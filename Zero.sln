@@ -28,6 +28,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{2DE9
 		scripts\tables.sql = scripts\tables.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.Rest", "Zero.Service.Rest\Zero.Service.Rest.csproj", "{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.IISWASHost", "Zero.Service.IISWASHost\Zero.Service.IISWASHost.csproj", "{90F57DDE-EBB0-4503-A3D5-9486B955187A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.WcfUnity", "..\Nega\Nega.WcfUnity\Nega.WcfUnity.csproj", "{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +72,18 @@ Global
 		{203D59CC-2FD4-4D9C-98F4-7BC6A30E907F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{203D59CC-2FD4-4D9C-98F4-7BC6A30E907F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{203D59CC-2FD4-4D9C-98F4-7BC6A30E907F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +92,9 @@ Global
 		{671F50A2-0A0B-44B5-85A7-4212EB3EF1F3} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
 		{BB0C023A-5ED0-4A38-9C57-36BD2A1231C9} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
 		{203D59CC-2FD4-4D9C-98F4-7BC6A30E907F} = {95EF63A3-56C9-4CC8-8B48-88DC227B5F74}
+		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal

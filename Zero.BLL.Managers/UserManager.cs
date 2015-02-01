@@ -8,20 +8,40 @@ using Nega.Data;
 
 using Zero.Domain;
 using Zero.BLL;
+using Zero.DAL;
 
 namespace Zero.BLL.Managers
 {
-    public class UserManager : IUserService
+
+    public class UserManager : MarshalByRefObject, IUserService
     {
+
+        private IUserDao userDao; 
+        private IRoleDao roleDao;
+
+        public UserManager(IUserDao userDao, 
+            IRoleDao roleDao)
+        {
+            this.userDao = userDao;
+            this.roleDao = roleDao;
+        }
 
         public void SaveUser(User user)
         {
-            throw new NotImplementedException();
+            if (user == null)
+            {
+                throw new ArgumentNullException();
+            }
+            this.userDao.Save(user);
         }
 
         public Task SaveUserAsync(User user)
         {
-            throw new NotImplementedException();
+            return Task.Factory.StartNew(
+                () =>
+                {
+                    SaveUser(user);
+                });
         }
 
         public bool UpdateUserPwd(string userId, string oldPwd, string newPwd)
