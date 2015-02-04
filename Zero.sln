@@ -34,6 +34,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.IISWASHost", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.WcfUnity", "..\Nega\Nega.WcfUnity\Nega.WcfUnity.csproj", "{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrateTests", "IntegrateTests", "{3302F915-41EF-4F7F-82F9-E42CE9F21FF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrateTest.Zero.Client", "IntegrateTest.Zero.Client\IntegrateTest.Zero.Client.csproj", "{C06702BE-D93D-4C67-82BA-41A662FB880F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.Entlib", "..\Nega\Nega.Entlib\Nega.Entlib.csproj", "{1CECF82E-9452-4091-889A-ABD10742FA49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +90,14 @@ Global
 		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C06702BE-D93D-4C67-82BA-41A662FB880F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C06702BE-D93D-4C67-82BA-41A662FB880F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C06702BE-D93D-4C67-82BA-41A662FB880F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C06702BE-D93D-4C67-82BA-41A662FB880F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CECF82E-9452-4091-889A-ABD10742FA49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CECF82E-9452-4091-889A-ABD10742FA49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CECF82E-9452-4091-889A-ABD10742FA49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CECF82E-9452-4091-889A-ABD10742FA49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +107,8 @@ Global
 		{BB0C023A-5ED0-4A38-9C57-36BD2A1231C9} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
 		{203D59CC-2FD4-4D9C-98F4-7BC6A30E907F} = {95EF63A3-56C9-4CC8-8B48-88DC227B5F74}
 		{7D13CDE7-115D-42A8-91E3-634ADFAE36B6} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
+		{C06702BE-D93D-4C67-82BA-41A662FB880F} = {3302F915-41EF-4F7F-82F9-E42CE9F21FF4}
+		{1CECF82E-9452-4091-889A-ABD10742FA49} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45

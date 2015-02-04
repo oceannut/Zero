@@ -16,10 +16,10 @@ namespace Zero.Service.Rest
 
         private readonly IUserService userService;
 
-        //public SignService(IUserService userService)
-        //{
-        //    this.userService = userService;
-        //}
+        public SignService(IUserService userService)
+        {
+            this.userService = userService;
+        }
 
         public SignService()
         {
@@ -28,7 +28,18 @@ namespace Zero.Service.Rest
 
         public User Signup(string username, string pwd, string name, string email)
         {
-            throw new NotImplementedException();
+            User user = new User();
+            user.Username = name;
+            user.Pwd = pwd;
+            user.Name = name;
+            user.Email = email;
+            user.Creation = DateTime.Now;
+            user.Modification = DateTime.Now;
+            user.Id = Guid.NewGuid().ToString();
+
+            this.userService.SaveUser(user);
+
+            return user;
         }
 
         public bool Signin(string username, string pwd)
