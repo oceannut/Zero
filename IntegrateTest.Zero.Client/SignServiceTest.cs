@@ -51,8 +51,8 @@ namespace IntegrateTest.Zero.Client
         {
             StringBuilder json = new StringBuilder();
             json.Append("{");
-            json.Append("\"pwd\":\"test\",");
-            json.Append("\"name\":\"test\",");
+            json.Append("\"pwd\":\"testPwd\",");
+            json.Append("\"name\":\"testName\",");
             json.Append("\"email\":\"test@test.com\"");
             json.Append("}");
             byte[] requestData = Encoding.GetEncoding("UTF-8").GetBytes(json.ToString());
@@ -61,7 +61,7 @@ namespace IntegrateTest.Zero.Client
             client.Headers.Add("Content-Type", "application/json");
             client.Headers.Add("ContentLength", requestData.Length.ToString());
 
-            client.UploadDataTaskAsync("http://localhost:49938/SignService.svc/sign/zsp/", "POST", requestData)
+            client.UploadDataTaskAsync("http://localhost:49938/SignService.svc/sign/zsp123456,,,1/", "POST", requestData)
                 .ContinueWith(
                     (task) =>
                     {
@@ -73,6 +73,8 @@ namespace IntegrateTest.Zero.Client
                         }
                         else
                         {
+                            Console.WriteLine((task.Exception.InnerException as WebException).Message);
+                            Console.WriteLine("-------------------------");
                             Console.WriteLine(task.Exception);
                         }
                     });

@@ -9,7 +9,11 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjection;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 
 using Nega.WcfUnity;
 using Nega.Entlib;
@@ -19,12 +23,6 @@ using Zero.BLL;
 using Zero.BLL.Managers;
 using Zero.DAL;
 using Zero.DAL.EF.MySQL;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
 
 namespace Zero.Service.IISWASHost
 {
@@ -33,42 +31,72 @@ namespace Zero.Service.IISWASHost
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            Console.WriteLine("app start");
+            string exceptionHandlingLogPolicy = "Log";
+            string exceptionHandlingLogAndWrapPolicy = "LogAndWrap";
 
             IUnityContainer container = ObjectsRegistry.SoloInstance.Container;
 
-            container.AddNewExtension<Interception>();
+            #region interception
 
+            container.AddNewExtension<Interception>();
             container.Configure<Interception>().AddPolicy("Save")
                  .AddMatchingRule<MemberNameMatchingRule>(new InjectionConstructor(new InjectionParameter("Save*")))
+                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
                  .AddCallHandler<TransactionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor());
             container.Configure<Interception>().AddPolicy("Update")
                  .AddMatchingRule<MemberNameMatchingRule>(new InjectionConstructor(new InjectionParameter("Update*")))
+                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
+                 .AddCallHandler<TransactionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor());
+            container.Configure<Interception>().AddPolicy("Delete")
+                 .AddMatchingRule<MemberNameMatchingRule>(new InjectionConstructor(new InjectionParameter("Delete*")))
+                 .AddCallHandler<LogCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(9001, true, false,
+                  "Pending Deletion",
+                  "Delete successfully", true, false, true, 10))
+                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
                  .AddCallHandler<TransactionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor());
 
-            container.Configure<Interception>().AddPolicy("Save2")
-                 .AddMatchingRule<MemberNameMatchingRule>(new InjectionConstructor(new InjectionParameter("Save*")))
-                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor("LogAndWrap"));
+            container.Configure<Interception>().AddPolicy("Wcf")
+                 .AddMatchingRule<NamespaceMatchingRule>(new InjectionConstructor(new InjectionParameter("Zero.Service.Rest")))
+                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogPolicy));
+
+            #endregion
+
+            #region DAL
 
             container.RegisterType<IUserDao, UserDao>();
             container.RegisterType<IRoleDao, RoleDao>();
 
-            container.RegisterType<IUserService, UserManager>(new Interceptor<TransparentProxyInterceptor>(),
+            #endregion
+
+            #region BLL
+
+            container.RegisterType<IUserService, UserManager>(new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
 
-            container.RegisterType<ISignService, SignService>();
+            #endregion
 
-            PolicyInjection.SetPolicyInjector(new PolicyInjector(new SystemConfigurationSource(false)), false);
+            #region Wcf
+
+            container.RegisterType<ISignService, SignService>(new Interceptor<TransparentProxyInterceptor>(),
+                new InterceptionBehavior<PolicyInjectionBehavior>());
+
+            #endregion
+
+            #region logging
 
             LogWriterFactory logWriterFactory = new LogWriterFactory();
             LogWriter logWriter = logWriterFactory.Create();
             Logger.SetLogWriter(logWriter, false);
 
-            // Create the default ExceptionManager object from the configuration settings.
+            #endregion
+
+            #region exception handling
+
             ExceptionPolicyFactory policyFactory = new ExceptionPolicyFactory();
-            ExceptionManager exManager = policyFactory.CreateManager();
-            // Create an ExceptionPolicy to illustrate the static HandleException method
-            ExceptionPolicy.SetExceptionManager(exManager);
+            ExceptionManager exceptionManager = policyFactory.CreateManager();
+            ExceptionPolicy.SetExceptionManager(exceptionManager);
+
+            #endregion
 
         }
 
@@ -100,27 +128,6 @@ namespace Zero.Service.IISWASHost
         protected void Application_End(object sender, EventArgs e)
         {
 
-        }
-
-
-        private static LoggingConfiguration BuildLoggingConfig()
-        {
-            // Formatters
-            TextFormatter formatter = new TextFormatter("Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {localMachine}{newline}App Domain: {localAppDomain}{newline}ProcessId: {localProcessId}{newline}Process Name: {localProcessName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}");
-
-            // Listeners
-            var flatFileTraceListener = new FlatFileTraceListener(@"d:\sb\SalaryCalculator.log", "----------------------------------------", "----------------------------------------", formatter);
-            var eventLog = new EventLog("Application", ".", "Enterprise Library Logging");
-            var eventLogTraceListener = new FormattedEventLogTraceListener(eventLog);
-            // Build Configuration
-            var config = new LoggingConfiguration();
-            config.AddLogSource("General", SourceLevels.All, true).AddTraceListener(eventLogTraceListener);
-            config.LogSources["General"].AddTraceListener(flatFileTraceListener);
-
-            // Special Sources Configuration
-            config.SpecialSources.LoggingErrorsAndWarnings.AddTraceListener(eventLogTraceListener);
-
-            return config;
         }
 
     }

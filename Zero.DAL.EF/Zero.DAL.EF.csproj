@@ -7,8 +7,8 @@
     <ProjectGuid>{FC93A87C-8A49-4A5D-A493-2B2E0DB75427}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Zero.DAL.EF.MySQL</RootNamespace>
-    <AssemblyName>Zero.DAL.EF.MySQL</AssemblyName>
+    <RootNamespace>Zero.DAL.EF</RootNamespace>
+    <AssemblyName>Zero.DAL.EF</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CategoryDao.cs" />
     <Compile Include="FragileDataContext.cs" />
     <Compile Include="RoleDao.cs" />
     <Compile Include="UserDao.cs" />

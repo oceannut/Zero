@@ -10,7 +10,7 @@ using Zero.Domain;
 using Zero.DAL;
 using System.Data.Entity.Infrastructure;
 
-namespace Zero.DAL.EF.MySQL
+namespace Zero.DAL.EF
 {
     public class UserDao : GenericPageableDao<User>, IUserDao
     {

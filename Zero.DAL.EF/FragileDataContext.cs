@@ -8,7 +8,7 @@ using System.Data.Entity;
 
 using Zero.Domain;
 
-namespace Zero.DAL.EF.MySQL
+namespace Zero.DAL.EF
 {
 
     public class FragileDataContext : DbContext

@@ -13,7 +13,7 @@ using Zero.DAL;
 namespace Zero.BLL.Managers
 {
 
-    public class UserManager : MarshalByRefObject, IUserService
+    public class UserManager : IUserService
     {
 
         private IUserDao userDao; 

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Zero.Domain.User" Collapsed="true">
-    <Position X="4.5" Y="0.75" Width="1.5" />
+    <Position X="5.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAEACACAAAAAAAQAAAAQIAgAAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>User.cs</FileName>
@@ -12,7 +12,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Zero.Domain.Role" Collapsed="true">
-    <Position X="4.5" Y="2.75" Width="1.5" />
+    <Position X="5.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACACACAAAAAAAAAAAAAAQIAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Role.cs</FileName>
@@ -20,6 +20,17 @@
     <ShowAsCollectionAssociation>
       <Property Name="Users" />
     </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Zero.Domain.Category" Collapsed="true">
+    <Position X="4.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUCAIACEAAAACAAgAAgQAQIAAAABIAAAgAAAEAAAAA=</HashCode>
+      <FileName>Category.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Parent" />
+    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Font Name="Microsoft YaHei UI" Size="9" />

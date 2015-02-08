@@ -9,7 +9,7 @@ using Nega.Data;
 using Zero.Domain;
 using Zero.DAL;
 
-namespace Zero.DAL.EF.MySQL
+namespace Zero.DAL.EF
 {
     public class RoleDao : GenericPageableDao<Role>, IRoleDao
     {
