@@ -60,18 +60,13 @@ namespace Zero.Service.IISWASHost
 
             PolicyInjection.SetPolicyInjector(new PolicyInjector(new SystemConfigurationSource(false)), false);
 
-
-            LoggingConfiguration loggingConfiguration = BuildLoggingConfig();
-            LogWriter logWriter = new LogWriter(loggingConfiguration);
-            //Logger.SetLogWriter(logWriter, false);
+            LogWriterFactory logWriterFactory = new LogWriterFactory();
+            LogWriter logWriter = logWriterFactory.Create();
+            Logger.SetLogWriter(logWriter, false);
 
             // Create the default ExceptionManager object from the configuration settings.
-            //ExceptionPolicyFactory policyFactory = new ExceptionPolicyFactory();
-            //ExceptionManager exManager = policyFactory.CreateManager();
-
-            // Create the default ExceptionManager object programatically
-            ExceptionManager exManager = BuildExceptionManagerConfig(logWriter);
-
+            ExceptionPolicyFactory policyFactory = new ExceptionPolicyFactory();
+            ExceptionManager exManager = policyFactory.CreateManager();
             // Create an ExceptionPolicy to illustrate the static HandleException method
             ExceptionPolicy.SetExceptionManager(exManager);
 
@@ -108,94 +103,13 @@ namespace Zero.Service.IISWASHost
         }
 
 
-
-        private static ExceptionManager BuildExceptionManagerConfig(LogWriter logWriter)
-        {
-            var policies = new List<ExceptionPolicyDefinition>();
-
-            var assistingAdministrators = new List<ExceptionPolicyEntry>
-            {
-                new ExceptionPolicyEntry(typeof (Exception),
-                    PostHandlingAction.ThrowNewException,
-                    new IExceptionHandler[]
-                     {
-                       new LoggingExceptionHandler("General", 9001, TraceEventType.Error,
-                         "Salary Calculations Service", 5, typeof(TextExceptionFormatter), logWriter),
-                       new ReplaceHandler("Application error.  Please advise your administrator and provide them with this error code: {handlingInstanceID}",
-                         typeof(Exception))
-                     })
-            };
-
-            var exceptionShielding = new List<ExceptionPolicyEntry>
-            {
-                new ExceptionPolicyEntry(typeof (Exception),
-                    PostHandlingAction.ThrowNewException,
-                    new IExceptionHandler[]
-                     {
-                       new WrapHandler("Application Error. Please contact your administrator.",
-                         typeof(Exception))
-                     })
-            };
-
-            var loggingAndReplacing = new List<ExceptionPolicyEntry>
-            {
-                new ExceptionPolicyEntry(typeof (Exception),
-                    PostHandlingAction.ThrowNewException,
-                    new IExceptionHandler[]
-                     {
-                       new LoggingExceptionHandler("General", 9000, TraceEventType.Error,
-                         "Salary Calculations Service", 5, typeof(TextExceptionFormatter), logWriter),
-                       new ReplaceHandler("An application error occurred and has been logged. Please contact your administrator.",
-                         typeof(Exception))
-                     })
-            };
-
-            var logAndWrap = new List<ExceptionPolicyEntry>
-            {
-                new ExceptionPolicyEntry(typeof (DivideByZeroException),
-                    PostHandlingAction.None,
-                    new IExceptionHandler[]
-                     {
-                       new LoggingExceptionHandler("General", 9002, TraceEventType.Error,
-                         "Salary Calculations Service", 5, typeof(TextExceptionFormatter), logWriter),
-                       new ReplaceHandler("Application error will be ignored and processing will continue.",
-                         typeof(Exception))
-                     }),
-                new ExceptionPolicyEntry(typeof (Exception),
-                    PostHandlingAction.ThrowNewException,
-                    new IExceptionHandler[]
-                     {
-                       new WrapHandler("An application error has occurred.",
-                         typeof(Exception))
-                     })
-            };
-
-            var replacingException = new List<ExceptionPolicyEntry>
-            {
-                new ExceptionPolicyEntry(typeof (Exception),
-                    PostHandlingAction.ThrowNewException,
-                    new IExceptionHandler[]
-                     {
-                       new ReplaceHandler("Application Error. Please contact your administrator.",
-                         typeof(Exception))
-                     })
-            };
-
-            policies.Add(new ExceptionPolicyDefinition("AssistingAdministrators", assistingAdministrators));
-            policies.Add(new ExceptionPolicyDefinition("ExceptionShielding", exceptionShielding));
-            policies.Add(new ExceptionPolicyDefinition("LoggingAndReplacingException", loggingAndReplacing));
-            policies.Add(new ExceptionPolicyDefinition("LogAndWrap", logAndWrap));
-            policies.Add(new ExceptionPolicyDefinition("ReplacingException", replacingException));
-            return new ExceptionManager(policies);
-        }
-
         private static LoggingConfiguration BuildLoggingConfig()
         {
             // Formatters
             TextFormatter formatter = new TextFormatter("Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {localMachine}{newline}App Domain: {localAppDomain}{newline}ProcessId: {localProcessId}{newline}Process Name: {localProcessName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}");
 
             // Listeners
-            var flatFileTraceListener = new FlatFileTraceListener(@"d:\Temp\SalaryCalculator.log", "----------------------------------------", "----------------------------------------", formatter);
+            var flatFileTraceListener = new FlatFileTraceListener(@"d:\sb\SalaryCalculator.log", "----------------------------------------", "----------------------------------------", formatter);
             var eventLog = new EventLog("Application", ".", "Enterprise Library Logging");
             var eventLogTraceListener = new FormattedEventLogTraceListener(eventLog);
             // Build Configuration

@@ -32,7 +32,6 @@ namespace Zero.BLL.Managers
             {
                 throw new ArgumentNullException();
             }
-            throw new Exception("Hello, me test.");
             this.userDao.Save(user);
         }
 
