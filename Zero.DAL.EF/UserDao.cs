@@ -15,9 +15,16 @@ namespace Zero.DAL.EF
     public class UserDao : GenericPageableDao<User>, IUserDao
     {
 
+        private string connectionString;
+
+        public UserDao(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
         public override bool Save(User entity)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 if (entity.Roles != null && entity.Roles.Count > 0)
                 {
@@ -42,7 +49,7 @@ namespace Zero.DAL.EF
 
         public override bool Update(User entity)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 var userGet = context.Users.FirstOrDefault(e => e.Id == entity.Id);
                 if (userGet != null)
@@ -113,7 +120,7 @@ namespace Zero.DAL.EF
 
         public override bool Delete(object id)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 var userGet = context.Users.FirstOrDefault(e => e.Id == (string)id);
                 if (userGet != null)
@@ -135,7 +142,7 @@ namespace Zero.DAL.EF
 
         public override User Get(object id)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 return context.Users.Include("Roles").FirstOrDefault(e => e.Id == (string)id);
             }
@@ -143,7 +150,7 @@ namespace Zero.DAL.EF
 
         public IList<User> List(string roleId)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 return (from user in context.Users 
                         where user.Roles.Any(e => e.Id == roleId) 

@@ -11,11 +11,11 @@ using Zero.Domain;
 namespace Zero.DAL.EF
 {
 
-    public class FragileDataContext : DbContext
+    public class UserDataContext : DbContext
     {
 
-        public FragileDataContext()
-            : base("connectionString")
+        public UserDataContext(string connectionString)
+            : base(connectionString)
         {
 
         }

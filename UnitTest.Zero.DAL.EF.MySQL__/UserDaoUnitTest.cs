@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Zero.Domain;
-using Zero.DAL.EF.MySQL;
+using Zero.DAL.EF;
 
 namespace UnitTest.Zero.DAL.EF.MySQL__
 {
     [TestClass]
     public class UserDaoUnitTest
     {
+
+        private const string connectionString = "connectionString";
+
         [TestMethod]
         public void TestCURD()
         {
             User user = TestHelper.CreateUser();
 
-            UserDao userDao = new UserDao();
+            UserDao userDao = new UserDao(connectionString);
             bool isSave = userDao.Save(user);
             Assert.IsTrue(isSave);
 
@@ -31,8 +34,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
         public void TestSave()
         {
             bool isSave = false;
-            UserDao userDao = new UserDao();
-            RoleDao roleDao = new RoleDao();
+            UserDao userDao = new UserDao(connectionString);
+            RoleDao roleDao = new RoleDao(connectionString);
 
             Role role = TestHelper.CreateRole();
             isSave = roleDao.Save(role);
@@ -50,8 +53,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
         [TestMethod]
         public void TestAddRole()
         {
-            UserDao userDao = new UserDao();
-            RoleDao roleDao = new RoleDao();
+            UserDao userDao = new UserDao(connectionString);
+            RoleDao roleDao = new RoleDao(connectionString);
 
             User user = TestHelper.CreateUser();
             Role role = TestHelper.CreateRole();
@@ -70,8 +73,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
         [TestMethod]
         public void TestAddRole2()
         {
-            UserDao userDao = new UserDao();
-            RoleDao roleDao = new RoleDao();
+            UserDao userDao = new UserDao(connectionString);
+            RoleDao roleDao = new RoleDao(connectionString);
 
             User user = TestHelper.CreateUser();
             bool isSave = userDao.Save(user);
@@ -90,8 +93,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
         [TestMethod]
         public void TestList()
         {
-            UserDao userDao = new UserDao();
-            RoleDao roleDao = new RoleDao();
+            UserDao userDao = new UserDao(connectionString);
+            RoleDao roleDao = new RoleDao(connectionString);
 
             Role role = TestHelper.CreateRole();
             bool isSave = roleDao.Save(role);

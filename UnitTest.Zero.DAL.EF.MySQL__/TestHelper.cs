@@ -11,6 +11,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
     public static class TestHelper
     {
 
+        public const string ConnectionString = "connectionString";
+
         public static User CreateUser()
         {
             return new User
@@ -35,6 +37,20 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
                 Creation = DateTime.Now,
                 Modification = DateTime.Now
             };
+        }
+
+        public static Category CreateCategory()
+        {
+            Category category = new Category
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "test",
+                Scope = 1,
+                Creation = DateTime.Now,
+                Modification = DateTime.Now
+            };
+            category.Code = category.Id;
+            return category;
         }
 
     }

@@ -14,9 +14,16 @@ namespace Zero.DAL.EF
     public class RoleDao : GenericPageableDao<Role>, IRoleDao
     {
 
+        private string connectionString;
+
+        public RoleDao(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
         public override bool Save(Role entity)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 if (entity.Users != null && entity.Users.Count > 0)
                 {
@@ -41,7 +48,7 @@ namespace Zero.DAL.EF
 
         public override bool Update(Role entity)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 var roleGet = context.Roles.FirstOrDefault(e => e.Id == entity.Id);
                 if (roleGet != null)
@@ -109,7 +116,7 @@ namespace Zero.DAL.EF
 
         public override bool Delete(object id)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 var roleGet = context.Roles.FirstOrDefault(e => e.Id == (string)id);
                 if (roleGet != null)
@@ -128,7 +135,7 @@ namespace Zero.DAL.EF
 
         public override Role Get(object id)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 return context.Roles.FirstOrDefault(e => e.Id == (string)id);
             }
@@ -136,7 +143,7 @@ namespace Zero.DAL.EF
 
         public IList<Role> List(string userId)
         {
-            using (FragileDataContext context = new FragileDataContext())
+            using (UserDataContext context = new UserDataContext(connectionString))
             {
                 return (from role in context.Roles
                         where role.Users.Any(e => e.Id == userId)

@@ -47,7 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CategoryDao.cs" />
-    <Compile Include="FragileDataContext.cs" />
+    <Compile Include="CategoryDataContext.cs" />
+    <Compile Include="UserDataContext.cs" />
     <Compile Include="RoleDao.cs" />
     <Compile Include="UserDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

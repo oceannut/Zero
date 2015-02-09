@@ -22,12 +22,14 @@ using Zero.Service.Rest;
 using Zero.BLL;
 using Zero.BLL.Managers;
 using Zero.DAL;
-using Zero.DAL.EF.MySQL;
+using Zero.DAL.EF;
 
 namespace Zero.Service.IISWASHost
 {
     public class Global : System.Web.HttpApplication
     {
+
+        private const string connectionString = "connectionString";
 
         protected void Application_Start(object sender, EventArgs e)
         {
@@ -63,8 +65,8 @@ namespace Zero.Service.IISWASHost
 
             #region DAL
 
-            container.RegisterType<IUserDao, UserDao>();
-            container.RegisterType<IRoleDao, RoleDao>();
+            container.RegisterType<IUserDao, UserDao>(new InjectionConstructor(connectionString));
+            container.RegisterType<IRoleDao, RoleDao>(new InjectionConstructor(connectionString));
 
             #endregion
 

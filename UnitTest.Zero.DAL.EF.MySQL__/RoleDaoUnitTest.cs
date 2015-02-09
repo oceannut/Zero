@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Zero.Domain;
-using Zero.DAL.EF.MySQL;
+using Zero.DAL.EF;
 
 namespace UnitTest.Zero.DAL.EF.MySQL__
 {
     [TestClass]
     public class RoleDaoUnitTest
     {
+
+        private const string connectionString = "connectionString";
+
         [TestMethod]
         public void TestCURD()
         {
 
             Role role = TestHelper.CreateRole();
 
-            RoleDao roleDao = new RoleDao();
+            RoleDao roleDao = new RoleDao(connectionString);
             bool isSave = roleDao.Save(role);
             Assert.IsTrue(isSave);
 
@@ -32,8 +35,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
         [TestMethod]
         public void TestAddUser()
         {
-            UserDao userDao = new UserDao();
-            RoleDao roleDao = new RoleDao();
+            UserDao userDao = new UserDao(connectionString);
+            RoleDao roleDao = new RoleDao(connectionString);
 
             User user = TestHelper.CreateUser();
             Role role = TestHelper.CreateRole();
