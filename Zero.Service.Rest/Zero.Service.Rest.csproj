@@ -49,6 +49,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CategoryQueryService.cs" />
+    <Compile Include="ICategoryQueryService.cs" />
+    <Compile Include="ICategoryService.cs" />
     <Compile Include="ISignService.cs" />
     <Compile Include="ITestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

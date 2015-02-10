@@ -20,9 +20,9 @@ namespace Zero.DAL
 
         bool IsCodeExisted(int scope, string code);
 
-        int Count(int? scope = null, string parentId = null);
+        int Count(int? scope = null, string parentId = null, bool? isDisused = null);
 
-        IEnumerable<Category> List(PagingRequest request, int? scope = null, bool? includeParent = null, string parentId = null);
+        IEnumerable<Category> List(int pageIndex, int pageSize, int? scope = null, string parentId = null, bool? isDisused = null);
 
     }
 

@@ -38,17 +38,17 @@ namespace Zero.BLL
 
         Task<bool> IsCategoryCodeExistedAsync(int scope, string code);
 
-        int CountCategory(int? scope = null, string parentId = null);
+        int CountCategory(int? scope = null, string parentId = null, bool? isDisused = null);
 
-        Task<int> CountCategoryAsync(int? scope = null, string parentId = null);
+        Task<int> CountCategoryAsync(int? scope = null, string parentId = null, bool? isDisused = null);
 
-        IEnumerable<Category> ListCategory(int scope, bool? includeParent = null, string parentId = null);
+        IEnumerable<Category> ListCategory(int scope, string parentId = null, bool? isDisused = null);
 
-        Task<IEnumerable<Category>> ListCategoryAsync(int scope, bool? includeParent = null, string parentId = null);
+        Task<IEnumerable<Category>> ListCategoryAsync(int scope, string parentId = null, bool? isDisused = null);
 
-        Paging<Category> PagingCategory(PagingRequest request, int scope, bool? includeParent = null, string parentId = null);
+        Paging<Category> PagingCategory(int pageIndex, int pageSize, int scope, string parentId = null);
 
-        Task<Paging<Category>> PagingCategoryAsync(PagingRequest request, int scope, bool? includeParent = null, string parentId = null);
+        Task<Paging<Category>> PagingCategoryAsync(int pageIndex, int pageSize, int scope, string parentId = null);
 
     }
 

@@ -5,6 +5,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
+using Nega.Common;
+
 namespace Zero.Domain
 {
 
@@ -12,7 +14,7 @@ namespace Zero.Domain
     /// 类型。
     /// </summary>
     [DataContract]
-    public class Category : Nega.Common.ITimestampData
+    public class Category : ITimestampData, ICategoryable, IDisuseable<Category>
     {
 
         /// <summary>
@@ -56,6 +58,12 @@ namespace Zero.Domain
         /// </summary>
         [DataMember]
         public virtual Category Parent { get; set; }
+
+        /// <summary>
+        /// 指示是否被废弃；true表示废弃，不再使用；false表示未废弃，仍在使用。
+        /// </summary>
+        [DataMember]
+        public bool Disused { get; set; }
 
         /// <summary>
         /// 创建时间。
@@ -225,6 +233,36 @@ namespace Zero.Domain
                         return false;
                     }
                 }
+            }
+        }
+
+        public void Disuse(Action<Category> action)
+        {
+            if (!IsRequiredAllSet())
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!this.Disused)
+            {
+                this.Disused = true;
+
+                Update(action, null);
+            }
+        }
+
+        public void Use(Action<Category> action)
+        {
+            if (!IsRequiredAllSet())
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (this.Disused)
+            {
+                this.Disused = false;
+
+                Update(action, null);
             }
         }
 
