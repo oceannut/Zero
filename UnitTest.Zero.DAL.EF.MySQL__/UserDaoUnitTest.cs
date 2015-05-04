@@ -19,27 +19,27 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             User user = TestHelper.CreateUser();
 
             UserDao userDao = new UserDao(connectionString);
-            bool isSave = userDao.Save(user);
-            Assert.IsTrue(isSave);
+            int isSave = userDao.Save(user);
+            Assert.IsTrue(isSave > 0);
 
             user.Name = "hello";
-            bool isUpdate = userDao.Update(user);
-            Assert.IsTrue(isUpdate);
+            int isUpdate = userDao.Update(user);
+            Assert.IsTrue(isUpdate > 0);
 
-            bool isDelete = userDao.Delete(user.Id);
-            Assert.IsTrue(isDelete);
+            int isDelete = userDao.Delete(user.Id);
+            Assert.IsTrue(isDelete > 0);
         }
 
         [TestMethod]
         public void TestSave()
         {
-            bool isSave = false;
+            int isSave = 0;
             UserDao userDao = new UserDao(connectionString);
             RoleDao roleDao = new RoleDao(connectionString);
 
             Role role = TestHelper.CreateRole();
             isSave = roleDao.Save(role);
-            Assert.IsTrue(isSave);
+            Assert.IsTrue(isSave > 0);
 
             User user = TestHelper.CreateUser();
             user.Roles = new List<Role>();
@@ -47,7 +47,7 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             role = TestHelper.CreateRole();
             user.Roles.Add(role);
             isSave = userDao.Save(user);
-            Assert.IsTrue(isSave);
+            Assert.IsTrue(isSave > 0);
         }
 
         [TestMethod]
@@ -60,13 +60,13 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             Role role = TestHelper.CreateRole();
             user.Roles = new List<Role>();
             user.Roles.Add(role);
-            bool isSave = userDao.Save(user);
-            Assert.IsTrue(isSave);
+            int isSave = userDao.Save(user);
+            Assert.IsTrue(isSave > 0);
 
             role = TestHelper.CreateRole();
             user.Roles.Add(role);
             isSave = userDao.Update(user);
-            Assert.IsTrue(isSave);
+            Assert.IsTrue(isSave > 0);
 
         }
 
@@ -77,17 +77,17 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             RoleDao roleDao = new RoleDao(connectionString);
 
             User user = TestHelper.CreateUser();
-            bool isSave = userDao.Save(user);
-            Assert.IsTrue(isSave);
+            int isSave = userDao.Save(user);
+            Assert.IsTrue(isSave > 0);
 
             Role role = TestHelper.CreateRole();
             isSave = roleDao.Save(role);
-            Assert.IsTrue(isSave);
+            Assert.IsTrue(isSave > 0);
 
             user.Roles = new List<Role>();
             user.Roles.Add(role);
             isSave = userDao.Update(user);
-            Assert.IsTrue(isSave);
+            Assert.IsTrue(isSave > 0);
         }
 
         [TestMethod]
@@ -97,8 +97,8 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             RoleDao roleDao = new RoleDao(connectionString);
 
             Role role = TestHelper.CreateRole();
-            bool isSave = roleDao.Save(role);
-            Assert.IsTrue(isSave);
+            int isSave = roleDao.Save(role);
+            Assert.IsTrue(isSave > 0);
 
             User user1 = TestHelper.CreateUser();
             User user2 = TestHelper.CreateUser();
@@ -106,13 +106,13 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             role.Users.Add(user1);
             role.Users.Add(user2);
             isSave = roleDao.Update(role);
-            Assert.IsTrue(isSave);
+            Assert.IsTrue(isSave > 0);
 
             IList<User> list = userDao.List(role.Id);
             Assert.AreEqual(2, list.Count);
 
-            bool isDelete = roleDao.Delete(role.Id);
-            Assert.IsTrue(isDelete);
+            int isDelete = roleDao.Delete(role.Id);
+            Assert.IsTrue(isDelete > 0);
 
             list = userDao.List(role.Id);
             Assert.AreEqual(0, list.Count);

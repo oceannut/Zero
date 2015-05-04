@@ -20,7 +20,7 @@ using Nega.Entlib;
 
 using Zero.Service.Rest;
 using Zero.BLL;
-using Zero.BLL.Managers;
+using Zero.BLL.Impl;
 using Zero.DAL;
 using Zero.DAL.EF;
 
@@ -72,7 +72,7 @@ namespace Zero.Service.IISWASHost
 
             #region BLL
 
-            container.RegisterType<IUserService, UserManager>(new Interceptor<InterfaceInterceptor>(),
+            container.RegisterType<IUserService, UserServiceImpl>(new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
 
             #endregion

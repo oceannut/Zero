@@ -11,7 +11,7 @@ using Zero.DAL;
 
 namespace Zero.DAL.EF
 {
-    public class RoleDao : GenericPageableDao<Role>, IRoleDao
+    public class RoleDao : GenericDao<Role, string>, IRoleDao
     {
 
         private string connectionString;
@@ -21,7 +21,7 @@ namespace Zero.DAL.EF
             this.connectionString = connectionString;
         }
 
-        public override bool Save(Role entity)
+        public override int Save(Role entity)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
@@ -41,12 +41,11 @@ namespace Zero.DAL.EF
                     }
                 }
                 context.Roles.Add(entity);
-                int rowsAffected = context.SaveChanges();
-                return rowsAffected > 0;
+                return context.SaveChanges();
             }
         }
 
-        public override bool Update(Role entity)
+        public override int Update(Role entity)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
@@ -104,36 +103,34 @@ namespace Zero.DAL.EF
                         }
                     }
                     roleGet.Modification = entity.Modification;
-                    int rowsAffected = context.SaveChanges();
-                    return rowsAffected > 0;
+                    return context.SaveChanges();
                 }
                 else
                 {
-                    return false;
+                    return 0;
                 }
             }
         }
 
-        public override bool Delete(object id)
+        public override int Delete(string id)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
-                var roleGet = context.Roles.FirstOrDefault(e => e.Id == (string)id);
+                var roleGet = context.Roles.FirstOrDefault(e => e.Id == id);
                 if (roleGet != null)
                 {
                     roleGet.Users.Clear();
                     context.Roles.Remove(roleGet);
-                    int rowsAffected = context.SaveChanges();
-                    return rowsAffected > 0;
+                    return context.SaveChanges();
                 }
                 else
                 {
-                    return false;
+                    return 0;
                 }
             }
         }
 
-        public override Role Get(object id)
+        public override Role Get(string id)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {

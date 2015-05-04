@@ -12,7 +12,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace Zero.DAL.EF
 {
-    public class UserDao : GenericPageableDao<User>, IUserDao
+    public class UserDao : GenericPageableDao<User, string>, IUserDao
     {
 
         private string connectionString;
@@ -22,7 +22,7 @@ namespace Zero.DAL.EF
             this.connectionString = connectionString;
         }
 
-        public override bool Save(User entity)
+        public override int Save(User entity)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
@@ -42,12 +42,11 @@ namespace Zero.DAL.EF
                     }
                 }
                 context.Users.Add(entity);
-                int rowsAffected = context.SaveChanges();
-                return rowsAffected > 0;
+                return context.SaveChanges();
             }
         }
 
-        public override bool Update(User entity)
+        public override int Update(User entity)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
@@ -108,17 +107,16 @@ namespace Zero.DAL.EF
                         }
                     }
                     userGet.Modification = entity.Modification;
-                    int rowsAffected = context.SaveChanges();
-                    return rowsAffected > 0;
+                    return context.SaveChanges();
                 }
                 else
                 {
-                    return false;
+                    return 0;
                 }
             }
         }
 
-        public override bool Delete(object id)
+        public override int Delete(string id)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
@@ -130,17 +128,16 @@ namespace Zero.DAL.EF
 
                     //userGet.Roles.Clear();
                     context.Users.Remove(userGet);
-                    int rowsAffected = context.SaveChanges();
-                    return rowsAffected > 0;
+                    return context.SaveChanges();
                 }
                 else
                 {
-                    return false;
+                    return 0;
                 }
             }
         }
 
-        public override User Get(object id)
+        public override User Get(string id)
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {

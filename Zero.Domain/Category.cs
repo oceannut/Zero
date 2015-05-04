@@ -14,7 +14,7 @@ namespace Zero.Domain
     /// 类型。
     /// </summary>
     [DataContract]
-    public class Category : ITimestampData, ICategoryable, IDisuseable<Category>
+    public class Category : ITimestampData, ICategoryable<string>, IDisuseable<Category>
     {
 
         /// <summary>
@@ -36,10 +36,16 @@ namespace Zero.Domain
         public string Name { get; set; }
 
         /// <summary>
+        /// 详细。
+        /// </summary>
+        [DataMember]
+        public string Desc { get; set; }
+
+        /// <summary>
         /// 排序号。
         /// </summary>
         [DataMember]
-        public int Order { get; set; }
+        public long Sequence { get; set; }
 
         /// <summary>
         /// 应用范围。
@@ -102,7 +108,7 @@ namespace Zero.Domain
             }
             if (isCodeExistedPredicate != null && isCodeExistedPredicate(Scope, Code))
             {
-                throw new Nega.Common.ObjectAlreadyExistedException<Category, string>(this, this.Code);
+                throw new ObjectAlreadyExistedException<Category, string>(this, this.Code);
             }
             if(Parent != null && string.IsNullOrWhiteSpace(Parent.Id))
             {
@@ -111,7 +117,7 @@ namespace Zero.Domain
             if ((!string.IsNullOrWhiteSpace(ParentId) && Id == ParentId)
                 || IsCyclicReference(parentAccessor))
             {
-                throw new Nega.Common.CyclicInheritanceException();
+                throw new CyclicInheritanceException();
             }
             DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
             Creation = timestamp;
@@ -149,10 +155,10 @@ namespace Zero.Domain
         /// <summary>
         /// 更改排序号。
         /// </summary>
-        /// <param name="order">排序号。</param>
+        /// <param name="sequence">排序号。</param>
         /// <param name="action">定义保存操作。</param>
         /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        public void ChangeOrder(int order,
+        public void ChangeSequence(int sequence,
             Action<Category> action,
             Func<DateTime> timestampFactory = null)
         {
@@ -161,9 +167,9 @@ namespace Zero.Domain
                 throw new InvalidOperationException();
             }
 
-            if (Order != order)
+            if (Sequence != sequence)
             {
-                Order = order;
+                Sequence = sequence;
 
                 Update(action, timestampFactory);
             }
@@ -193,7 +199,7 @@ namespace Zero.Domain
                 if ((!string.IsNullOrWhiteSpace(ParentId) && Id == ParentId)
                     || (parent != null && IsCyclicReference(parentAccessor)))
                 {
-                    throw new Nega.Common.CyclicInheritanceException();
+                    throw new CyclicInheritanceException();
                 }
 
                 Update(action, timestampFactory);

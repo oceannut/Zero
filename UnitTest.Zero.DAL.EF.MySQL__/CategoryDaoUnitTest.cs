@@ -18,15 +18,15 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             Category category = TestHelper.CreateCategory();
 
             CategoryDao categoryDao = new CategoryDao(TestHelper.ConnectionString);
-            bool isSave = categoryDao.Save(category);
-            Assert.IsTrue(isSave);
+            int isSave = categoryDao.Save(category);
+            Assert.IsTrue(isSave > 0);
 
             category.Name = "hello";
-            bool isUpdate = categoryDao.Update(category);
-            Assert.IsTrue(isUpdate);
+            int isUpdate = categoryDao.Update(category);
+            Assert.IsTrue(isUpdate > 0);
 
-            bool isDelete = categoryDao.Delete(category.Id);
-            Assert.IsTrue(isDelete);
+            int isDelete = categoryDao.Delete(category.Id);
+            Assert.IsTrue(isDelete > 0);
         }
 
     }

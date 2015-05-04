@@ -11,7 +11,7 @@ using Zero.DAL;
 
 namespace Zero.DAL.EF
 {
-    public class CategoryDao : GenericPageableDao<Category>, ICategoryDao
+    public class CategoryDao : GenericDao<Category, string>, ICategoryDao
     {
 
         private string connectionString;
@@ -21,7 +21,7 @@ namespace Zero.DAL.EF
             this.connectionString = connectionString;
         }
 
-        public override bool Save(Category entity)
+        public override int Save(Category entity)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
@@ -31,23 +31,21 @@ namespace Zero.DAL.EF
                     entry.State = System.Data.Entity.EntityState.Unchanged;
                 }
                 context.Categories.Add(entity);
-                int rowsAffected = context.SaveChanges();
-                return rowsAffected > 0;
+                return context.SaveChanges();
             }
         }
 
-        public override bool Update(Category entity)
+        public override int Update(Category entity)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
                 var entry = context.Entry<Category>(entity);
                 entry.State = System.Data.Entity.EntityState.Modified;
-                int rowsAffected = context.SaveChanges();
-                return rowsAffected > 0;
+                return context.SaveChanges();
             }
         }
 
-        public override bool Delete(object id)
+        public override int Delete(string id)
         {
             Category found = Get(id);
             if (found != null)
@@ -57,17 +55,27 @@ namespace Zero.DAL.EF
                     var entry = context.Entry<Category>(found);
                     entry.State = System.Data.Entity.EntityState.Deleted;
                     context.Categories.Remove(found);
-                    int rowsAffected = context.SaveChanges();
-                    return rowsAffected > 0;
+                    return context.SaveChanges();
                 }
             }
             else
             {
-                return false;
+                return 0;
             }
         }
 
-        public override Category Get(object id)
+        public override int Delete(Category entity)
+        {
+            using (CategoryDataContext context = new CategoryDataContext(connectionString))
+            {
+                var entry = context.Entry<Category>(entity);
+                entry.State = System.Data.Entity.EntityState.Deleted;
+                context.Categories.Remove(entity);
+                return context.SaveChanges();
+            }
+        }
+
+        public override Category Get(string id)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
@@ -134,31 +142,16 @@ namespace Zero.DAL.EF
             }
         }
 
-        public IEnumerable<Category> List(int pageIndex, int pageSize, int? scope = null, string parentId = null, bool? isDisused = null)
+        public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
-                if (pageSize == int.MaxValue)
-                {
-                    return (from category in context.Categories
-                            where (scope == null || category.Scope == scope)
-                                && (parentId == null || ((parentId == string.Empty && category.ParentId == null) || category.ParentId == parentId))
-                                && (isDisused == null || category.Disused == isDisused.Value)
-                            select category)
-                            .ToArray();
-                }
-                else
-                {
-                    return (from category in context.Categories
-                            where (scope == null || category.Scope == scope)
-                                && (parentId == null || ((parentId == string.Empty && category.ParentId == null) || category.ParentId == parentId))
-                                && (isDisused == null || category.Disused == isDisused.Value)
-                            orderby category.Name
-                            select category)
-                            .Skip(pageIndex * pageSize)
-                            .Take(pageSize)
-                            .ToArray();
-                }
+                return (from category in context.Categories
+                        where (scope == null || category.Scope == scope)
+                            && (parentId == null || ((parentId == string.Empty && category.ParentId == null) || category.ParentId == parentId))
+                            && (isDisused == null || category.Disused == isDisused.Value)
+                        select category)
+                        .ToArray();
             }
         }
 

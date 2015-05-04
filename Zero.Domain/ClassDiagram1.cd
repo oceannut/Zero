@@ -25,13 +25,20 @@
   <Class Name="Zero.Domain.Category" Collapsed="true">
     <Position X="4.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAUCAIACEAAAACAAgAAgQAQIAAAABIAAAgAAAEAAAAA=</HashCode>
+      <HashCode>AAQCAIADAAAAACAAgAAgQAQIIAAEBIIAAgAAQUEAAAA=</HashCode>
       <FileName>Category.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Parent" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Zero.Domain.KeyVal" Collapsed="true">
+    <Position X="8.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>KeyVal.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Microsoft YaHei UI" Size="9" />
 </ClassDiagram>

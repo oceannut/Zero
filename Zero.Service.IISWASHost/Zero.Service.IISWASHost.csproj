@@ -136,9 +136,9 @@
       <Project>{7d13cde7-115d-42a8-91e3-634adfae36b6}</Project>
       <Name>Nega.WcfUnity</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zero.BLL.Managers\Zero.BLL.Managers.csproj">
+    <ProjectReference Include="..\Zero.BLL.Managers\Zero.BLL.Impl.csproj">
       <Project>{ffbd4bfd-f033-45db-9e89-9da65df37b89}</Project>
-      <Name>Zero.BLL.Managers</Name>
+      <Name>Zero.BLL.Impl</Name>
     </ProjectReference>
     <ProjectReference Include="..\Zero.BLL\Zero.BLL.csproj">
       <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>
@@ -162,7 +162,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <None Include="packages.config__" />
     <None Include="Web.Connections.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

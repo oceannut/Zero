@@ -10,16 +10,16 @@ using Zero.Domain;
 using Zero.BLL;
 using Zero.DAL;
 
-namespace Zero.BLL.Managers
+namespace Zero.BLL.Impl
 {
 
-    public class UserManager : IUserService
+    public class UserServiceImpl : IUserService
     {
 
         private IUserDao userDao; 
         private IRoleDao roleDao;
 
-        public UserManager(IUserDao userDao, 
+        public UserServiceImpl(IUserDao userDao, 
             IRoleDao roleDao)
         {
             this.userDao = userDao;

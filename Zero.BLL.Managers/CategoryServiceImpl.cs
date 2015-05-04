@@ -10,14 +10,14 @@ using Zero.Domain;
 using Zero.BLL;
 using Zero.DAL;
 
-namespace Zero.BLL.Managers
+namespace Zero.BLL.Impl
 {
-    public class CategoryManager : ICategoryService
+    public class CategoryServiceImpl : ICategoryService
     {
 
         private ICategoryDao categoryDao;
 
-        public CategoryManager(ICategoryDao categoryDao)
+        public CategoryServiceImpl(ICategoryDao categoryDao)
         {
             this.categoryDao = categoryDao;
         }

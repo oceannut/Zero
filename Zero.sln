@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Domain", "Zero.Domain\Zero.Domain.csproj", "{A7BCC192-2491-45CC-A700-B6D85FA6477F}"
 EndProject
@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.BLL", "Zero.BLL\Zero.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.Data", "..\Nega\Nega.Data\Nega.Data.csproj", "{BB0C023A-5ED0-4A38-9C57-36BD2A1231C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.BLL.Managers", "Zero.BLL.Managers\Zero.BLL.Managers.csproj", "{FFBD4BFD-F033-45DB-9E89-9DA65DF37B89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.BLL.Impl", "Zero.BLL.Managers\Zero.BLL.Impl.csproj", "{FFBD4BFD-F033-45DB-9E89-9DA65DF37B89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.DAL", "Zero.DAL\Zero.DAL.csproj", "{457A80E9-95FD-436F-B035-67F721AC6BC2}"
 EndProject
@@ -39,6 +39,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.Entlib", "..\Nega\Nega.Entlib\Nega.Entlib.csproj", "{1CECF82E-9452-4091-889A-ABD10742FA49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.DAL.EF", "Zero.DAL.EF\Zero.DAL.EF.csproj", "{FC93A87C-8A49-4A5D-A493-2B2E0DB75427}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.DAL.Caching", "Zero.DAL.Caching\Zero.DAL.Caching.csproj", "{1B6D8EBB-CE32-4531-99DA-69784A9F3A50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +100,10 @@ Global
 		{FC93A87C-8A49-4A5D-A493-2B2E0DB75427}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC93A87C-8A49-4A5D-A493-2B2E0DB75427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC93A87C-8A49-4A5D-A493-2B2E0DB75427}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B6D8EBB-CE32-4531-99DA-69784A9F3A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B6D8EBB-CE32-4531-99DA-69784A9F3A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B6D8EBB-CE32-4531-99DA-69784A9F3A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B6D8EBB-CE32-4531-99DA-69784A9F3A50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

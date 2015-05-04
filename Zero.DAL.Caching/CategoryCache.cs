@@ -4,16 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Nega.Data;
-
 using Zero.Domain;
+using Zero.DAL;
 
-namespace Zero.DAL
+namespace Zero.DAL.Caching
 {
-    public interface IRoleDao : IDao<Role, string>
+    public class CategoryCache
     {
-
-        IList<Role> List(string userId);
-
     }
 }

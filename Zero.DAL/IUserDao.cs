@@ -11,7 +11,7 @@ using Zero.Domain;
 namespace Zero.DAL
 {
 
-    public interface IUserDao : IPageableDao<User>
+    public interface IUserDao : IPageableDao<User, string>
     {
 
         IList<User> List(string roleId);

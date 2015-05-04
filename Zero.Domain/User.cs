@@ -5,11 +5,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
+using Nega.Common;
+
 namespace Zero.Domain
 {
 
     [DataContract]
-    public class User : Nega.Common.ITimestampData
+    public class User : ITimestampData
     {
 
         [DataMember]

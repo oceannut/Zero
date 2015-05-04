@@ -11,7 +11,7 @@ using Zero.Domain;
 namespace Zero.DAL
 {
 
-    public interface ICategoryDao : IDao<Category>
+    public interface ICategoryDao : IDao<Category, string>
     {
 
         Category Get(string id, bool? includeParent = null);
@@ -22,7 +22,7 @@ namespace Zero.DAL
 
         int Count(int? scope = null, string parentId = null, bool? isDisused = null);
 
-        IEnumerable<Category> List(int pageIndex, int pageSize, int? scope = null, string parentId = null, bool? isDisused = null);
+        IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null);
 
     }
 

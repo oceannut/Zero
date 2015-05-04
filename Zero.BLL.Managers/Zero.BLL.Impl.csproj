@@ -4,18 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}</ProjectGuid>
+    <ProjectGuid>{FFBD4BFD-F033-45DB-9E89-9DA65DF37B89}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Zero.Service.Rest</RootNamespace>
-    <AssemblyName>Zero.Service.Rest</AssemblyName>
-    <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
+    <RootNamespace>Zero.BLL.Impl</RootNamespace>
+    <AssemblyName>Zero.BLL.Impl</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-    <XsdCodeGenEnabled>True</XsdCodeGenEnabled>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,62 +30,42 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategoryQueryService.cs" />
-    <Compile Include="ICategoryQueryService.cs" />
-    <Compile Include="ICategoryService.cs" />
-    <Compile Include="ISignService.cs" />
-    <Compile Include="ITestService.cs" />
+    <Compile Include="CategoryServiceImpl.cs" />
+    <Compile Include="UserServiceImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignService.cs" />
-    <Compile Include="TestService.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">
       <Project>{671f50a2-0a0b-44b5-85a7-4212eb3ef1f3}</Project>
       <Name>Nega.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Nega\Nega.Data\Nega.Data.csproj">
+      <Project>{bb0c023a-5ed0-4a38-9c57-36bd2a1231c9}</Project>
+      <Name>Nega.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Zero.BLL\Zero.BLL.csproj">
       <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>
       <Name>Zero.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.DAL\Zero.DAL.csproj">
+      <Project>{457a80e9-95fd-436f-b035-67f721ac6bc2}</Project>
+      <Name>Zero.DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Zero.Domain\Zero.Domain.csproj">
       <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
       <Name>Zero.Domain</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <VSToolsPath Condition="'$(VSToolsPath)' == '' and '$(VisualStudioVersion)' != '' and '$(VisualStudioVersion)' != '11.0'">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio</VSToolsPath>
-    <WcfServiceModelTargetPath>$(VSToolsPath)\WCF</WcfServiceModelTargetPath>
-  </PropertyGroup>
-  <Import Project="$(WcfServiceModelTargetPath)\Microsoft.VisualStudio.ServiceModel.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <FlavorProperties GUID="{3D9AD99F-2412-4246-B90B-4EAA41C64699}">
-        <WcfProjectProperties>
-          <AutoStart>True</AutoStart>
-        </WcfProjectProperties>
-      </FlavorProperties>
-    </VisualStudio>
-  </ProjectExtensions>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
