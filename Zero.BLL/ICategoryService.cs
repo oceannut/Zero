@@ -46,9 +46,9 @@ namespace Zero.BLL
 
         Task<IEnumerable<Category>> ListCategoryAsync(int scope, string parentId = null, bool? isDisused = null);
 
-        Paging<Category> PagingCategory(int pageIndex, int pageSize, int scope, string parentId = null);
+        //Paging<Category> PagingCategory(int pageIndex, int pageSize, int scope, string parentId = null);
 
-        Task<Paging<Category>> PagingCategoryAsync(int pageIndex, int pageSize, int scope, string parentId = null);
+        //Task<Paging<Category>> PagingCategoryAsync(int pageIndex, int pageSize, int scope, string parentId = null);
 
     }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Nega.Common;
+using Nega.Data;
 using Nega.Modularity;
 
 using Zero.Domain;
@@ -12,11 +13,11 @@ using Zero.DAL;
 
 namespace Zero.DAL.Caching
 {
-    public class CategoryCache : ICategoryDao, IModule
+    public class CategoryCache : GenericDao<Category, string>, ICategoryDao, IModule
     {
 
         private ICategoryDao dao;
-        private CacheManager cacheManager;
+        private ICache cache;
 
         public string Name
         {
@@ -36,16 +37,20 @@ namespace Zero.DAL.Caching
             }
 
             this.dao = dao;
-            this.cacheManager = cacheManager;
+            this.cache = cacheManager.GetCache(Name) as ICache;
         }
 
-        public int Save(Category entity)
+        public override int Save(Category entity)
         {
             int count = dao.Save(entity);
 
-            TreeNodeCollection<Category> tree = this.cacheManager.GetCache(Name) as TreeNodeCollection<Category>;
-            TreeNode<Category> parent = Tree<Category>.Find(tree,
-                        (e) => e.Data.Id == entity.ParentId);
+            TreeNodeCollection<Category> tree = Tree(entity.Scope);
+            TreeNode<Category> parent = null;
+            if (!string.IsNullOrWhiteSpace(entity.ParentId))
+            {
+                parent = Tree<Category>.Find(tree,
+                             (e) => e.Data.Id == entity.ParentId);
+            }
             AttachToParent(tree, parent,
                 new TreeNode<Category>
                 {
@@ -55,47 +60,77 @@ namespace Zero.DAL.Caching
             return count;
         }
 
-        public int Save(ICollection<Category> col)
+        public override int Update(Category entity)
         {
-            throw new NotImplementedException();
+            int count = dao.Update(entity);
+
+            TreeNodeCollection<Category> tree = Tree(entity.Scope);
+            TreeNode<Category> node = Tree<Category>.Find(tree,
+                        (e) => e.Data.Id == entity.Id);
+            if (node == null)
+            {
+                TreeNode<Category> parent = null;
+                if (!string.IsNullOrWhiteSpace(entity.ParentId))
+                {
+                    parent = Tree<Category>.Find(tree,
+                                 (e) => e.Data.Id == entity.ParentId);
+                }
+                AttachToParent(tree, parent,
+                    new TreeNode<Category>
+                    {
+                        Data = entity
+                    });
+            }
+            else
+            {
+                TreeNode<Category> oldParent = node.Parent;
+                UnattachToParent(tree, oldParent, node);
+                TreeNode<Category> newParent = null;
+                if (!string.IsNullOrWhiteSpace(entity.ParentId))
+                {
+                    newParent = Tree<Category>.Find(tree,
+                                 (e) => e.Data.Id == entity.ParentId);
+                }
+                node.Data = entity;
+                AttachToParent(tree, newParent, node);
+            }
+
+            return count;
         }
 
-        public int Update(Category entity)
+        public override int Delete(ICollection<Category> col)
         {
-            throw new NotImplementedException();
+            int count = dao.Delete(col);
+
+            foreach (var item in col)
+            {
+                TreeNodeCollection<Category> tree = Tree(item.Scope);
+                Tree<Category>.PostorderTraverse(tree,
+                    (e) =>
+                    {
+                        if (item.Id == e.Data.Id)
+                        {
+                            UnattachToParent(tree, e.Parent, e);
+                            if (!e.IsLeaf)
+                            {
+                                Tree<Category>.PostorderTraverse(e,
+                                    (subNode) =>
+                                    {
+                                        if (subNode.Parent != null)
+                                        {
+                                            subNode.Parent.Children.Remove(subNode);
+                                        }
+                                    });
+                            }
+                        }
+
+                    });
+            }
+
+            return count;
         }
 
-        public int Update(ICollection<Category> col)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Delete(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Delete(ICollection<string> col)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Delete(Category entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Delete(ICollection<Category> col)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Category Get(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsExist(string id)
+        public override Category Get(string id)
         {
             throw new NotImplementedException();
         }
@@ -117,16 +152,59 @@ namespace Zero.DAL.Caching
 
         public int Count(int? scope = null, string parentId = null, bool? isDisused = null)
         {
-            throw new NotImplementedException();
+            int count = 0;
+            if (scope.HasValue)
+            {
+                TreeNodeCollection<Category> tree = Tree(scope.Value);
+                Filter(false, e => count++, tree, parentId, isDisused);
+            }
+            else
+            {
+                foreach (var item in this.cache.Items)
+                {
+                    TreeNodeCollection<Category> tree = item.Value as TreeNodeCollection<Category>;
+                    Filter(false, e => count++, tree, parentId, isDisused);
+                }
+            }
+
+            return count;
         }
 
         public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
         {
-            throw new NotImplementedException();
+            List<Category> result = new List<Category>();
+            if (scope.HasValue)
+            {
+                TreeNodeCollection<Category> tree = Tree(scope.Value);
+                Filter(true, e => result.Add(e), tree, parentId, isDisused);
+            }
+            else
+            {
+                foreach (var item in this.cache.Items)
+                {
+                    TreeNodeCollection<Category> tree = item.Value as TreeNodeCollection<Category>;
+                    Filter(true, e => result.Add(e), tree, parentId, isDisused);
+                }
+            }
+
+            return result;
+        }
+
+        public TreeNodeCollection<Category> Tree(int scope)
+        {
+            TreeNodeCollection<Category> tree = this.cache.Get(scope.ToString()) as TreeNodeCollection<Category>;
+            if (tree == null)
+            {
+                tree =  new TreeNodeCollection<Category>();
+                this.cache.Add(scope.ToString(), tree);
+            }
+
+            return tree;
         }
 
         public void Initialize()
         {
+            this.cache.Clear();
             IEnumerable<Category> categories = this.dao.List();
             if (categories != null && categories.Count() > 0)
             {
@@ -145,28 +223,14 @@ namespace Zero.DAL.Caching
 
                 foreach (int scope in categoryDict.Keys)
                 {
-                    List<Category> list = categoryDict[scope];
-                    TreeNodeCollection<Category> tree = BuildTree(list);
-                    if (tree != null && tree.Count > 0)
-                    {
-                        tree.Sort(SortBySequence);
-                        Tree<Category>.PreorderTraverse(tree,
-                            (e) =>
-                            {
-                                if (!e.IsLeaf)
-                                {
-                                    e.Children.Sort(SortBySequence);
-                                }
-                            });
-                        this.cacheManager.GetCache(Name).Add(scope.ToString(), tree);
-                    }
+                    this.cache.Add(scope.ToString(), Category.BuildTree(categoryDict[scope]));
                 }
             }
         }
 
         public void Destroy()
         {
-            this.cacheManager.GetCache(Name).Dispose();
+            this.cache.Dispose();
         }
 
         public void Dispose()
@@ -179,12 +243,12 @@ namespace Zero.DAL.Caching
             if (parent == null)
             {
                 tree.Add(node);
-                tree.Sort(SortBySequence);
+                tree.Sort(Category.CompareToBySequence);
             }
             else
             {
                 parent.Children.Add(node);
-                parent.Children.Sort(SortBySequence);
+                parent.Children.Sort(Category.CompareToBySequence);
             }
         }
 
@@ -200,55 +264,23 @@ namespace Zero.DAL.Caching
             }
         }
 
-        private int SortBySequence(TreeNode<Category> node1, TreeNode<Category> node2)
+        private void Filter(bool needClone, Action<Category> action, TreeNodeCollection<Category> tree, 
+            string parentId = null, bool? isDisused = null)
         {
-            return node2.Data.Sequence.CompareTo(node1.Data.Sequence);
-        }
-
-        private TreeNodeCollection<Category> BuildTree(List<Category> col)
-        {
-            if (col == null || col.Count == 0)
-            {
-                throw new ArgumentNullException();
-            }
-
-            TreeNodeCollection<Category> tree = new TreeNodeCollection<Category>();
-
-            List<TreeNode<Category>> list = (from item in col
-                                             select new TreeNode<Category>
-                                                  {
-                                                      Data = item
-                                                  })
-                                                  .ToList();
-            Queue<TreeNode<Category>> queue = new Queue<TreeNode<Category>>();
-            foreach (var item in list)
-            {
-                queue.Enqueue(item);
-            }
-            while (queue.Count > 0)
-            {
-                TreeNode<Category> current = queue.Dequeue();
-                if (string.IsNullOrWhiteSpace(current.Data.ParentId))
-                {
-                    tree.Add(current);
-                }
-                else
-                {
-                    TreeNode<Category> parent = Tree<Category>.Find(tree,
-                        (e) => e.Data.Id == current.Data.ParentId);
-                    if (parent == null)
-                    {
-                        queue.Enqueue(current);
-                    }
-                    else
-                    {
-                        parent.Children.Add(current);
-                    }
-                }
-            }
-
-            return tree;
+            Tree<Category>.PreorderTraverse(tree,
+                        (e) =>
+                        {
+                            if (needClone)
+                            {
+                                action(e.Data.ShallowClone());
+                            }
+                            else
+                            {
+                                action(e.Data);
+                            }
+                        });
         }
 
     }
+
 }

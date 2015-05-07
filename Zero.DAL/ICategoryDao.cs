@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Nega.Common;
 using Nega.Data;
 
 using Zero.Domain;
@@ -23,6 +24,8 @@ namespace Zero.DAL
         int Count(int? scope = null, string parentId = null, bool? isDisused = null);
 
         IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null);
+
+        TreeNodeCollection<Category> Tree(int scope);
 
     }
 

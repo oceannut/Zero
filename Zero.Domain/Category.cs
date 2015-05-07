@@ -14,7 +14,7 @@ namespace Zero.Domain
     /// 类型。
     /// </summary>
     [DataContract]
-    public class Category : ITimestampData, ICategoryable<string>, IDisuseable<Category>
+    public class Category : ITimestampData, ICategoryable<string>, IDisuseable<Category>, ICloneable
     {
 
         /// <summary>
@@ -297,6 +297,101 @@ namespace Zero.Domain
             {
                 return base.GetHashCode();
             }
+        }
+
+        public object Clone()
+        {
+            Category copy = ShallowClone();
+            if (this.Parent != null)
+            {
+                copy.Parent = this.Parent.Clone() as Category;
+            }
+
+            return copy;
+        }
+
+        public Category ShallowClone()
+        {
+            Category copy = new Category();
+            copy.Id = this.Id;
+            copy.Code = this.Code;
+            copy.Name = this.Name;
+            copy.Desc = this.Desc;
+            copy.Sequence = this.Sequence;
+            copy.Disused = this.Disused;
+            copy.Scope = this.Scope;
+            copy.ParentId = this.ParentId;
+            copy.Creation = this.Creation;
+            copy.Modification = this.Modification;
+
+            return copy;
+        }
+
+        public static TreeNodeCollection<Category> BuildTree(IEnumerable<Category> col)
+        {
+            TreeNodeCollection<Category> tree = new TreeNodeCollection<Category>();
+
+            if (col != null && col.Count() > 0)
+            {
+                List<TreeNode<Category>> list = (from item in col
+                                                 select new TreeNode<Category>
+                                                 {
+                                                     Data = item
+                                                 })
+                                                 .ToList();
+                Queue<TreeNode<Category>> queue = new Queue<TreeNode<Category>>();
+                foreach (var item in list)
+                {
+                    queue.Enqueue(item);
+                }
+                while (queue.Count > 0)
+                {
+                    TreeNode<Category> current = queue.Dequeue();
+                    if (string.IsNullOrWhiteSpace(current.Data.ParentId))
+                    {
+                        tree.Add(current);
+                    }
+                    else
+                    {
+                        TreeNode<Category> parent = Tree<Category>.Find(tree,
+                            (e) => e.Data.Id == current.Data.ParentId);
+                        if (parent == null)
+                        {
+                            queue.Enqueue(current);
+                        }
+                        else
+                        {
+                            parent.Children.Add(current);
+                        }
+                    }
+                }
+                SortTree(tree);
+            }
+
+            return tree;
+        }
+
+        public static void SortTree(TreeNodeCollection<Category> tree)
+        {
+            if (tree == null || tree.Count == 0)
+            {
+                return;
+            }
+
+            tree.Sort(CompareToBySequence);
+            Tree<Category>.PreorderTraverse(tree,
+                (e) =>
+                {
+                    if (!e.IsLeaf)
+                    {
+                        e.Children.Sort(CompareToBySequence);
+                    }
+                });
+        }
+
+        public static int CompareToBySequence(TreeNode<Category> node1, TreeNode<Category> node2)
+        {
+            return node2.Data.Sequence.CompareTo(node1.Data.Sequence);
         }
 
         private void Update(Action<Category> action,

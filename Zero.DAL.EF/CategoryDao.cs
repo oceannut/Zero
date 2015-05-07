@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Nega.Common;
 using Nega.Data;
 
 using Zero.Domain;
@@ -45,35 +46,49 @@ namespace Zero.DAL.EF
             }
         }
 
-        public override int Delete(string id)
-        {
-            Category found = Get(id);
-            if (found != null)
-            {
-                using (CategoryDataContext context = new CategoryDataContext(connectionString))
-                {
-                    var entry = context.Entry<Category>(found);
-                    entry.State = System.Data.Entity.EntityState.Deleted;
-                    context.Categories.Remove(found);
-                    return context.SaveChanges();
-                }
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        public override int Delete(Category entity)
+        public override int Delete(ICollection<Category> col)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
-                var entry = context.Entry<Category>(entity);
-                entry.State = System.Data.Entity.EntityState.Deleted;
-                context.Categories.Remove(entity);
+                foreach (Category entity in col)
+                {
+                    var entry = context.Entry<Category>(entity);
+                    entry.State = System.Data.Entity.EntityState.Deleted;
+                }
+                context.Categories.RemoveRange(col);
                 return context.SaveChanges();
             }
         }
+
+        //public override int Delete(string id)
+        //{
+        //    Category found = Get(id);
+        //    if (found != null)
+        //    {
+        //        using (CategoryDataContext context = new CategoryDataContext(connectionString))
+        //        {
+        //            var entry = context.Entry<Category>(found);
+        //            entry.State = System.Data.Entity.EntityState.Deleted;
+        //            context.Categories.Remove(found);
+        //            return context.SaveChanges();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return 0;
+        //    }
+        //}
+
+        //public override int Delete(Category entity)
+        //{
+        //    using (CategoryDataContext context = new CategoryDataContext(connectionString))
+        //    {
+        //        var entry = context.Entry<Category>(entity);
+        //        entry.State = System.Data.Entity.EntityState.Deleted;
+        //        context.Categories.Remove(entity);
+        //        return context.SaveChanges();
+        //    }
+        //}
 
         public override Category Get(string id)
         {
@@ -153,6 +168,11 @@ namespace Zero.DAL.EF
                         select category)
                         .ToArray();
             }
+        }
+
+        public TreeNodeCollection<Category> Tree(int scope)
+        {
+            return Category.BuildTree(List(scope));
         }
 
     }
