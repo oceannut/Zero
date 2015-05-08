@@ -25,9 +25,6 @@ namespace Zero.BLL.Impl
 
         public void SaveCategory(Category category)
         {
-            TreeNodeCollection<Category> tree = categoryDao.Tree(category.Scope);
-            CheckCircleRefrence(tree, category);
-
             categoryDao.Save(category);
         }
 
@@ -42,9 +39,6 @@ namespace Zero.BLL.Impl
 
         public void UpdateCategory(Category category)
         {
-            TreeNodeCollection<Category> tree = categoryDao.Tree(category.Scope);
-            CheckCircleRefrence(tree, category);
-
             categoryDao.Update(category);
         }
 
@@ -127,36 +121,18 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        //public Paging<Category> PagingCategory(int pageIndex, int pageSize, int scope, string parentId = null)
-        //{
-        //    int count = CountCategory(scope, parentId);
-        //    IEnumerable<Category> list = categoryDao.List(pageIndex, pageSize, scope, parentId);
-        //    return new Paging<Category>
-        //    {
-        //        TotalCount = count,
-        //        Collection = list
-        //    };
-        //}
-
-        //public Task<Paging<Category>> PagingCategoryAsync(int pageIndex, int pageSize, int scope, string parentId = null)
-        //{
-        //    return Task.Factory.StartNew<Paging<Category>>(
-        //        () =>
-        //        {
-        //            return PagingCategory(pageIndex, pageSize, scope, parentId);
-        //        });
-        //}
-
-        private void CheckCircleRefrence(TreeNodeCollection<Category> tree, Category category)
+        public bool IsCategoryCyclicReference(Category category)
         {
+            bool result = false;
             if (!string.IsNullOrWhiteSpace(category.ParentId))
             {
                 if (category.Id == category.ParentId)
                 {
-                    throw new ArgumentException("自己不能是自己的父节点");
+                    result = true;
                 }
                 else
                 {
+                    TreeNodeCollection<Category> tree = categoryDao.Tree(category.Scope);
                     Tree<Category>.PreorderTraverse(tree,
                         (e) =>
                         {
@@ -167,7 +143,7 @@ namespace Zero.BLL.Impl
                                 {
                                     if (category.Id == parent.Data.Id)
                                     {
-                                        throw new ArgumentException("父节点形成了环");
+                                        result = true;
                                     }
                                     parent = parent.Parent;
                                 }
@@ -180,6 +156,8 @@ namespace Zero.BLL.Impl
                         });
                 }
             }
+
+            return result;
         }
 
     }

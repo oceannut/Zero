@@ -93,11 +93,10 @@ namespace Zero.Domain
         public void Save(Action<Category> action,
             Func<DateTime> timestampFactory = null,
             Func<int, string, bool> isCodeExistedPredicate = null,
-            Func<string, Category> parentAccessor = null)
+            Func<Category, bool> isCategoryCyclicReference = null)
         {
             if (string.IsNullOrWhiteSpace(Id)
-                || string.IsNullOrWhiteSpace(Name)
-                || Scope < 1)
+                || string.IsNullOrWhiteSpace(Name))
             {
                 throw new InvalidOperationException();
             }
@@ -114,8 +113,7 @@ namespace Zero.Domain
             {
                 ParentId = Parent.Id;
             }
-            if ((!string.IsNullOrWhiteSpace(ParentId) && Id == ParentId)
-                || IsCyclicReference(parentAccessor))
+            if (isCategoryCyclicReference(this))
             {
                 throw new CyclicInheritanceException();
             }
@@ -130,12 +128,14 @@ namespace Zero.Domain
         }
 
         /// <summary>
-        /// 更改名称。
+        /// 更改名称和详细。
         /// </summary>
         /// <param name="name">名称。</param>
+        /// <param name="desc">详细。</param>
         /// <param name="action">定义保存操作。</param>
         /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        public void ChangeName(string name, 
+        public void ChangeNameAndDesc(string name, 
+            string desc,
             Action<Category> action,
             Func<DateTime> timestampFactory = null)
         {
@@ -144,9 +144,10 @@ namespace Zero.Domain
                 throw new InvalidOperationException();
             }
 
-            if (Name != name)
+            if (Name != name || Desc != desc)
             {
                 Name = name;
+                Desc = desc;
 
                 Update(action, timestampFactory);
             }
@@ -185,7 +186,7 @@ namespace Zero.Domain
         public void ChangeParent(Category parent,
             Action<Category> action,
             Func<DateTime> timestampFactory = null,
-            Func<string, Category> parentAccessor = null)
+            Func<Category, bool> isCategoryCyclicReference = null)
         {
             if (!IsRequiredAllSet())
             {
@@ -196,8 +197,7 @@ namespace Zero.Domain
             {
                 Parent = parent;
                 ParentId = parent == null ? null : parent.Id;
-                if ((!string.IsNullOrWhiteSpace(ParentId) && Id == ParentId)
-                    || (parent != null && IsCyclicReference(parentAccessor)))
+                if (isCategoryCyclicReference(this))
                 {
                     throw new CyclicInheritanceException();
                 }
@@ -207,41 +207,9 @@ namespace Zero.Domain
         }
 
         /// <summary>
-        /// 判断当前类型与其上级类型是否形成了环引用。
+        /// 更改类型不再使用。
         /// </summary>
-        /// <param name="parentAccessor">定义获取上级类型的操作。</param>
-        /// <returns>如果有环引用，则返回true。</returns>
-        public bool IsCyclicReference(Func<string, Category> parentAccessor)
-        {
-            if (string.IsNullOrWhiteSpace(ParentId) && Parent != null)
-            {
-                ParentId = Parent.Id;
-            }
-            if (string.IsNullOrWhiteSpace(ParentId))
-            {
-                return false;
-            }
-            else
-            {
-                if (Parent != null)
-                {
-                    return this.Equals(Parent) ? true : Parent.IsCyclicReference(parentAccessor);
-                }
-                else
-                {
-                    Category found = parentAccessor == null ? null : parentAccessor(ParentId);
-                    if(found != null)
-                    {
-                        return this.Equals(found) ? true : found.IsCyclicReference(parentAccessor);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
+        /// <param name="action">定义保存操作。</param>
         public void Disuse(Action<Category> action)
         {
             if (!IsRequiredAllSet())
@@ -257,6 +225,10 @@ namespace Zero.Domain
             }
         }
 
+        /// <summary>
+        /// 更改类型使用。
+        /// </summary>
+        /// <param name="action">定义保存操作。</param>
         public void Use(Action<Category> action)
         {
             if (!IsRequiredAllSet())
@@ -411,7 +383,6 @@ namespace Zero.Domain
             return (!string.IsNullOrWhiteSpace(Id)
                 && !string.IsNullOrWhiteSpace(Code)
                 && !string.IsNullOrWhiteSpace(Name)
-                && Scope > 0
                 && Creation != DateTime.MinValue
                 && Modification != DateTime.MinValue);
         }
