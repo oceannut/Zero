@@ -15,8 +15,6 @@ namespace Zero.DAL
     public interface ICategoryDao : IDao<Category, string>
     {
 
-        Category Get(string id, bool? includeParent = null);
-
         Category GetByCode(int scope, string code, bool? includeParent = null);
 
         bool IsCodeExisted(int scope, string code);

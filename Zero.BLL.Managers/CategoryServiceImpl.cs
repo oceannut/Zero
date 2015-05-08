@@ -71,20 +71,6 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public Category GetCategory(string id, bool? includeParent = null)
-        {
-            return categoryDao.Get(id, includeParent);
-        }
-
-        public Task<Category> GetCategoryAsync(string id, bool? includeParent = null)
-        {
-            return Task.Factory.StartNew<Category>(
-                () =>
-                {
-                    return GetCategory(id, includeParent);
-                });
-        }
-
         public Category GetCategoryByCode(int scope, string code, bool? includeParent = null)
         {
             return categoryDao.GetByCode(scope, code, includeParent);

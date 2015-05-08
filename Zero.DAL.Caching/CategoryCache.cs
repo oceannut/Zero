@@ -130,24 +130,55 @@ namespace Zero.DAL.Caching
             return count;
         }
 
-        public override Category Get(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Category Get(string id, bool? includeParent = null)
-        {
-            throw new NotImplementedException();
-        }
-
         public Category GetByCode(int scope, string code, bool? includeParent = null)
         {
-            throw new NotImplementedException();
+            Category found = null;
+            TreeNodeCollection<Category> tree = Tree(scope);
+            Tree<Category>.PreorderTraverse(tree,
+                (e) =>
+                {
+                    if (code == e.Data.Code)
+                    {
+                        found = e.Data.ShallowClone();
+                        if (includeParent.HasValue && includeParent.Value)
+                        {
+                            TreeNode<Category> parent = e.Parent;
+                            while (parent != null)
+                            {
+                                found.Parent = parent.Data.ShallowClone();
+                                parent = parent.Parent;
+                            }
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                });
+
+            return found;
         }
 
         public bool IsCodeExisted(int scope, string code)
         {
-            throw new NotImplementedException();
+            bool isExisted = false;
+            TreeNodeCollection<Category> tree = Tree(scope);
+            Tree<Category>.PreorderTraverse(tree,
+                (e) =>
+                {
+                    if (code == e.Data.Code)
+                    {
+                        isExisted = true;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                });
+
+            return isExisted;
         }
 
         public int Count(int? scope = null, string parentId = null, bool? isDisused = null)
@@ -270,13 +301,17 @@ namespace Zero.DAL.Caching
             Tree<Category>.PreorderTraverse(tree,
                         (e) =>
                         {
-                            if (needClone)
+                            if ((parentId == null || (parentId == string.Empty && e.Data.ParentId == null) || parentId == e.Data.ParentId)
+                                && (isDisused == null || isDisused.Value == e.Data.Disused))
                             {
-                                action(e.Data.ShallowClone());
-                            }
-                            else
-                            {
-                                action(e.Data);
+                                if (needClone)
+                                {
+                                    action(e.Data.ShallowClone());
+                                }
+                                else
+                                {
+                                    action(e.Data);
+                                }
                             }
                         });
         }

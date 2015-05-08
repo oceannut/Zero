@@ -26,10 +26,6 @@ namespace Zero.BLL
 
         Task DeleteCategoryAsync(string id);
 
-        Category GetCategory(string id, bool? includeParent = null);
-
-        Task<Category> GetCategoryAsync(string id, bool? includeParent = null);
-
         Category GetCategoryByCode(int scope, string code, bool? includeParent = null);
 
         Task<Category> GetCategoryByCodeAsync(int scope, string code, bool? includeParent = null);
@@ -45,10 +41,6 @@ namespace Zero.BLL
         IEnumerable<Category> ListCategory(int scope, string parentId = null, bool? isDisused = null);
 
         Task<IEnumerable<Category>> ListCategoryAsync(int scope, string parentId = null, bool? isDisused = null);
-
-        //Paging<Category> PagingCategory(int pageIndex, int pageSize, int scope, string parentId = null);
-
-        //Task<Paging<Category>> PagingCategoryAsync(int pageIndex, int pageSize, int scope, string parentId = null);
 
     }
 

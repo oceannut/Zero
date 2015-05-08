@@ -90,31 +90,31 @@ namespace Zero.DAL.EF
         //    }
         //}
 
-        public override Category Get(string id)
-        {
-            using (CategoryDataContext context = new CategoryDataContext(connectionString))
-            {
-                return context.Categories.Find(id);
-            }
-        }
+        //public override Category Get(string id)
+        //{
+        //    using (CategoryDataContext context = new CategoryDataContext(connectionString))
+        //    {
+        //        return context.Categories.Find(id);
+        //    }
+        //}
 
-        public Category Get(string id, bool? includeParent = null)
-        {
-            using (CategoryDataContext context = new CategoryDataContext(connectionString))
-            {
-                if (includeParent.HasValue && includeParent.Value)
-                {
-                    return (from categroy in context.Categories.Include("Parent")
-                            where categroy.Id == id
-                            select categroy)
-                            .FirstOrDefault();
-                }
-                else
-                {
-                    return context.Categories.Find(id);
-                }
-            }
-        }
+        //public Category Get(string id, bool? includeParent = null)
+        //{
+        //    using (CategoryDataContext context = new CategoryDataContext(connectionString))
+        //    {
+        //        if (includeParent.HasValue && includeParent.Value)
+        //        {
+        //            return (from categroy in context.Categories.Include("Parent")
+        //                    where categroy.Id == id
+        //                    select categroy)
+        //                    .FirstOrDefault();
+        //        }
+        //        else
+        //        {
+        //            return context.Categories.Find(id);
+        //        }
+        //    }
+        //}
 
         public Category GetByCode(int scope, string code, bool? includeParent = null)
         {
