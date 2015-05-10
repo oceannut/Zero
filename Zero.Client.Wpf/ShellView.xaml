@@ -1,0 +1,81 @@
+﻿<Window x:Class="Zero.Client.Wpf.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctrl="clr-namespace:Nega.WpfCtrl;assembly=Nega.WpfCtrl"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen">
+
+    <DockPanel LastChildFill="True">
+
+        <!--title bar-->
+        <Border DockPanel.Dock="Top">
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="Demo"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ctrl:PathButton x:Name="MinWindow" Style="{StaticResource MinWindowButton}" Width="24" Height="24" Margin="4 0 0 0"/>
+                    <ToggleButton x:Name="NormalWindow" Style="{StaticResource NormalWindowButton}" Width="24" Height="24" Margin="4 0 0 0"/>
+                    <ctrl:PathButton x:Name="CloseWindow" Style="{StaticResource CloseWindowButton}" Width="24" Height="24" Margin="4 0 0 0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--status bar-->
+        <Border DockPanel.Dock="Bottom" BorderThickness="0 0.5 0 0.5" Background="#EFEFEFEF">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="正常"/>
+            </StackPanel>
+        </Border>
+
+        <!--middle area-->
+        <Border>
+
+            <DockPanel LastChildFill="True">
+
+                <!--nav bar-->
+                <Border DockPanel.Dock="Left" BorderThickness="0 0 0.5 0" MinWidth="180">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStopCollection>
+                                    <GradientStop Color="#00CCCCCC" Offset="0.0" />
+                                    <GradientStop Color="#8FCCCCCC" Offset="0.15" />
+                                    <GradientStop Color="#DDCCCCCC" Offset="0.85" />
+                                    <GradientStop Color="#00CCCCCC" Offset="1.0" />
+                                </GradientStopCollection>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <StackPanel Margin="12 0 6 0">
+                        <ListBox x:Name="Navs" SelectedItem="{Binding SelectedNav}" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0 4 0 8" VerticalAlignment="Center">
+                                        <Border Padding="4 4 2 4" VerticalAlignment="Center" HorizontalAlignment="Center" Width="22" Height="22">
+                                            <Path x:Name="Path" Stroke="Gray" StrokeThickness="0.5" Fill="#8FCCCCCC" Stretch="Uniform" 
+                                                    Data="M448 1088q0 53 -37.5 90.5t-90.5 37.5t-90.5 -37.5t-37.5 -90.5t37.5 -90.5t90.5 -37.5t90.5 37.5t37.5 90.5zM1515 512q0 -53 -37 -90l-491 -492q-39 -37 -91 -37q-53 0 -90 37l-715 716q-38 37 -64.5 101t-26.5 117v416q0 52 38 90t90 38h416q53 0 117 -26.5t102 -64.5 l715 -714q37 -39 37 -91zM1899 512q0 -53 -37 -90l-491 -492q-39 -37 -91 -37q-36 0 -59 14t-53 45l470 470q37 37 37 90q0 52 -37 91l-715 714q-38 38 -102 64.5t-117 26.5h224q53 0 117 -26.5t102 -64.5l715 -714q37 -39 37 -91z">
+                                                <Path.LayoutTransform>
+                                                    <RotateTransform CenterX="0" CenterY="0" Angle="90"/>
+                                                </Path.LayoutTransform>
+                                            </Path>
+                                        </Border>
+                                        <TextBlock Text="{Binding Title}" Margin="6 0 0 0" FontSize="15"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+                <Border>
+                    <ContentControl x:Name="ActiveItem"/>
+                </Border>
+
+            </DockPanel>
+            
+        </Border>
+
+    </DockPanel>
+
+</Window>

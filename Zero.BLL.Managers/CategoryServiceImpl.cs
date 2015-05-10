@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Nega.Common;
 using Nega.Data;
 
 using Zero.Domain;
 using Zero.BLL;
 using Zero.DAL;
-using Nega.Common;
 
 namespace Zero.BLL.Impl
 {
