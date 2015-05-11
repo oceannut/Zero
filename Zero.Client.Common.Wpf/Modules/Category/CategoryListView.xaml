@@ -22,8 +22,15 @@
                     
                 </Grid>
 
-                <TreeView>
-
+                <TreeView x:Name="CategoryList">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
                 </TreeView>
 
             </DockPanel>

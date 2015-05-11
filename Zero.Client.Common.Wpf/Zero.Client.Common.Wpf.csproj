@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Category\CategoryListViewModel.cs" />
+    <Compile Include="Modules\Category\CategoryViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -105,6 +106,24 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">
+      <Project>{671f50a2-0a0b-44b5-85a7-4212eb3ef1f3}</Project>
+      <Name>Nega.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Nega\Nega.WpfCommon\Nega.WpfCommon.csproj">
+      <Project>{c5a090f2-6c50-4fa5-9a7d-297d38f918ec}</Project>
+      <Name>Nega.WpfCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.BLL\Zero.BLL.csproj">
+      <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>
+      <Name>Zero.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.Domain\Zero.Domain.csproj">
+      <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
+      <Name>Zero.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
