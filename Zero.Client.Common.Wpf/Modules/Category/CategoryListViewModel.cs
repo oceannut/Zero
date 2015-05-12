@@ -44,7 +44,7 @@ namespace Zero.Client.Common.Wpf
         {
             base.OnViewLoaded(view);
 
-            this.categoryService.ListCategoryAsync(0)
+            this.categoryService.ListCategoryAsync(1)
                 .ContinueWith((task) =>
                 {
                     if (task.Exception == null)
@@ -58,6 +58,10 @@ namespace Zero.Client.Common.Wpf
                                     this.CategoryList = CategoryViewModel.BuildTree(categories);
                                 }));
                         }
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show(task.Exception.ToString());
                     }
                 });
         }

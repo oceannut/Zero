@@ -39,17 +39,17 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             };
         }
 
-        public static Category CreateCategory()
+        public static Category CreateCategory(string code, string name)
         {
             Category category = new Category
             {
                 Id = Guid.NewGuid().ToString(),
-                Name = "test",
+                Name = name,
                 Scope = 1,
                 Creation = DateTime.Now,
                 Modification = DateTime.Now
             };
-            category.Code = category.Id;
+            category.Code = code;
             return category;
         }
 

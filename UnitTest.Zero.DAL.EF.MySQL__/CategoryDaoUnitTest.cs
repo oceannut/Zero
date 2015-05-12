@@ -10,12 +10,21 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
     public class CategoryDaoUnitTest
     {
 
-        
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestSave1()
         {
-            Category category = TestHelper.CreateCategory();
+            Category category = TestHelper.CreateCategory("test", "测试");
+
+            CategoryDao categoryDao = new CategoryDao(TestHelper.ConnectionString);
+            int isSave = categoryDao.Save(category);
+            Assert.IsTrue(isSave > 0);
+        }
+
+        [TestMethod]
+        public void TestSave2()
+        {
+            Category category = TestHelper.CreateCategory("test", "测试");
 
             CategoryDao categoryDao = new CategoryDao(TestHelper.ConnectionString);
             int isSave = categoryDao.Save(category);
@@ -25,7 +34,7 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             int isUpdate = categoryDao.Update(category);
             Assert.IsTrue(isUpdate > 0);
 
-            int isDelete = categoryDao.Delete(category.Id);
+            int isDelete = categoryDao.Delete(new Category[] { category });
             Assert.IsTrue(isDelete > 0);
         }
 

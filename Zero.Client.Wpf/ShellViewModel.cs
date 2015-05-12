@@ -72,13 +72,17 @@ namespace Zero.Client.Wpf
 
         #region contructors
 
+        private CategoryListViewModel categoryListViewModel;
+
         public ShellViewModel(IModuleContainer container,
             IWindowManager windowManager,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            CategoryListViewModel categoryListViewModel)
         {
             this.container = container;
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
+            this.categoryListViewModel = categoryListViewModel;
         }
 
         #endregion
@@ -122,7 +126,7 @@ namespace Zero.Client.Wpf
             {
                 Title = "分类1",
                 Data = "test",
-                Target = new CategoryListViewModel()
+                Target = this.categoryListViewModel
             });
         }
 
