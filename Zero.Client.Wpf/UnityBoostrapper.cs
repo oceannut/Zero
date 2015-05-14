@@ -69,17 +69,17 @@ namespace Zero.Client.Wpf
         private void RegisterTypes()
         {
 
-            //CacheManager permanentCacheManager = new CacheManager();
-            //permanentCacheManager.Factory = new PermanentCacheFactory();
+            this.container.RegisterType<ICacheFactory, PermanentCacheFactory>("PermanentCacheFactory", new ContainerControlledLifetimeManager());
+            this.container.RegisterType<CacheManager>("PermanentCacheManager", new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(this.container.Resolve<ICacheFactory>("PermanentCacheFactory")));
 
-            container.RegisterType<ICategoryDao, CategoryDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+            this.container.RegisterType<CategoryDao>("CategoryDao", new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+            this.container.RegisterType<ICategoryDao, CategoryCache>(new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(this.container.Resolve<CategoryDao>("CategoryDao"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
 
-            //ICategoryDao categoryDao = new CategoryDao("connectionString");
-            //this.container.RegisterInstance<ICategoryDao>(new CategoryCache(categoryDao, permanentCacheManager), new ContainerControlledLifetimeManager());
+            (this.container.Resolve<CategoryCache>() as IModule).Initialize();
 
             this.container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager());
-            
-            
 
             this.container.RegisterType<Zero.Client.Common.Wpf.CategoryListViewModel>(new ContainerControlledLifetimeManager());
 
@@ -88,8 +88,6 @@ namespace Zero.Client.Wpf
             this.container.RegisterInstance<IWindowManager>(new WindowManager());
             this.container.RegisterInstance<IEventAggregator>(new EventAggregator());
             this.container.RegisterType<ShellViewModel>(new ContainerControlledLifetimeManager());
-
-            
 
         }
 

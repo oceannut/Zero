@@ -73,6 +73,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleName.cs" />
+    <Page Include="Modules\Category\CategoryDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Modules\Category\CategoryListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +85,7 @@
     <Compile Include="Modules\Base\NavViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\Category\CategoryDetailsViewModel.cs" />
     <Compile Include="Modules\Category\CategoryListViewModel.cs" />
     <Compile Include="Modules\Category\CategoryViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -115,6 +120,10 @@
     <ProjectReference Include="..\..\Nega\Nega.WpfCommon\Nega.WpfCommon.csproj">
       <Project>{c5a090f2-6c50-4fa5-9a7d-297d38f918ec}</Project>
       <Name>Nega.WpfCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Nega\Nega.WpfCtrl\Nega.WpfCtrl.csproj">
+      <Project>{f8d21e26-cdfa-41c7-8669-7510d3aee353}</Project>
+      <Name>Nega.WpfCtrl</Name>
     </ProjectReference>
     <ProjectReference Include="..\Zero.BLL\Zero.BLL.csproj">
       <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>

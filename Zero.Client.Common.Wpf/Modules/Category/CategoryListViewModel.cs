@@ -15,13 +15,16 @@ using Zero.BLL;
 namespace Zero.Client.Common.Wpf
 {
 
-    public class CategoryListViewModel : Screen
+    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive
     {
 
         private ICategoryService categoryService;
+        private TreeNodeModel selectedItem;
 
         private ObservableCollection<TreeNodeModel> categoryList;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public ObservableCollection<TreeNodeModel> CategoryList
         {
             get { return categoryList; }
@@ -38,6 +41,31 @@ namespace Zero.Client.Common.Wpf
         public CategoryListViewModel(ICategoryService categoryService)
         {
             this.categoryService = categoryService;
+        }
+
+        public void SelectCategory(TreeNodeModel selectedItem)
+        {
+            this.selectedItem = selectedItem;
+        }
+
+        public void AddCategory()
+        {
+            ActivateItem(new CategoryDetailsViewModel());
+        }
+
+        public void EditCategory()
+        {
+            if (this.selectedItem == null)
+            {
+                System.Windows.MessageBox.Show("请选择编辑的节点");
+                return;
+            }
+            System.Windows.MessageBox.Show(this.selectedItem.Name);
+        }
+
+        public void RemoveCategory()
+        {
+
         }
 
         protected override void OnViewLoaded(object view)

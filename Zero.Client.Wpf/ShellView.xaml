@@ -14,9 +14,9 @@
                     <TextBlock Text="Demo"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <ctrl:PathButton x:Name="MinWindow" Style="{StaticResource MinWindowButton}" Width="24" Height="24" Margin="4 0 0 0"/>
-                    <ToggleButton x:Name="NormalWindow" Style="{StaticResource NormalWindowButton}" Width="24" Height="24" Margin="4 0 0 0"/>
-                    <ctrl:PathButton x:Name="CloseWindow" Style="{StaticResource CloseWindowButton}" Width="24" Height="24" Margin="4 0 0 0"/>
+                    <ctrl:PathButton x:Name="MinWindow" Style="{StaticResource MinWindowButton}" Margin="4 0 0 0"/>
+                    <ToggleButton x:Name="NormalWindow" Style="{StaticResource NormalWindowButton}" Margin="4 0 0 0"/>
+                    <ctrl:PathButton x:Name="CloseWindow" Style="{StaticResource CloseWindowButton}" Margin="4 0 0 0"/>
                 </StackPanel>
             </Grid>
         </Border>
