@@ -81,12 +81,14 @@ namespace Zero.Client.Wpf
 
             this.container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager());
 
+            this.container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
+            this.container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
+
             this.container.RegisterType<Zero.Client.Common.Wpf.CategoryListViewModel>(new ContainerControlledLifetimeManager());
 
             this.container.RegisterType<IModuleContainer, SimpleModuleContainer>(new ContainerControlledLifetimeManager());
 
-            this.container.RegisterInstance<IWindowManager>(new WindowManager());
-            this.container.RegisterInstance<IEventAggregator>(new EventAggregator());
+            
             this.container.RegisterType<ShellViewModel>(new ContainerControlledLifetimeManager());
 
         }

@@ -16,21 +16,27 @@ namespace Zero.Client.Common.Wpf
     public class CategoryViewModel : TreeNodeModel
     {
 
-        private Category category;
-        public Category Primitive
+        private Category model;
+        public Category Model
         {
-            get { return category; }
+            get { return model; }
         }
 
-        public CategoryViewModel(Category category)
+        public CategoryViewModel() :
+            this(new Category())
         {
-            if (category == null)
+
+        }
+
+        public CategoryViewModel(Category model)
+        {
+            if (model == null)
             {
                 throw new ArgumentNullException();
             }
 
-            this.category = category;
-            this.Name = category.Name;
+            this.model = model;
+            this.Name = model.Name;
         }
 
         public static ObservableCollection<TreeNodeModel> BuildTree(IEnumerable<Category> col)
@@ -50,21 +56,21 @@ namespace Zero.Client.Common.Wpf
                 while (queue.Count > 0)
                 {
                     CategoryViewModel current = queue.Dequeue() as CategoryViewModel;
-                    if (string.IsNullOrWhiteSpace(current.Primitive.ParentId))
+                    if (string.IsNullOrWhiteSpace(current.Model.ParentId))
                     {
                         tree.Add(current);
                     }
                     else
                     {
                         TreeNodeModel parent = Tree.Find(tree,
-                            (e) => (e as CategoryViewModel).Primitive.Id == current.Primitive.ParentId) as TreeNodeModel;
+                            (e) => (e as CategoryViewModel).Model.Id == current.Model.ParentId) as TreeNodeModel;
                         if (parent == null)
                         {
                             queue.Enqueue(current);
                         }
                         else
                         {
-                            parent.Children.Add(current);
+                            parent.AddChild(current);
                         }
                     }
                 }

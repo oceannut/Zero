@@ -156,10 +156,6 @@
       <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
       <Name>Zero.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zero.Service.Rest\Zero.Service.Rest.csproj">
-      <Project>{43fb66d6-b1ed-4243-ad80-e0f3afafb2b4}</Project>
-      <Name>Zero.Service.Rest</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

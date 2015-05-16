@@ -4,9 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cmp="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
-             xmlns:ctrl="clr-namespace:Nega.WpfCtrl;assembly=Nega.WpfCtrl"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:ctrl="clr-namespace:Nega.WpfCtrl;assembly=Nega.WpfCtrl">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,21 +19,23 @@
                 <Grid DockPanel.Dock="Top">
                     
                     <StackPanel Orientation="Horizontal">
-                        <ctrl:PathButton x:Name="AddCategory" Style="{StaticResource AddButton}" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="AddRootCategory" Style="{StaticResource AddButton}" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="AddChildCategory" Style="{StaticResource AddButton}" Margin="4 0 0 0"/>
                         <ctrl:PathButton x:Name="EditCategory" Style="{StaticResource EditButton}" Margin="4 0 0 0"/>
                         <ctrl:PathButton x:Name="RemoveCategory" Style="{StaticResource RemoveButton}" IconAngle="180" Margin="4 0 0 0"/>
                     </StackPanel>
                     
                 </Grid>
 
-                <TreeView x:Name="CategoryList"
-                          cmp:Message.Attach="[Event SelectedItemChanged]=[Action SelectCategory($this.SelectedItem)];[Event MouseDoubleClick]=[Action EditCategory()]">
+                <TreeView x:Name="CategoryList" AllowDrop="True"
+                          cmp:Message.Attach="[Event SelectedItemChanged]=[Action SelectCategory($this.SelectedItem)];[Event Drop]=[Action Node_Drop($source,$eventargs)]">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
-                                <TextBlock Text="{Binding Name}"></TextBlock>
-                            </StackPanel>
+                            <ctrl:DragBox DragObject="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                </StackPanel>
+                            </ctrl:DragBox>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
@@ -46,8 +46,8 @@
         
         <GridSplitter Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" 
                       Width="3" ResizeDirection="Columns"/>
-        
-        <Grid Grid.Column="1">
+
+        <Grid Grid.Column="1" cmp:Message.Attach="[Event Drop]=[Action Detail_Drop($source,$eventargs)]" AllowDrop="True" Background="White">
 
             <ContentControl x:Name="ActiveItem"/>
 

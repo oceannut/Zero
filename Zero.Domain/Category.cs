@@ -59,11 +59,23 @@ namespace Zero.Domain
         [DataMember]
         public string ParentId { get; set; }
 
+        private Category parent;
         /// <summary>
         /// 上级类型。
         /// </summary>
         [DataMember]
-        public virtual Category Parent { get; set; }
+        public virtual Category Parent
+        {
+            get { return parent; }
+            set
+            {
+                if (parent != value)
+                {
+                    parent = value;
+                    ParentId = parent == null ? null : parent.Id;
+                }
+            }
+        }
 
         /// <summary>
         /// 指示是否被废弃；true表示废弃，不再使用；false表示未废弃，仍在使用。
@@ -108,10 +120,6 @@ namespace Zero.Domain
             if (isCodeExistedPredicate != null && isCodeExistedPredicate(Scope, Code))
             {
                 throw new ObjectAlreadyExistedException<Category, string>(this, this.Code);
-            }
-            if(Parent != null && string.IsNullOrWhiteSpace(Parent.Id))
-            {
-                ParentId = Parent.Id;
             }
             if (isCategoryCyclicReference(this))
             {
@@ -196,7 +204,6 @@ namespace Zero.Domain
             if (Parent != parent)
             {
                 Parent = parent;
-                ParentId = parent == null ? null : parent.Id;
                 if (isCategoryCyclicReference(this))
                 {
                     throw new CyclicInheritanceException();

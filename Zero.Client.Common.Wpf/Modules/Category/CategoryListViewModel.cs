@@ -11,15 +11,17 @@ using Nega.WpfCommon;
 
 using Zero.Domain;
 using Zero.BLL;
+using System.Windows;
 
 namespace Zero.Client.Common.Wpf
 {
 
-    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive
+    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<string>
     {
 
         private ICategoryService categoryService;
-        private TreeNodeModel selectedItem;
+        private IEventAggregator eventAggregator;
+        private CategoryViewModel selectedItem;
 
         private ObservableCollection<TreeNodeModel> categoryList;
         /// <summary>
@@ -38,34 +40,93 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        public CategoryListViewModel(ICategoryService categoryService)
+        public CategoryListViewModel(ICategoryService categoryService, 
+            IEventAggregator eventAggregator)
         {
             this.categoryService = categoryService;
+            this.eventAggregator = eventAggregator;
+
+            this.eventAggregator.Subscribe(this);
         }
 
         public void SelectCategory(TreeNodeModel selectedItem)
         {
-            this.selectedItem = selectedItem;
+            this.selectedItem = selectedItem as CategoryViewModel;
         }
 
-        public void AddCategory()
+        public void AddRootCategory()
         {
-            ActivateItem(new CategoryDetailsViewModel());
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator));
+        }
+
+        public void AddChildCategory()
+        {
+            if (this.selectedItem == null)
+            {
+                MessageBox.Show("请选择要添加子节点的父节点");
+                return;
+            }
+
+            CategoryViewModel viewModel = new CategoryViewModel();
+            viewModel.Model.Parent = this.selectedItem.Model;
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
+                viewModel));
         }
 
         public void EditCategory()
         {
             if (this.selectedItem == null)
             {
-                System.Windows.MessageBox.Show("请选择编辑的节点");
+                MessageBox.Show("请选择编辑的节点");
                 return;
             }
-            System.Windows.MessageBox.Show(this.selectedItem.Name);
+
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
+                this.selectedItem));
         }
 
         public void RemoveCategory()
         {
+            if (this.selectedItem == null)
+            {
+                MessageBox.Show("请选择要删除的节点");
+                return;
+            }
+            if (MessageBox.Show(string.Format("您确定要删除\"{0}\"?", this.selectedItem.Name), "删除对话框", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+        }
 
+        public void Detail_Drop(object sender, DragEventArgs e)
+        {
+            CategoryViewModel category = e.Data.GetData(typeof(CategoryViewModel)) as CategoryViewModel;
+            if (category == null)
+            {
+                return;
+            }
+
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator, category));
+        }
+
+        public void Node_Drop(object sender, DragEventArgs e)
+        {
+            CategoryViewModel category = e.Data.GetData(typeof(CategoryViewModel)) as CategoryViewModel;
+            if (category == null)
+            {
+                return;
+            }
+        }
+
+        public void Handle(string message)
+        {
+            if ("CloseCategoryDetail" == message)
+            {
+                for (int i = this.Items.Count - 1; i >= 0; i--)
+                {
+                    DeactivateItem(this.Items[i], true);
+                }
+            }
         }
 
         protected override void OnViewLoaded(object view)
@@ -73,25 +134,18 @@ namespace Zero.Client.Common.Wpf
             base.OnViewLoaded(view);
 
             this.categoryService.ListCategoryAsync(1)
-                .ContinueWith((task) =>
-                {
-                    if (task.Exception == null)
+                .ExcuteOnUIThread<IEnumerable<Category>>(
+                    (e) =>
                     {
-                        var categories = task.Result;
-                        if (categories != null && categories.Count() > 0)
+                        if (e != null && e.Count() > 0)
                         {
-                            System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                                new System.Action(() =>
-                                {
-                                    this.CategoryList = CategoryViewModel.BuildTree(categories);
-                                }));
+                            this.CategoryList = CategoryViewModel.BuildTree(e);
                         }
-                    }
-                    else
+                    },
+                    (ex) =>
                     {
-                        System.Windows.MessageBox.Show(task.Exception.ToString());
-                    }
-                });
+                        MessageBox.Show(ex.ToString());
+                    });
         }
 
     }
