@@ -121,7 +121,7 @@ namespace Zero.Domain
             {
                 throw new ObjectAlreadyExistedException<Category, string>(this, this.Code);
             }
-            if (isCategoryCyclicReference(this))
+            if (isCategoryCyclicReference != null && isCategoryCyclicReference(this))
             {
                 throw new CyclicInheritanceException();
             }

@@ -16,12 +16,14 @@ using System.Windows;
 namespace Zero.Client.Common.Wpf
 {
 
-    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<string>
+    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<CategoryEditEvent>
     {
 
-        private ICategoryService categoryService;
-        private IEventAggregator eventAggregator;
+        private readonly ICategoryService categoryService;
+        private readonly IEventAggregator eventAggregator;
+        private readonly int scope;
         private CategoryViewModel selectedItem;
+        private CategoryViewModel newViewModel;
 
         private ObservableCollection<TreeNodeModel> categoryList;
         /// <summary>
@@ -41,10 +43,12 @@ namespace Zero.Client.Common.Wpf
         }
 
         public CategoryListViewModel(ICategoryService categoryService, 
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            int scope)
         {
             this.categoryService = categoryService;
             this.eventAggregator = eventAggregator;
+            this.scope = scope;
 
             this.eventAggregator.Subscribe(this);
         }
@@ -56,7 +60,11 @@ namespace Zero.Client.Common.Wpf
 
         public void AddRootCategory()
         {
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator));
+            this.newViewModel = new CategoryViewModel();
+            this.newViewModel.Model.Scope = this.scope;
+            this.newViewModel.Model.Sequence = this.CategoryList.Count + 1;
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
+                this.newViewModel));
         }
 
         public void AddChildCategory()
@@ -67,10 +75,13 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            CategoryViewModel viewModel = new CategoryViewModel();
-            viewModel.Model.Parent = this.selectedItem.Model;
+            this.newViewModel = new CategoryViewModel();
+            this.newViewModel.Model.Scope = this.scope;
+            this.newViewModel.Model.Sequence = this.selectedItem.Children.Count + 1;
+            this.newViewModel.Model.Parent = this.selectedItem.Model;
+            //this.newViewModel.Parent = this.selectedItem;
             ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                viewModel));
+                this.newViewModel));
         }
 
         public void EditCategory()
@@ -106,7 +117,8 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator, category));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator, 
+                category));
         }
 
         public void Node_Drop(object sender, DragEventArgs e)
@@ -118,14 +130,30 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        public void Handle(string message)
+        public void Handle(CategoryEditEvent message)
         {
-            if ("CloseCategoryDetail" == message)
+            switch(message.Action)
             {
-                for (int i = this.Items.Count - 1; i >= 0; i--)
-                {
-                    DeactivateItem(this.Items[i], true);
-                }
+                case CategoryEditAction.Save:
+                    if (message.Exception == null && this.CategoryList != null)
+                    {
+                        if (this.selectedItem == null)
+                        {
+                            this.CategoryList.Add(this.newViewModel);
+                        }
+                        else
+                        {
+                            this.selectedItem.AddChild(this.newViewModel);
+                        }
+                        this.newViewModel = null;
+                    }
+                    break;
+                case CategoryEditAction.Cancel:
+                    for (int i = this.Items.Count - 1; i >= 0; i--)
+                    {
+                        DeactivateItem(this.Items[i], true);
+                    }
+                    break;
             }
         }
 

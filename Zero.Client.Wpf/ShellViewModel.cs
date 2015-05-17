@@ -29,16 +29,18 @@ namespace Zero.Client.Wpf
 
         #region navigation
 
-        private ObservableCollection<NavViewModel> navs;
-        public ObservableCollection<NavViewModel> Navs
+        public NavViewModel[] Navs { get; set; }
+
+        private ObservableCollection<NavViewModel> navList;
+        public ObservableCollection<NavViewModel> NavList
         {
-            get { return navs; }
+            get { return navList; }
             set
             {
-                if (navs != value)
+                if (navList != value)
                 {
-                    navs = value;
-                    NotifyOfPropertyChange(() => this.Navs);
+                    navList = value;
+                    NotifyOfPropertyChange(() => this.NavList);
                 }
             }
         }
@@ -72,17 +74,13 @@ namespace Zero.Client.Wpf
 
         #region contructors
 
-        private CategoryListViewModel categoryListViewModel;
-
         public ShellViewModel(IModuleContainer container,
             IWindowManager windowManager,
-            IEventAggregator eventAggregator,
-            CategoryListViewModel categoryListViewModel)
+            IEventAggregator eventAggregator)
         {
             this.container = container;
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
-            this.categoryListViewModel = categoryListViewModel;
         }
 
         #endregion
@@ -121,13 +119,14 @@ namespace Zero.Client.Wpf
         {
             base.OnViewAttached(view, context);
 
-            this.Navs = new ObservableCollection<NavViewModel>();
-            this.Navs.Add(new NavViewModel
+            this.NavList = new ObservableCollection<NavViewModel>();
+            if (this.Navs != null && this.Navs.Length > 0)
             {
-                Title = "分类1",
-                Data = "test",
-                Target = this.categoryListViewModel
-            });
+                foreach (var nav in this.Navs)
+                {
+                    this.NavList.Add(nav);
+                }
+            }
         }
 
         #endregion

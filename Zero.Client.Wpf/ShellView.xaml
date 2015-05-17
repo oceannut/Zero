@@ -48,7 +48,7 @@
                         </LinearGradientBrush>
                     </Border.BorderBrush>
                     <StackPanel Margin="12 0 6 0">
-                        <ListBox x:Name="Navs" SelectedItem="{Binding SelectedNav}" BorderThickness="0">
+                        <ListBox x:Name="NavList" SelectedItem="{Binding SelectedNav}" BorderThickness="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0 4 0 8" VerticalAlignment="Center">
@@ -60,7 +60,7 @@
                                                 </Path.LayoutTransform>
                                             </Path>
                                         </Border>
-                                        <TextBlock Text="{Binding Title}" Margin="6 0 0 0" FontSize="15"/>
+                                        <TextBlock Text="{Binding Header}" Margin="6 0 0 0" FontSize="15"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

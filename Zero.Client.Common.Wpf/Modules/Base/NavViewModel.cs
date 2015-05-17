@@ -25,44 +25,16 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        private string name;
-        public string Name
+        private string header;
+        public string Header
         {
-            get { return name; }
+            get { return header; }
             set
             {
-                if (name != value)
+                if (header != value)
                 {
-                    name = value;
-                    NotifyOfPropertyChange(() => this.Name);
-                }
-            }
-        }
-
-        private string title;
-        public string Title
-        {
-            get { return title; }
-            set
-            {
-                if (title != value)
-                {
-                    title = value;
-                    NotifyOfPropertyChange(() => this.Title);
-                }
-            }
-        }
-
-        private object data;
-        public object Data
-        {
-            get { return data; }
-            set
-            {
-                if (data != value)
-                {
-                    data = value;
-                    NotifyOfPropertyChange(() => this.Data);
+                    header = value;
+                    NotifyOfPropertyChange(() => this.Header);
                 }
             }
         }
@@ -79,6 +51,17 @@ namespace Zero.Client.Common.Wpf
                     NotifyOfPropertyChange(() => this.Target);
                 }
             }
+        }
+
+        public NavViewModel()
+        {
+
+        }
+
+        public NavViewModel(string header, IScreen target)
+        {
+            this.Header = header;
+            this.Target = target;
         }
 
     }

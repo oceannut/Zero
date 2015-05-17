@@ -10,6 +10,7 @@ using Caliburn.Micro;
 using Nega.WpfCommon;
 
 using Zero.BLL;
+using Zero.Domain;
 
 namespace Zero.Client.Common.Wpf
 {
@@ -50,13 +51,6 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        public CategoryDetailsViewModel(ICategoryService categoryService,
-            IEventAggregator eventAggregator)
-            : this(categoryService, eventAggregator, new CategoryViewModel())
-        {
-            
-        }
-
         public CategoryDetailsViewModel(ICategoryService categoryService, 
             IEventAggregator eventAggregator,
             CategoryViewModel category)
@@ -73,18 +67,23 @@ namespace Zero.Client.Common.Wpf
         {
             if (string.IsNullOrWhiteSpace(this.category.Model.Id))
             {
-                this.category.Model.Name = this.Name;
-                this.category.Model.Desc = this.Desc;
-                this.category.Model.Save(
+                Category entity = this.category.Model;
+                entity.Id = Guid.NewGuid().ToString();
+                entity.Name = this.Name;
+                entity.Desc = this.Desc;
+                entity.Save(
                     (e) => 
                     {
                         this.categoryService.SaveCategoryAsync(this.category.Model)
                             .ExcuteOnUIThread(
                             () =>
                             {
+                                this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Save, this.category));
                             },
                             (ex) =>
                             {
+                                this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Save, this.category, ex));
+                                MessageBox.Show("保存失败: " + ex.Message);
                             });
                     });
                 
@@ -101,6 +100,7 @@ namespace Zero.Client.Common.Wpf
                             },
                             (ex) =>
                             {
+                                MessageBox.Show("更新失败: " + ex.Message);
                             });
                     });
             }
@@ -108,7 +108,7 @@ namespace Zero.Client.Common.Wpf
 
         public void Cancel()
         {
-            this.eventAggregator.PublishOnUIThread("CloseCategoryDetail");
+            this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Cancel, this.category));
         }
 
     }

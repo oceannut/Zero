@@ -18,6 +18,7 @@ using Zero.DAL.EF;
 using Zero.DAL.Caching;
 using Zero.BLL;
 using Zero.BLL.Impl;
+using Zero.Client.Common.Wpf;
 
 namespace Zero.Client.Wpf
 {
@@ -84,12 +85,21 @@ namespace Zero.Client.Wpf
             this.container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
             this.container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
 
-            this.container.RegisterType<Zero.Client.Common.Wpf.CategoryListViewModel>(new ContainerControlledLifetimeManager());
+            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel1", new InjectionConstructor(this.container.Resolve<ICategoryService>(),
+                this.container.Resolve<IEventAggregator>(),
+                1));
+            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel2", new InjectionConstructor(this.container.Resolve<ICategoryService>(),
+                this.container.Resolve<IEventAggregator>(),
+                2));
+            
 
             this.container.RegisterType<IModuleContainer, SimpleModuleContainer>(new ContainerControlledLifetimeManager());
 
-            
-            this.container.RegisterType<ShellViewModel>(new ContainerControlledLifetimeManager());
+            this.container.RegisterType<ShellViewModel>(new InjectionProperty("Navs",
+                    new ResolvedArrayParameter<NavViewModel>(
+                        new NavViewModel("车辆分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel1")),
+                        new NavViewModel("案件分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel2"))
+                        )));
 
         }
 
