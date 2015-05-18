@@ -27,7 +27,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260" MaxWidth="500"/>
+            <ColumnDefinition Width="260" MinWidth="260" MaxWidth="500"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
@@ -38,10 +38,11 @@
                 <Grid DockPanel.Dock="Top">
                     
                     <StackPanel Orientation="Horizontal">
-                        <ctrl:PathButton x:Name="AddRootCategory" Style="{StaticResource AddRootCategoryButton}" Margin="4 0 0 0"/>
-                        <ctrl:PathButton x:Name="AddChildCategory" Style="{StaticResource AddChildCategoryButton}" Margin="4 0 0 0"/>
-                        <ctrl:PathButton x:Name="EditCategory" Style="{StaticResource EditButton}" Margin="4 0 0 0"/>
-                        <ctrl:PathButton x:Name="RemoveCategory" Style="{StaticResource RemoveButton}" IconAngle="180" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="AddRootCategory" ToolTip="添加根类型"  Style="{StaticResource AddRootCategoryButton}" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="AddChildCategory" ToolTip="添加子类型" Style="{StaticResource AddChildCategoryButton}" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="EditCategory" ToolTip="编辑类型" Style="{StaticResource EditButton}" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="RemoveCategory" ToolTip="删除类型" Style="{StaticResource RemoveButton}" IconAngle="180" Margin="4 0 0 0"/>
+                        <ctrl:PathButton x:Name="RefreshCategory" ToolTip="刷新" Style="{StaticResource RefreshButton}" IconAngle="180" Margin="4 0 0 0"/>
                     </StackPanel>
                     
                 </Grid>

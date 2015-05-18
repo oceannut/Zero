@@ -17,72 +17,62 @@ namespace Zero.Client.Common.Wpf
     public class CategoryDetailsViewModel : Screen
     {
 
-        private ICategoryService categoryService;
-        private IEventAggregator eventAggregator;
-        private CategoryViewModel category;
+        private readonly ICategoryService categoryService;
+        private readonly IEventAggregator eventAggregator;
+        private readonly CategoryListViewModel summary;
 
-        private string name;
-
-        public string Name
+        private CategoryViewModel current;
+        public CategoryViewModel Current
         {
-            get { return name; }
+            get { return this.current; }
             set
             {
-                if (name != value)
+                if (current != value)
                 {
-                    name = value;
-                    NotifyOfPropertyChange(() => Name);
-                }
-            }
-        }
-
-        private string desc;
-
-        public string Desc
-        {
-            get { return desc; }
-            set
-            {
-                if (desc != value)
-                {
-                    desc = value;
-                    NotifyOfPropertyChange(() => Desc);
+                    current = value;
+                    NotifyOfPropertyChange(() => Current);
                 }
             }
         }
 
         public CategoryDetailsViewModel(ICategoryService categoryService, 
             IEventAggregator eventAggregator,
-            CategoryViewModel category)
+            CategoryListViewModel summary,
+            CategoryViewModel current)
         {
             this.categoryService = categoryService;
             this.eventAggregator = eventAggregator;
-            this.category = category;
-
-            this.Name = category.Model.Name;
-            this.Desc = category.Model.Desc;
+            this.summary = summary;
+            this.current = current;
         }
 
         public void Save()
         {
-            if (string.IsNullOrWhiteSpace(this.category.Model.Id))
+            Category category = this.Current.Model;
+            if (string.IsNullOrWhiteSpace(category.Id))
             {
-                Category entity = this.category.Model;
-                entity.Id = Guid.NewGuid().ToString();
-                entity.Name = this.Name;
-                entity.Desc = this.Desc;
-                entity.Save(
+                category.Id = Guid.NewGuid().ToString();
+                category.Save(
                     (e) => 
                     {
-                        this.categoryService.SaveCategoryAsync(this.category.Model)
+                        this.categoryService.SaveCategoryAsync(e)
                             .ExcuteOnUIThread(
                             () =>
                             {
-                                this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Save, this.category));
+                                this.summary.RefreshWhenSave(this.current);
+                                this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Save, this.current));
+                                if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                {
+                                    CategoryViewModel nextViewModel = this.Current.Next();
+                                    this.Current = nextViewModel;
+                                }
+                                else
+                                {
+                                    this.summary.ClearDetailWhenCancel();
+                                }
                             },
                             (ex) =>
                             {
-                                this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Save, this.category, ex));
                                 MessageBox.Show("保存失败: " + ex.Message);
                             });
                     });
@@ -90,7 +80,7 @@ namespace Zero.Client.Common.Wpf
             }
             else
             {
-                this.category.Model.ChangeNameAndDesc(this.Name, this.Desc, 
+                category.Update(
                     (e) =>
                     {
                         this.categoryService.UpdateCategoryAsync(e)
@@ -108,7 +98,7 @@ namespace Zero.Client.Common.Wpf
 
         public void Cancel()
         {
-            this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Cancel, this.category));
+            this.summary.ClearDetailWhenCancel();
         }
 
     }

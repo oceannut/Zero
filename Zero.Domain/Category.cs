@@ -136,15 +136,11 @@ namespace Zero.Domain
         }
 
         /// <summary>
-        /// 更改名称和详细。
+        /// 更新
         /// </summary>
-        /// <param name="name">名称。</param>
-        /// <param name="desc">详细。</param>
         /// <param name="action">定义保存操作。</param>
         /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        public void ChangeNameAndDesc(string name, 
-            string desc,
-            Action<Category> action,
+        public void Update(Action<Category> action,
             Func<DateTime> timestampFactory = null)
         {
             if (!IsRequiredAllSet())
@@ -152,12 +148,12 @@ namespace Zero.Domain
                 throw new InvalidOperationException();
             }
 
-            if (Name != name || Desc != desc)
-            {
-                Name = name;
-                Desc = desc;
+            DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
+            Modification = timestamp;
 
-                Update(action, timestampFactory);
+            if (action != null)
+            {
+                action(this);
             }
         }
 
@@ -171,11 +167,6 @@ namespace Zero.Domain
             Action<Category> action,
             Func<DateTime> timestampFactory = null)
         {
-            if (!IsRequiredAllSet())
-            {
-                throw new InvalidOperationException();
-            }
-
             if (Sequence != sequence)
             {
                 Sequence = sequence;
@@ -196,11 +187,6 @@ namespace Zero.Domain
             Func<DateTime> timestampFactory = null,
             Func<Category, bool> isCategoryCyclicReference = null)
         {
-            if (!IsRequiredAllSet())
-            {
-                throw new InvalidOperationException();
-            }
-
             if (Parent != parent)
             {
                 Parent = parent;
@@ -219,11 +205,6 @@ namespace Zero.Domain
         /// <param name="action">定义保存操作。</param>
         public void Disuse(Action<Category> action)
         {
-            if (!IsRequiredAllSet())
-            {
-                throw new InvalidOperationException();
-            }
-
             if (!this.Disused)
             {
                 this.Disused = true;
@@ -238,11 +219,6 @@ namespace Zero.Domain
         /// <param name="action">定义保存操作。</param>
         public void Use(Action<Category> action)
         {
-            if (!IsRequiredAllSet())
-            {
-                throw new InvalidOperationException();
-            }
-
             if (this.Disused)
             {
                 this.Disused = false;
@@ -371,18 +347,6 @@ namespace Zero.Domain
         public static int CompareToBySequence(TreeNode<Category> node1, TreeNode<Category> node2)
         {
             return node2.Data.Sequence.CompareTo(node1.Data.Sequence);
-        }
-
-        private void Update(Action<Category> action,
-            Func<DateTime> timestampFactory = null)
-        {
-            DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
-            Modification = timestamp;
-
-            if (action != null)
-            {
-                action(this);
-            }
         }
 
         private bool IsRequiredAllSet()

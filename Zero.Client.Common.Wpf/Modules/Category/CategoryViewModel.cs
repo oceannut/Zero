@@ -16,10 +16,89 @@ namespace Zero.Client.Common.Wpf
     public class CategoryViewModel : TreeNodeModel
     {
 
-        private Category model;
+        private readonly Category model;
         public Category Model
         {
             get { return model; }
+        }
+
+        public string Code
+        {
+            get { return this.model.Code; }
+            set
+            {
+                if (this.model.Code != value)
+                {
+                    this.model.Code = value;
+                    OnPropertyChanged("Code");
+                }
+            }
+        }
+
+        public override string Name
+        {
+            get { return this.model.Name; }
+            set
+            {
+                if (this.model.Name != value)
+                {
+                    this.model.Name = value;
+                    OnPropertyChanged("Name");
+                }
+            }
+        }
+
+        public string Desc
+        {
+            get { return this.model.Desc; }
+            set
+            {
+                if (this.model.Desc != value)
+                {
+                    this.model.Desc = value;
+                    OnPropertyChanged("Desc");
+                }
+            }
+        }
+
+        public long Sequence
+        {
+            get { return this.model.Sequence; }
+            set
+            {
+                if (this.model.Sequence != value)
+                {
+                    this.model.Sequence = value;
+                    OnPropertyChanged("Sequence");
+                }
+            }
+        }
+
+        public override TreeNodeModel Parent
+        {
+            get
+            {
+                return base.Parent;
+            }
+            set
+            {
+                base.Parent = value;
+
+                if (base.Parent != null)
+                {
+                    this.model.Parent = (base.Parent as CategoryViewModel).Model;
+                }
+                else
+                {
+                    this.model.Parent = null;
+                }
+            }
+        }
+
+        public int Scope
+        {
+            get { return this.model.Scope; }
+            set { this.model.Scope = value; }
         }
 
         public CategoryViewModel() :
@@ -36,7 +115,16 @@ namespace Zero.Client.Common.Wpf
             }
 
             this.model = model;
-            this.Name = model.Name;
+        }
+
+        internal CategoryViewModel Next()
+        {
+            CategoryViewModel nextViewModel = new CategoryViewModel();
+            nextViewModel.Scope = this.Scope;
+            nextViewModel.Sequence = this.Sequence + 1;
+            nextViewModel.Parent = this.Parent;
+
+            return nextViewModel;
         }
 
         public static ObservableCollection<TreeNodeModel> BuildTree(IEnumerable<Category> col)
@@ -77,6 +165,26 @@ namespace Zero.Client.Common.Wpf
             }
 
             return tree;
+        }
+
+        public static void ClearTree(ObservableCollection<TreeNodeModel> tree)
+        {
+            if (tree != null && tree.Count > 0)
+            {
+                Tree.PostorderTraverse(tree,
+                    (e) =>
+                    {
+                        CategoryViewModel current = e as CategoryViewModel;
+                        if (current.Children != null && current.Children.Count > 0)
+                        {
+                            for (int i = current.Children.Count - 1; i >= 0; i--)
+                            {
+                                current.RemoveChild(current.Children[i]);
+                            }
+                        }
+                    });
+                tree.Clear();
+            }
         }
 
     }

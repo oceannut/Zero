@@ -9,8 +9,7 @@ namespace Zero.Client.Common.Wpf
 
     public enum CategoryEditAction
     {
-        Save,
-        Cancel
+        Save
     }
 
     public class CategoryEditEvent
@@ -20,8 +19,6 @@ namespace Zero.Client.Common.Wpf
 
         public CategoryViewModel ViewModel { get; set; }
 
-        public Exception Exception { get; set; }
-
         public CategoryEditEvent() { }
 
         public CategoryEditEvent(CategoryEditAction action, 
@@ -29,15 +26,6 @@ namespace Zero.Client.Common.Wpf
         {
             this.Action = action;
             this.ViewModel = viewModel;
-        }
-
-        public CategoryEditEvent(CategoryEditAction action,
-            CategoryViewModel viewModel,
-            Exception ex)
-        {
-            this.Action = action;
-            this.ViewModel = viewModel;
-            this.Exception = ex;
         }
 
     }

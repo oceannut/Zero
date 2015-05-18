@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Caliburn.Micro;
 
@@ -11,19 +12,18 @@ using Nega.WpfCommon;
 
 using Zero.Domain;
 using Zero.BLL;
-using System.Windows;
 
 namespace Zero.Client.Common.Wpf
 {
 
-    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<CategoryEditEvent>
+    public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive
     {
 
         private readonly ICategoryService categoryService;
         private readonly IEventAggregator eventAggregator;
         private readonly int scope;
         private CategoryViewModel selectedItem;
-        private CategoryViewModel newViewModel;
+        //private CategoryViewModel newViewModel;
 
         private ObservableCollection<TreeNodeModel> categoryList;
         /// <summary>
@@ -49,8 +49,6 @@ namespace Zero.Client.Common.Wpf
             this.categoryService = categoryService;
             this.eventAggregator = eventAggregator;
             this.scope = scope;
-
-            this.eventAggregator.Subscribe(this);
         }
 
         public void SelectCategory(TreeNodeModel selectedItem)
@@ -60,11 +58,11 @@ namespace Zero.Client.Common.Wpf
 
         public void AddRootCategory()
         {
-            this.newViewModel = new CategoryViewModel();
-            this.newViewModel.Model.Scope = this.scope;
-            this.newViewModel.Model.Sequence = this.CategoryList.Count + 1;
+            CategoryViewModel newViewModel = new CategoryViewModel();
+            newViewModel.Scope = this.scope;
+            newViewModel.Sequence = this.CategoryList.Count + 1;
             ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                this.newViewModel));
+                this, newViewModel));
         }
 
         public void AddChildCategory()
@@ -75,13 +73,12 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            this.newViewModel = new CategoryViewModel();
-            this.newViewModel.Model.Scope = this.scope;
-            this.newViewModel.Model.Sequence = this.selectedItem.Children.Count + 1;
-            this.newViewModel.Model.Parent = this.selectedItem.Model;
-            //this.newViewModel.Parent = this.selectedItem;
+            CategoryViewModel newViewModel = new CategoryViewModel();
+            newViewModel.Scope = this.scope;
+            newViewModel.Sequence = this.selectedItem.Children.Count + 1;
+            newViewModel.Parent = this.selectedItem;
             ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                this.newViewModel));
+                this, newViewModel));
         }
 
         public void EditCategory()
@@ -93,7 +90,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                this.selectedItem));
+                this, this.selectedItem));
         }
 
         public void RemoveCategory()
@@ -109,6 +106,11 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
+        public void RefreshCategory()
+        {
+            LoadCategoryList();
+        }
+
         public void Detail_Drop(object sender, DragEventArgs e)
         {
             CategoryViewModel category = e.Data.GetData(typeof(CategoryViewModel)) as CategoryViewModel;
@@ -118,7 +120,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator, 
-                category));
+                this, category));
         }
 
         public void Node_Drop(object sender, DragEventArgs e)
@@ -130,38 +132,37 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        public void Handle(CategoryEditEvent message)
+        internal void RefreshWhenSave(CategoryViewModel newViewModel)
         {
-            switch(message.Action)
+            if (this.selectedItem == null)
             {
-                case CategoryEditAction.Save:
-                    if (message.Exception == null && this.CategoryList != null)
-                    {
-                        if (this.selectedItem == null)
-                        {
-                            this.CategoryList.Add(this.newViewModel);
-                        }
-                        else
-                        {
-                            this.selectedItem.AddChild(this.newViewModel);
-                        }
-                        this.newViewModel = null;
-                    }
-                    break;
-                case CategoryEditAction.Cancel:
-                    for (int i = this.Items.Count - 1; i >= 0; i--)
-                    {
-                        DeactivateItem(this.Items[i], true);
-                    }
-                    break;
+                this.CategoryList.Add(newViewModel);
             }
+            else
+            {
+                this.selectedItem.AddChild(newViewModel);
+            }
+        }
+
+        internal void ClearDetailWhenCancel()
+        {
+             for (int i = this.Items.Count - 1; i >= 0; i--)
+             {
+                 DeactivateItem(this.Items[i], true);
+             }
         }
 
         protected override void OnViewLoaded(object view)
         {
             base.OnViewLoaded(view);
 
-            this.categoryService.ListCategoryAsync(1)
+            LoadCategoryList();
+        }
+
+        private void LoadCategoryList()
+        {
+            CategoryViewModel.ClearTree(this.CategoryList);
+            this.categoryService.ListCategoryAsync(this.scope)
                 .ExcuteOnUIThread<IEnumerable<Category>>(
                     (e) =>
                     {
