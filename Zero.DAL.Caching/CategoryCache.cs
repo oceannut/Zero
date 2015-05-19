@@ -221,18 +221,6 @@ namespace Zero.DAL.Caching
             return result;
         }
 
-        public TreeNodeCollection<Category> Tree(int scope)
-        {
-            TreeNodeCollection<Category> tree = this.cache.Get(scope.ToString()) as TreeNodeCollection<Category>;
-            if (tree == null)
-            {
-                tree =  new TreeNodeCollection<Category>();
-                this.cache.Add(scope.ToString(), tree);
-            }
-
-            return tree;
-        }
-
         public void Initialize()
         {
             this.cache.Clear();
@@ -267,6 +255,18 @@ namespace Zero.DAL.Caching
         public void Dispose()
         {
             Destroy();
+        }
+
+        private TreeNodeCollection<Category> Tree(int scope)
+        {
+            TreeNodeCollection<Category> tree = this.cache.Get(scope.ToString()) as TreeNodeCollection<Category>;
+            if (tree == null)
+            {
+                tree = new TreeNodeCollection<Category>();
+                this.cache.Add(scope.ToString(), tree);
+            }
+
+            return tree;
         }
 
         private void AttachToParent(TreeNodeCollection<Category> tree, TreeNode<Category> parent, TreeNode<Category> node)

@@ -23,7 +23,7 @@ namespace Zero.DAL
 
         IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null);
 
-        TreeNodeCollection<Category> Tree(int scope);
+        //TreeNodeCollection<Category> Tree(int scope);
 
     }
 

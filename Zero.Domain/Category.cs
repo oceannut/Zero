@@ -14,7 +14,10 @@ namespace Zero.Domain
     /// 类型。
     /// </summary>
     [DataContract]
-    public class Category : ITimestampData, ICategoryable<string>, IDisuseable<Category>, ICloneable
+    public class Category : ITimestampData, 
+        ICategoryable<string>,
+        IDisuseable<Category>, 
+        ICloneable
     {
 
         /// <summary>
@@ -98,32 +101,36 @@ namespace Zero.Domain
         /// <summary>
         /// 保存。
         /// </summary>
-        /// <param name="action">定义保存操作。</param>
-        /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        /// <param name="isCodeExistedPredicate">定义判断编号是否已被使用的操作。</param>
-        /// <param name="parentAccessor">定义获取上级类型的操作。</param>
-        public void Save(Action<Category> action,
+        /// <param name="tree">类型树。</param>
+        /// <param name="action">保存操作。</param>
+        /// <param name="timestampFactory">获取统一时间的操作。</param>
+        /// <param name="isCodeExistedPredicate">判断编号是否已被使用的操作。</param>
+        public void Save(TreeNodeCollection<Category> tree, 
+            Action<Category> action,
             Func<DateTime> timestampFactory = null,
-            Func<int, string, bool> isCodeExistedPredicate = null,
-            Func<Category, bool> isCategoryCyclicReference = null)
+            Func<int, string, bool> isCodeExistedPredicate = null)
         {
-            if (string.IsNullOrWhiteSpace(Id)
-                || string.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrWhiteSpace(Name))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Name is not set yet.");
             }
-
-            if (string.IsNullOrWhiteSpace(Code))
+            if (!string.IsNullOrWhiteSpace(this.Id) && !string.IsNullOrWhiteSpace(this.ParentId) 
+                && tree == null)
             {
-                Code = Id;
+                throw new InvalidOperationException("Please provide tree when Id and ParentId are not null.");
+            }
+            if (IsCyclicReference(tree))
+            {
+                throw new CyclicInheritanceException();
             }
             if (isCodeExistedPredicate != null && isCodeExistedPredicate(Scope, Code))
             {
                 throw new ObjectAlreadyExistedException<Category, string>(this, this.Code);
             }
-            if (isCategoryCyclicReference != null && isCategoryCyclicReference(this))
+
+            if (string.IsNullOrWhiteSpace(Code))
             {
-                throw new CyclicInheritanceException();
+                Code = Id;
             }
             DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
             Creation = timestamp;
@@ -136,41 +143,40 @@ namespace Zero.Domain
         }
 
         /// <summary>
-        /// 更新
+        /// 更改名称和详细。
         /// </summary>
-        /// <param name="action">定义保存操作。</param>
-        /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        public void Update(Action<Category> action,
+        /// <param name="name">名称</param>
+        /// <param name="desc">详细</param>
+        /// <param name="action">更新操作。</param>
+        /// <param name="timestampFactory">获取统一时间的操作。</param>
+        public void ChangeNameAndDesc(string name, 
+            string desc,
+            Action<Category> action,
             Func<DateTime> timestampFactory = null)
         {
-            if (!IsRequiredAllSet())
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new InvalidOperationException();
+                throw new ArgumentNullException();
             }
 
-            DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
-            Modification = timestamp;
-
-            if (action != null)
-            {
-                action(this);
-            }
+            Name = name;
+            Desc = desc;
+            Update(action, timestampFactory);
         }
 
         /// <summary>
         /// 更改排序号。
         /// </summary>
         /// <param name="sequence">排序号。</param>
-        /// <param name="action">定义保存操作。</param>
-        /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        public void ChangeSequence(int sequence,
+        /// <param name="action">更新操作。</param>
+        /// <param name="timestampFactory">获取统一时间的操作。</param>
+        public void ChangeSequence(long sequence,
             Action<Category> action,
             Func<DateTime> timestampFactory = null)
         {
             if (Sequence != sequence)
             {
                 Sequence = sequence;
-
                 Update(action, timestampFactory);
             }
         }
@@ -179,22 +185,35 @@ namespace Zero.Domain
         /// 更改上级类型。
         /// </summary>
         /// <param name="parent">上级类型。</param>
-        /// <param name="action">定义保存操作。</param>
-        /// <param name="timestampFactory">定义获取统一时间的操作。</param>
-        /// <param name="parentAccessor">定义获取上级类型的操作。</param>
+        /// <param name="sequence">排序号。</param>
+        /// <param name="tree">类型树。</param>
+        /// <param name="action">更新操作。</param>
+        /// <param name="timestampFactory">获取统一时间的操作。</param>
         public void ChangeParent(Category parent,
+            long sequence,
+            TreeNodeCollection<Category> tree, 
             Action<Category> action,
-            Func<DateTime> timestampFactory = null,
-            Func<Category, bool> isCategoryCyclicReference = null)
+            Func<DateTime> timestampFactory = null)
         {
+            if (parent != null && string.IsNullOrWhiteSpace(parent.Id))
+            {
+                throw new ArgumentNullException();
+            }
+
             if (Parent != parent)
             {
-                Parent = parent;
-                if (isCategoryCyclicReference(this))
+                if (parent != null && !string.IsNullOrWhiteSpace(parent.Id)
+                    && tree == null)
+                {
+                    throw new InvalidOperationException("Please provide tree when Id and ParentId are not null.");
+                }
+                if (IsCyclicReference(tree))
                 {
                     throw new CyclicInheritanceException();
                 }
 
+                Parent = parent;
+                Sequence = sequence;
                 Update(action, timestampFactory);
             }
         }
@@ -202,29 +221,208 @@ namespace Zero.Domain
         /// <summary>
         /// 更改类型不再使用。
         /// </summary>
-        /// <param name="action">定义保存操作。</param>
-        public void Disuse(Action<Category> action)
+        /// <param name="action">更新操作。</param>
+        /// <param name="timestampFactory">获取统一时间的操作。</param>
+        public void Disuse(TreeNodeCollection<Category> tree, 
+            Action<IEnumerable<Category>> action,
+            Func<DateTime> timestampFactory = null)
         {
             if (!this.Disused)
             {
-                this.Disused = true;
+                IEnumerable<Category> categories = GetSelfAndDescendants(tree);
+                foreach (var category in categories)
+                {
+                    category.Disused = true;
+                    DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
+                    category.Modification = timestamp;
+                }
 
-                Update(action, null);
+                if (action != null)
+                {
+                    action(categories);
+                }
             }
         }
 
         /// <summary>
         /// 更改类型使用。
         /// </summary>
-        /// <param name="action">定义保存操作。</param>
-        public void Use(Action<Category> action)
+        ///<param name="action">更新操作。</param>
+        /// <param name="timestampFactory">获取统一时间的操作。</param>
+        public void Use(TreeNodeCollection<Category> tree, 
+            Action<IEnumerable<Category>> action,
+            Func<DateTime> timestampFactory = null)
         {
             if (this.Disused)
             {
-                this.Disused = false;
+                IEnumerable<Category> categories = GetSelfAndDescendants(tree);
+                foreach (var category in categories)
+                {
+                    category.Disused = false;
+                    DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
+                    category.Modification = timestamp;
+                }
 
-                Update(action, null);
+                if (action != null)
+                {
+                    action(categories);
+                }
             }
+        }
+
+        /// <summary>
+        /// 删除类型。
+        /// </summary>
+        /// <param name="tree">类型树。</param>
+        /// <param name="action">删除操作。</param>
+        public void Delete(TreeNodeCollection<Category> tree,
+            Action<IEnumerable<Category>> action)
+        {
+            IEnumerable<Category> categories = GetSelfAndDescendants(tree, false);
+
+            if (action != null)
+            {
+                action(categories);
+            }
+        }
+
+        /// <summary>
+        /// 深度拷贝。
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            Category copy = ShallowClone();
+            if (this.Parent != null)
+            {
+                copy.Parent = this.Parent.Clone() as Category;
+            }
+
+            return copy;
+        }
+
+        /// <summary>
+        /// 浅度拷贝。
+        /// </summary>
+        /// <returns></returns>
+        public Category ShallowClone()
+        {
+            Category copy = new Category();
+            copy.Id = this.Id;
+            copy.Code = this.Code;
+            copy.Name = this.Name;
+            copy.Desc = this.Desc;
+            copy.Sequence = this.Sequence;
+            copy.Disused = this.Disused;
+            copy.Scope = this.Scope;
+            copy.ParentId = this.ParentId;
+            copy.Creation = this.Creation;
+            copy.Modification = this.Modification;
+
+            return copy;
+        }
+
+        /// <summary>
+        /// 获取类型，及以其为根节点的子树上的所有类型。
+        /// </summary>
+        /// <param name="tree">类型树。</param>
+        /// <param name="isPreorder">是否以先序顺序访问子树。</param>
+        /// <returns></returns>
+        public IEnumerable<Category> GetSelfAndDescendants(TreeNodeCollection<Category> tree,
+            bool? isPreorder = null)
+        {
+            List<Category> list = new List<Category>();
+            bool contains = false;
+            Tree<Category>.PreorderTraverse(tree,
+                (e) =>
+                {
+                    if (e.Data.Id == this.Id)
+                    {
+                        contains = true;
+                        if (!isPreorder.HasValue || isPreorder.Value)
+                        {
+                            Tree<Category>.PreorderTraverse(e,
+                                (node) =>
+                                {
+                                    list.Add(node.Data);
+                                });
+                        }
+                        else
+                        {
+                            Tree<Category>.PostorderTraverse(e,
+                                (node) =>
+                                {
+                                    list.Add(node.Data);
+                                });
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                });
+            if (!contains)
+            {
+                throw new ArgumentException("The category is not existed in the tree.");
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// 判断类型的父类型或祖先类型是否存在环形引用。
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public bool IsCyclicReference(TreeNodeCollection<Category> tree)
+        {
+            if (tree == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            bool result = false;
+            if (!string.IsNullOrWhiteSpace(this.Id) && !string.IsNullOrWhiteSpace(this.ParentId))
+            {
+                if (this.Id == this.ParentId)
+                {
+                    result = true;
+                }
+                else
+                {
+                    bool contains = false;
+                    Tree<Category>.PreorderTraverse(tree,
+                        (e) =>
+                        {
+                            if (e.Data.Id == this.ParentId)
+                            {
+                                contains = true;
+                                TreeNode<Category> parent = e;
+                                while (parent != null)
+                                {
+                                    if (this.Id == parent.Data.Id)
+                                    {
+                                        result = true;
+                                        break;
+                                    }
+                                    parent = parent.Parent;
+                                }
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        });
+                    if (!contains)
+                    {
+                        throw new ArgumentException("The category is not existed in the tree.");
+                    }
+                }
+            }
+
+            return result;
         }
 
         public override bool Equals(object obj)
@@ -252,34 +450,6 @@ namespace Zero.Domain
             {
                 return base.GetHashCode();
             }
-        }
-
-        public object Clone()
-        {
-            Category copy = ShallowClone();
-            if (this.Parent != null)
-            {
-                copy.Parent = this.Parent.Clone() as Category;
-            }
-
-            return copy;
-        }
-
-        public Category ShallowClone()
-        {
-            Category copy = new Category();
-            copy.Id = this.Id;
-            copy.Code = this.Code;
-            copy.Name = this.Name;
-            copy.Desc = this.Desc;
-            copy.Sequence = this.Sequence;
-            copy.Disused = this.Disused;
-            copy.Scope = this.Scope;
-            copy.ParentId = this.ParentId;
-            copy.Creation = this.Creation;
-            copy.Modification = this.Modification;
-
-            return copy;
         }
 
         public static TreeNodeCollection<Category> BuildTree(IEnumerable<Category> col)
@@ -347,6 +517,23 @@ namespace Zero.Domain
         public static int CompareToBySequence(TreeNode<Category> node1, TreeNode<Category> node2)
         {
             return node2.Data.Sequence.CompareTo(node1.Data.Sequence);
+        }
+
+        private void Update(Action<Category> action,
+            Func<DateTime> timestampFactory = null)
+        {
+            if (!IsRequiredAllSet())
+            {
+                throw new InvalidOperationException();
+            }
+
+            DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
+            Modification = timestamp;
+
+            if (action != null)
+            {
+                action(this);
+            }
         }
 
         private bool IsRequiredAllSet()

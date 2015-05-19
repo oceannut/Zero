@@ -52,7 +52,7 @@ namespace Zero.Client.Common.Wpf
             if (string.IsNullOrWhiteSpace(category.Id))
             {
                 category.Id = Guid.NewGuid().ToString();
-                category.Save(
+                category.Save(null,
                     (e) => 
                     {
                         this.categoryService.SaveCategoryAsync(e)
@@ -80,19 +80,19 @@ namespace Zero.Client.Common.Wpf
             }
             else
             {
-                category.Update(
-                    (e) =>
-                    {
-                        this.categoryService.UpdateCategoryAsync(e)
-                            .ExcuteOnUIThread(
-                            () =>
-                            {
-                            },
-                            (ex) =>
-                            {
-                                MessageBox.Show("更新失败: " + ex.Message);
-                            });
-                    });
+                //category.Update(
+                //    (e) =>
+                //    {
+                //        this.categoryService.UpdateCategoryAsync(e)
+                //            .ExcuteOnUIThread(
+                //            () =>
+                //            {
+                //            },
+                //            (ex) =>
+                //            {
+                //                MessageBox.Show("更新失败: " + ex.Message);
+                //            });
+                //    });
             }
         }
 

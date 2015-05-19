@@ -170,10 +170,10 @@ namespace Zero.DAL.EF
             }
         }
 
-        public TreeNodeCollection<Category> Tree(int scope)
-        {
-            return Category.BuildTree(List(scope));
-        }
+        //public TreeNodeCollection<Category> Tree(int scope)
+        //{
+        //    return Category.BuildTree(List(scope));
+        //}
 
     }
 }

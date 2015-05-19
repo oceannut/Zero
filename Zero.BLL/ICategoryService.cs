@@ -40,7 +40,7 @@ namespace Zero.BLL
 
         Task<IEnumerable<Category>> ListCategoryAsync(int scope, string parentId = null, bool? isDisused = null);
 
-        bool IsCategoryCyclicReference(Category category);
+        //bool IsCategoryCyclicReference(Category category);
 
     }
 

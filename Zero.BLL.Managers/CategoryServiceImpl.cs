@@ -121,44 +121,44 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public bool IsCategoryCyclicReference(Category category)
-        {
-            bool result = false;
-            if (!string.IsNullOrWhiteSpace(category.ParentId))
-            {
-                if (category.Id == category.ParentId)
-                {
-                    result = true;
-                }
-                else
-                {
-                    TreeNodeCollection<Category> tree = categoryDao.Tree(category.Scope);
-                    Tree<Category>.PreorderTraverse(tree,
-                        (e) =>
-                        {
-                            if (e.Data.Id == category.ParentId)
-                            {
-                                TreeNode<Category> parent = e;
-                                while (parent != null)
-                                {
-                                    if (category.Id == parent.Data.Id)
-                                    {
-                                        result = true;
-                                    }
-                                    parent = parent.Parent;
-                                }
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        });
-                }
-            }
+        //public bool IsCategoryCyclicReference(Category category)
+        //{
+        //    bool result = false;
+        //    if (!string.IsNullOrWhiteSpace(category.ParentId))
+        //    {
+        //        if (category.Id == category.ParentId)
+        //        {
+        //            result = true;
+        //        }
+        //        else
+        //        {
+        //            TreeNodeCollection<Category> tree = categoryDao.Tree(category.Scope);
+        //            Tree<Category>.PreorderTraverse(tree,
+        //                (e) =>
+        //                {
+        //                    if (e.Data.Id == category.ParentId)
+        //                    {
+        //                        TreeNode<Category> parent = e;
+        //                        while (parent != null)
+        //                        {
+        //                            if (category.Id == parent.Data.Id)
+        //                            {
+        //                                result = true;
+        //                            }
+        //                            parent = parent.Parent;
+        //                        }
+        //                        return true;
+        //                    }
+        //                    else
+        //                    {
+        //                        return false;
+        //                    }
+        //                });
+        //        }
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
     }
 }
