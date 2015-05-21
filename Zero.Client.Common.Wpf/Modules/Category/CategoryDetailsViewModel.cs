@@ -18,53 +18,72 @@ namespace Zero.Client.Common.Wpf
     {
 
         private readonly ICategoryService categoryService;
-        private readonly IEventAggregator eventAggregator;
         private readonly CategoryListViewModel summary;
-
         private CategoryViewModel current;
-        public CategoryViewModel Current
+
+        private string name;
+        public string Name
         {
-            get { return this.current; }
+            get { return name; }
             set
             {
-                if (current != value)
+                if (name != value)
                 {
-                    current = value;
-                    NotifyOfPropertyChange(() => Current);
+                    name = value;
+                    NotifyOfPropertyChange(() => Name);
                 }
             }
         }
 
-        public CategoryDetailsViewModel(ICategoryService categoryService, 
-            IEventAggregator eventAggregator,
+        private string desc;
+        public string Desc
+        {
+            get { return desc; }
+            set
+            {
+                if (desc != value)
+                {
+                    desc = value;
+                    NotifyOfPropertyChange(() => Desc);
+                }
+            }
+        }
+
+        public CategoryDetailsViewModel(ICategoryService categoryService,
             CategoryListViewModel summary,
             CategoryViewModel current)
         {
             this.categoryService = categoryService;
-            this.eventAggregator = eventAggregator;
             this.summary = summary;
             this.current = current;
+
+            this.Name = this.current.Model.Name;
+            this.Desc = this.current.Model.Desc;
         }
 
         public void Save()
         {
-            Category category = this.Current.Model;
+            Category category = this.current.Model;
             if (string.IsNullOrWhiteSpace(category.Id))
             {
                 category.Id = Guid.NewGuid().ToString();
-                category.Save(null,
+                category.Name = Name;
+                category.Desc = Desc;
+                var categories = this.categoryService.ListCategory(category.Scope);
+                var tree = Category.BuildTree(categories);
+                category.Save(tree,
                     (e) => 
                     {
                         this.categoryService.SaveCategoryAsync(e)
                             .ExcuteOnUIThread(
                             () =>
                             {
+                                this.current.Name = name;
                                 this.summary.RefreshWhenSave(this.current);
-                                this.eventAggregator.PublishOnUIThread(new CategoryEditEvent(CategoryEditAction.Save, this.current));
                                 if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                                 {
-                                    CategoryViewModel nextViewModel = this.Current.Next();
-                                    this.Current = nextViewModel;
+                                    CategoryViewModel nextViewModel = this.current.Next();
+                                    this.current = nextViewModel;
                                 }
                                 else
                                 {
@@ -80,19 +99,21 @@ namespace Zero.Client.Common.Wpf
             }
             else
             {
-                //category.Update(
-                //    (e) =>
-                //    {
-                //        this.categoryService.UpdateCategoryAsync(e)
-                //            .ExcuteOnUIThread(
-                //            () =>
-                //            {
-                //            },
-                //            (ex) =>
-                //            {
-                //                MessageBox.Show("更新失败: " + ex.Message);
-                //            });
-                //    });
+                category.ChangeNameAndDesc(Name, Desc,
+                    (e) =>
+                    {
+                        this.categoryService.UpdateCategoryAsync(e)
+                            .ExcuteOnUIThread(
+                            () =>
+                            {
+                                this.current.Name = name;
+                                this.summary.ClearDetailWhenCancel();
+                            },
+                            (ex) =>
+                            {
+                                MessageBox.Show("更新失败: " + ex.Message);
+                            });
+                    });
             }
         }
 

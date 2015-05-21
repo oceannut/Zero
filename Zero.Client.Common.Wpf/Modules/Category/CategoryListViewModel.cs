@@ -12,6 +12,7 @@ using Nega.WpfCommon;
 
 using Zero.Domain;
 using Zero.BLL;
+using Nega.Common;
 
 namespace Zero.Client.Common.Wpf
 {
@@ -20,10 +21,8 @@ namespace Zero.Client.Common.Wpf
     {
 
         private readonly ICategoryService categoryService;
-        private readonly IEventAggregator eventAggregator;
         private readonly int scope;
         private CategoryViewModel selectedItem;
-        //private CategoryViewModel newViewModel;
 
         private ObservableCollection<TreeNodeModel> categoryList;
         /// <summary>
@@ -43,11 +42,14 @@ namespace Zero.Client.Common.Wpf
         }
 
         public CategoryListViewModel(ICategoryService categoryService, 
-            IEventAggregator eventAggregator,
             int scope)
         {
+            if (categoryService == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             this.categoryService = categoryService;
-            this.eventAggregator = eventAggregator;
             this.scope = scope;
         }
 
@@ -58,11 +60,8 @@ namespace Zero.Client.Common.Wpf
 
         public void AddRootCategory()
         {
-            CategoryViewModel newViewModel = new CategoryViewModel();
-            newViewModel.Scope = this.scope;
-            newViewModel.Sequence = this.CategoryList.Count + 1;
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                this, newViewModel));
+            CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.CategoryList.Count + 1);
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, viewModel));
         }
 
         public void AddChildCategory()
@@ -73,12 +72,8 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            CategoryViewModel newViewModel = new CategoryViewModel();
-            newViewModel.Scope = this.scope;
-            newViewModel.Sequence = this.selectedItem.Children.Count + 1;
-            newViewModel.Parent = this.selectedItem;
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                this, newViewModel));
+            CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.selectedItem.Children.Count + 1, this.selectedItem.Model);
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, viewModel));
         }
 
         public void EditCategory()
@@ -89,8 +84,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator,
-                this, this.selectedItem));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, this.selectedItem));
         }
 
         public void RemoveCategory()
@@ -119,8 +113,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.eventAggregator, 
-                this, category));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, category));
         }
 
         public void Node_Drop(object sender, DragEventArgs e)
@@ -132,15 +125,17 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        internal void RefreshWhenSave(CategoryViewModel newViewModel)
+        internal void RefreshWhenSave(CategoryViewModel viewModel)
         {
-            if (this.selectedItem == null)
+            if (viewModel.Model.Parent == null)
             {
-                this.CategoryList.Add(newViewModel);
+                this.CategoryList.Add(viewModel);
             }
             else
             {
-                this.selectedItem.AddChild(newViewModel);
+                TreeNodeModel parent = Tree.Find(this.CategoryList,
+                            (e) => (e as CategoryViewModel).Model.Id == (viewModel as CategoryViewModel).Model.Parent.Id) as TreeNodeModel;
+                parent.AddChild(viewModel);
             }
         }
 

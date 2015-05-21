@@ -86,7 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Category\CategoryDetailsViewModel.cs" />
-    <Compile Include="Modules\Category\CategoryEditEvent.cs" />
     <Compile Include="Modules\Category\CategoryListViewModel.cs" />
     <Compile Include="Modules\Category\CategoryViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

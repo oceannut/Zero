@@ -22,85 +22,6 @@ namespace Zero.Client.Common.Wpf
             get { return model; }
         }
 
-        public string Code
-        {
-            get { return this.model.Code; }
-            set
-            {
-                if (this.model.Code != value)
-                {
-                    this.model.Code = value;
-                    OnPropertyChanged("Code");
-                }
-            }
-        }
-
-        public override string Name
-        {
-            get { return this.model.Name; }
-            set
-            {
-                if (this.model.Name != value)
-                {
-                    this.model.Name = value;
-                    OnPropertyChanged("Name");
-                }
-            }
-        }
-
-        public string Desc
-        {
-            get { return this.model.Desc; }
-            set
-            {
-                if (this.model.Desc != value)
-                {
-                    this.model.Desc = value;
-                    OnPropertyChanged("Desc");
-                }
-            }
-        }
-
-        public long Sequence
-        {
-            get { return this.model.Sequence; }
-            set
-            {
-                if (this.model.Sequence != value)
-                {
-                    this.model.Sequence = value;
-                    OnPropertyChanged("Sequence");
-                }
-            }
-        }
-
-        public override TreeNodeModel Parent
-        {
-            get
-            {
-                return base.Parent;
-            }
-            set
-            {
-                base.Parent = value;
-
-                if (base.Parent != null)
-                {
-                    this.model.Parent = (base.Parent as CategoryViewModel).Model;
-                }
-                else
-                {
-                    this.model.Parent = null;
-                }
-            }
-        }
-
-        public int Scope
-        {
-            get { return this.model.Scope; }
-            set { this.model.Scope = value; }
-        }
-
         public CategoryViewModel() :
             this(new Category())
         {
@@ -115,14 +36,29 @@ namespace Zero.Client.Common.Wpf
             }
 
             this.model = model;
+            this.Name = model.Name;
+        }
+
+        public CategoryViewModel(int scope, int sequence)
+            : this()
+        {
+            this.model.Scope = scope;
+            this.model.Sequence = sequence;
+        }
+
+        public CategoryViewModel(int scope, int sequence, 
+            Category parent)
+            : this(scope, sequence)
+        {
+            this.model.Parent = parent;
         }
 
         internal CategoryViewModel Next()
         {
             CategoryViewModel nextViewModel = new CategoryViewModel();
-            nextViewModel.Scope = this.Scope;
-            nextViewModel.Sequence = this.Sequence + 1;
-            nextViewModel.Parent = this.Parent;
+            nextViewModel.Model.Scope = this.model.Scope;
+            nextViewModel.Model.Sequence = this.model.Sequence + 1;
+            nextViewModel.Model.Parent = this.model.Parent;
 
             return nextViewModel;
         }
