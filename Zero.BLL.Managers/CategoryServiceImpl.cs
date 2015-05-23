@@ -51,17 +51,17 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public void DeleteCategory(string id)
+        public void DeleteCategory(ICollection<Category> categories)
         {
-            categoryDao.Delete(id);
+            categoryDao.Delete(categories);
         }
 
-        public Task DeleteCategoryAsync(string id)
+        public Task DeleteCategoryAsync(ICollection<Category> categories)
         {
             return Task.Factory.StartNew(
                 () =>
                 {
-                    DeleteCategory(id);
+                    DeleteCategory(categories);
                 });
         }
 
@@ -107,12 +107,12 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public IEnumerable<Category> ListCategory(int scope, string parentId = null, bool? isDisused = null)
+        public IEnumerable<Category> ListCategory(int? scope, string parentId = null, bool? isDisused = null)
         {
             return categoryDao.List(scope, parentId, isDisused);
         }
 
-        public Task<IEnumerable<Category>> ListCategoryAsync(int scope, string parentId = null, bool? isDisused = null)
+        public Task<IEnumerable<Category>> ListCategoryAsync(int? scope, string parentId = null, bool? isDisused = null)
         {
             return Task.Factory.StartNew<IEnumerable<Category>>(
                 () =>
@@ -121,44 +121,19 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        //public bool IsCategoryCyclicReference(Category category)
-        //{
-        //    bool result = false;
-        //    if (!string.IsNullOrWhiteSpace(category.ParentId))
-        //    {
-        //        if (category.Id == category.ParentId)
-        //        {
-        //            result = true;
-        //        }
-        //        else
-        //        {
-        //            TreeNodeCollection<Category> tree = categoryDao.Tree(category.Scope);
-        //            Tree<Category>.PreorderTraverse(tree,
-        //                (e) =>
-        //                {
-        //                    if (e.Data.Id == category.ParentId)
-        //                    {
-        //                        TreeNode<Category> parent = e;
-        //                        while (parent != null)
-        //                        {
-        //                            if (category.Id == parent.Data.Id)
-        //                            {
-        //                                result = true;
-        //                            }
-        //                            parent = parent.Parent;
-        //                        }
-        //                        return true;
-        //                    }
-        //                    else
-        //                    {
-        //                        return false;
-        //                    }
-        //                });
-        //        }
-        //    }
+        public TreeNodeCollection<Category> TreeCategory(int scope)
+        {
+            return categoryDao.Tree(scope);
+        }
 
-        //    return result;
-        //}
+        public Task<TreeNodeCollection<Category>> TreeCategoryAsync(int scope)
+        {
+            return Task.Factory.StartNew<TreeNodeCollection<Category>>(
+                () =>
+                {
+                    return TreeCategory(scope);
+                });
+        }
 
     }
 }

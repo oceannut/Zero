@@ -98,6 +98,52 @@ namespace Zero.Client.Common.Wpf
             {
                 return;
             }
+
+            Category category = this.selectedItem.Model;
+            this.categoryService.TreeCategoryAsync(category.Scope)
+                .ContinueWith((task) =>
+                {
+                    if (task.Exception == null)
+                    {
+                        category.Delete(task.Result,
+                            (e) =>
+                            {
+                                this.categoryService.DeleteCategoryAsync(e)
+                                    .ExcuteOnUIThread(
+                                        () =>
+                                        {
+                                            Tree.PostorderTraverse(this.selectedItem,
+                                                (node) =>
+                                                {
+                                                    CategoryViewModel viewModel = node as CategoryViewModel;
+                                                    if (viewModel.Children != null && viewModel.Children.Count > 0)
+                                                    {
+                                                        for (int i = viewModel.Children.Count - 1; i >= 0; i--)
+                                                        {
+                                                            viewModel.RemoveChildAt(i);
+                                                        }
+                                                    }
+                                                });
+                                            if (this.selectedItem.Parent == null)
+                                            {
+                                                this.CategoryList.Remove(this.selectedItem);
+                                            }
+                                            else
+                                            {
+                                                this.selectedItem.Parent.RemoveChild(this.selectedItem);
+                                            }
+                                        },
+                                        (ex) =>
+                                        {
+                                            MessageBox.Show("删除失败: " + ex.Message);
+                                        });
+                            });
+                    }
+                    else
+                    {
+                        MessageBox.Show("加载类型树失败: " + task.Exception);
+                    }
+                });
         }
 
         public void RefreshCategory()
@@ -139,7 +185,7 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        internal void ClearDetailWhenCancel()
+        internal void ClearDetail()
         {
              for (int i = this.Items.Count - 1; i >= 0; i--)
              {
@@ -156,7 +202,7 @@ namespace Zero.Client.Common.Wpf
 
         private void LoadCategoryList()
         {
-            CategoryViewModel.ClearTree(this.CategoryList);
+            CategoryViewModel.CleanupTree(this.CategoryList);
             this.categoryService.ListCategoryAsync(this.scope)
                 .ExcuteOnUIThread<IEnumerable<Category>>(
                     (e) =>

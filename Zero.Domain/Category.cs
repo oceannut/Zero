@@ -276,13 +276,13 @@ namespace Zero.Domain
         /// <param name="tree">类型树。</param>
         /// <param name="action">删除操作。</param>
         public void Delete(TreeNodeCollection<Category> tree,
-            Action<IEnumerable<Category>> action)
+            Action<ICollection<Category>> action)
         {
             IEnumerable<Category> categories = GetSelfAndDescendants(tree, false);
 
             if (action != null)
             {
-                action(categories);
+                action(categories.ToArray());
             }
         }
 
@@ -494,6 +494,14 @@ namespace Zero.Domain
             }
 
             return tree;
+        }
+
+        public static void CleanupTree(TreeNodeCollection<Category> tree)
+        {
+            if (tree != null && tree.Count > 0)
+            {
+                tree.Clear();
+            }
         }
 
         public static void SortTree(TreeNodeCollection<Category> tree)

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Nega.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Zero.Domain;
 
 namespace Zero.BLL
@@ -20,9 +20,9 @@ namespace Zero.BLL
 
         Task UpdateCategoryAsync(Category category);
 
-        void DeleteCategory(string id);
+        void DeleteCategory(ICollection<Category> categories);
 
-        Task DeleteCategoryAsync(string id);
+        Task DeleteCategoryAsync(ICollection<Category> categories);
 
         Category GetCategoryByCode(int scope, string code, bool? includeParent = null);
 
@@ -36,11 +36,13 @@ namespace Zero.BLL
 
         Task<int> CountCategoryAsync(int? scope = null, string parentId = null, bool? isDisused = null);
 
-        IEnumerable<Category> ListCategory(int scope, string parentId = null, bool? isDisused = null);
+        IEnumerable<Category> ListCategory(int? scope, string parentId = null, bool? isDisused = null);
 
-        Task<IEnumerable<Category>> ListCategoryAsync(int scope, string parentId = null, bool? isDisused = null);
+        Task<IEnumerable<Category>> ListCategoryAsync(int? scope, string parentId = null, bool? isDisused = null);
 
-        //bool IsCategoryCyclicReference(Category category);
+        TreeNodeCollection<Category> TreeCategory(int scope);
+
+        Task<TreeNodeCollection<Category>> TreeCategoryAsync(int scope);
 
     }
 

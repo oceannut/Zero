@@ -221,9 +221,20 @@ namespace Zero.DAL.Caching
             return result;
         }
 
+        public TreeNodeCollection<Category> Tree(int scope)
+        {
+            TreeNodeCollection<Category> tree = this.cache.Get(scope.ToString()) as TreeNodeCollection<Category>;
+            if (tree == null)
+            {
+                tree = dao.Tree(scope);
+                this.cache.Add(scope.ToString(), tree);
+            }
+
+            return tree;
+        }
+
         public void Initialize()
         {
-            this.cache.Clear();
             IEnumerable<Category> categories = this.dao.List();
             if (categories != null && categories.Count() > 0)
             {
@@ -249,24 +260,18 @@ namespace Zero.DAL.Caching
 
         public void Destroy()
         {
-            this.cache.Dispose();
+            foreach (var item in this.cache.Items)
+            {
+                TreeNodeCollection<Category> tree = item.Value as TreeNodeCollection<Category>;
+                Category.CleanupTree(tree);
+            }
+            this.cache.Clear();
         }
 
         public void Dispose()
         {
             Destroy();
-        }
-
-        private TreeNodeCollection<Category> Tree(int scope)
-        {
-            TreeNodeCollection<Category> tree = this.cache.Get(scope.ToString()) as TreeNodeCollection<Category>;
-            if (tree == null)
-            {
-                tree = new TreeNodeCollection<Category>();
-                this.cache.Add(scope.ToString(), tree);
-            }
-
-            return tree;
+            this.cache.Dispose();
         }
 
         private void AttachToParent(TreeNodeCollection<Category> tree, TreeNode<Category> parent, TreeNode<Category> node)

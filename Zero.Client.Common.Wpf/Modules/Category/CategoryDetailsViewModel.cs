@@ -69,33 +69,41 @@ namespace Zero.Client.Common.Wpf
                 category.Id = Guid.NewGuid().ToString();
                 category.Name = Name;
                 category.Desc = Desc;
-                var categories = this.categoryService.ListCategory(category.Scope);
-                var tree = Category.BuildTree(categories);
-                category.Save(tree,
-                    (e) => 
+                this.categoryService.TreeCategoryAsync(category.Scope)
+                    .ContinueWith((task) =>
                     {
-                        this.categoryService.SaveCategoryAsync(e)
-                            .ExcuteOnUIThread(
-                            () =>
-                            {
-                                this.current.Name = name;
-                                this.summary.RefreshWhenSave(this.current);
-                                if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        if (task.Exception == null)
+                        {
+                            category.Save(task.Result,
+                                (e) =>
                                 {
-                                    CategoryViewModel nextViewModel = this.current.Next();
-                                    this.current = nextViewModel;
-                                }
-                                else
-                                {
-                                    this.summary.ClearDetailWhenCancel();
-                                }
-                            },
-                            (ex) =>
-                            {
-                                MessageBox.Show("保存失败: " + ex.Message);
-                            });
+                                    this.categoryService.SaveCategoryAsync(e)
+                                        .ExcuteOnUIThread(
+                                        () =>
+                                        {
+                                            this.current.Name = name;
+                                            this.summary.RefreshWhenSave(this.current);
+                                            if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                            {
+                                                CategoryViewModel nextViewModel = this.current.Next();
+                                                this.current = nextViewModel;
+                                            }
+                                            else
+                                            {
+                                                this.summary.ClearDetail();
+                                            }
+                                        },
+                                        (ex) =>
+                                        {
+                                            MessageBox.Show("保存失败: " + ex.Message);
+                                        });
+                                });
+                        }
+                        else
+                        {
+                            MessageBox.Show("加载类型树失败: " + task.Exception);
+                        }
                     });
-                
             }
             else
             {
@@ -107,7 +115,7 @@ namespace Zero.Client.Common.Wpf
                             () =>
                             {
                                 this.current.Name = name;
-                                this.summary.ClearDetailWhenCancel();
+                                this.summary.ClearDetail();
                             },
                             (ex) =>
                             {
@@ -119,7 +127,7 @@ namespace Zero.Client.Common.Wpf
 
         public void Cancel()
         {
-            this.summary.ClearDetailWhenCancel();
+            this.summary.ClearDetail();
         }
 
     }

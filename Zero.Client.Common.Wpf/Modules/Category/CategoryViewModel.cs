@@ -103,7 +103,7 @@ namespace Zero.Client.Common.Wpf
             return tree;
         }
 
-        public static void ClearTree(ObservableCollection<TreeNodeModel> tree)
+        public static void CleanupTree(ObservableCollection<TreeNodeModel> tree)
         {
             if (tree != null && tree.Count > 0)
             {
@@ -115,7 +115,7 @@ namespace Zero.Client.Common.Wpf
                         {
                             for (int i = current.Children.Count - 1; i >= 0; i--)
                             {
-                                current.RemoveChild(current.Children[i]);
+                                current.RemoveChildAt(i);
                             }
                         }
                     });
