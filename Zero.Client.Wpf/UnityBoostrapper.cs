@@ -16,8 +16,10 @@ using Zero.Domain;
 using Zero.DAL;
 using Zero.DAL.EF;
 using Zero.DAL.Caching;
+using Zero.DAL.Rest;
 using Zero.BLL;
 using Zero.BLL.Impl;
+using Zero.Client.Common;
 using Zero.Client.Common.Wpf;
 
 namespace Zero.Client.Wpf
@@ -27,6 +29,7 @@ namespace Zero.Client.Wpf
     {
 
         private const string connectionString = "connectionString";
+        private const string url = "http://localhost:49938";
 
         private IUnityContainer container;
         private readonly List<IModule> modules = new List<IModule>();
@@ -74,21 +77,30 @@ namespace Zero.Client.Wpf
             this.container.RegisterType<CacheManager>("PermanentCacheManager", new ContainerControlledLifetimeManager(),
                 new InjectionConstructor(this.container.Resolve<ICacheFactory>("PermanentCacheFactory")));
 
-            this.container.RegisterType<CategoryDao>("CategoryDao", new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
-            this.container.RegisterType<ICategoryDao, CategoryCache>(new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(this.container.Resolve<CategoryDao>("CategoryDao"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
+            //this.container.RegisterType<CategoryDao>("CategoryDao", new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+            this.container.RegisterType<ICategoryDao, CategoryWebClient>("CategoryWebClient", new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
 
-            (this.container.Resolve<CategoryCache>() as IModule).Initialize();
+            //this.container.RegisterType<ICategoryDao, CategoryCache>(new ContainerControlledLifetimeManager(),
+            //    new InjectionConstructor(this.container.Resolve<CategoryDao>("CategoryDao"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
+            //this.container.RegisterType<ICategoryDao, CategoryCache>("CategoryCache", new ContainerControlledLifetimeManager(),
+            //    new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryWebClient"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
 
-            this.container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager());
+            //(this.container.Resolve<CategoryCache>() as IModule).Initialize();
+
+            this.container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryWebClient")));
+
+            this.container.RegisterType<ICategoryClientService, DesktopCategoryClientService>("DesktopCategoryClientService", new ContainerControlledLifetimeManager());
+            this.container.RegisterType<ICategoryClientService, CategoryClientServiceImpl>("CategoryClientService", new ContainerControlledLifetimeManager());
 
             this.container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
             this.container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
 
-            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel1", new InjectionConstructor(this.container.Resolve<ICategoryService>(), 1));
-            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel2", new InjectionConstructor(this.container.Resolve<ICategoryService>(), 2));
+            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel1",
+                new InjectionConstructor(this.container.Resolve<ICategoryService>(), this.container.Resolve<ICategoryClientService>("CategoryClientService"), 1));
+            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel2",
+                new InjectionConstructor(this.container.Resolve<ICategoryService>(), this.container.Resolve<ICategoryClientService>("CategoryClientService"), 2));
             
-
             this.container.RegisterType<IModuleContainer, SimpleModuleContainer>(new ContainerControlledLifetimeManager());
 
             this.container.RegisterType<ShellViewModel>(new InjectionProperty("Navs",

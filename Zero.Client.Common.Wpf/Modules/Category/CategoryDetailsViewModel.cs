@@ -11,6 +11,7 @@ using Nega.WpfCommon;
 
 using Zero.BLL;
 using Zero.Domain;
+using Zero.Client.Common;
 
 namespace Zero.Client.Common.Wpf
 {
@@ -18,6 +19,7 @@ namespace Zero.Client.Common.Wpf
     {
 
         private readonly ICategoryService categoryService;
+        private readonly ICategoryClientService categoryClientService;
         private readonly CategoryListViewModel summary;
         private CategoryViewModel current;
 
@@ -50,10 +52,12 @@ namespace Zero.Client.Common.Wpf
         }
 
         public CategoryDetailsViewModel(ICategoryService categoryService,
+            ICategoryClientService categoryClientService,
             CategoryListViewModel summary,
             CategoryViewModel current)
         {
             this.categoryService = categoryService;
+            this.categoryClientService = categoryClientService;
             this.summary = summary;
             this.current = current;
 
@@ -69,40 +73,25 @@ namespace Zero.Client.Common.Wpf
                 category.Id = Guid.NewGuid().ToString();
                 category.Name = Name;
                 category.Desc = Desc;
-                this.categoryService.TreeCategoryAsync(category.Scope)
-                    .ContinueWith((task) =>
+
+                this.categoryClientService.SaveCategory(category,
+                    (result) =>
                     {
-                        if (task.Exception == null)
+                        this.current.Name = result.Name;
+                        this.summary.RefreshWhenSave(this.current);
+                        if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         {
-                            category.Save(task.Result,
-                                (e) =>
-                                {
-                                    this.categoryService.SaveCategoryAsync(e)
-                                        .ExcuteOnUIThread(
-                                        () =>
-                                        {
-                                            this.current.Name = name;
-                                            this.summary.RefreshWhenSave(this.current);
-                                            if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                                            {
-                                                CategoryViewModel nextViewModel = this.current.Next();
-                                                this.current = nextViewModel;
-                                            }
-                                            else
-                                            {
-                                                this.summary.ClearDetail();
-                                            }
-                                        },
-                                        (ex) =>
-                                        {
-                                            MessageBox.Show("保存失败: " + ex.Message);
-                                        });
-                                });
+                            CategoryViewModel nextViewModel = this.current.Next();
+                            this.current = nextViewModel;
                         }
                         else
                         {
-                            MessageBox.Show("加载类型树失败: " + task.Exception);
+                            this.summary.ClearDetail();
                         }
+                    },
+                    (ex) =>
+                    {
+                        MessageBox.Show("保存失败: " + ex.Message);
                     });
             }
             else
@@ -124,6 +113,70 @@ namespace Zero.Client.Common.Wpf
                     });
             }
         }
+
+        //public void Save()
+        //{
+        //    Category category = this.current.Model;
+        //    if (string.IsNullOrWhiteSpace(category.Id))
+        //    {
+        //        category.Id = Guid.NewGuid().ToString();
+        //        category.Name = Name;
+        //        category.Desc = Desc;
+        //        this.categoryService.TreeCategoryAsync(category.Scope)
+        //            .ContinueWith((task) =>
+        //            {
+        //                if (task.Exception == null)
+        //                {
+        //                    category.Save(task.Result,
+        //                        (e) =>
+        //                        {
+        //                            this.categoryService.SaveCategoryAsync(e)
+        //                                .ExcuteOnUIThread(
+        //                                () =>
+        //                                {
+        //                                    this.current.Name = name;
+        //                                    this.summary.RefreshWhenSave(this.current);
+        //                                    if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        //                                    {
+        //                                        CategoryViewModel nextViewModel = this.current.Next();
+        //                                        this.current = nextViewModel;
+        //                                    }
+        //                                    else
+        //                                    {
+        //                                        this.summary.ClearDetail();
+        //                                    }
+        //                                },
+        //                                (ex) =>
+        //                                {
+        //                                    MessageBox.Show("保存失败: " + ex.Message);
+        //                                });
+        //                        });
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("加载类型树失败: " + task.Exception);
+        //                }
+        //            });
+        //    }
+        //    else
+        //    {
+        //        category.ChangeNameAndDesc(Name, Desc,
+        //            (e) =>
+        //            {
+        //                this.categoryService.UpdateCategoryAsync(e)
+        //                    .ExcuteOnUIThread(
+        //                    () =>
+        //                    {
+        //                        this.current.Name = name;
+        //                        this.summary.ClearDetail();
+        //                    },
+        //                    (ex) =>
+        //                    {
+        //                        MessageBox.Show("更新失败: " + ex.Message);
+        //                    });
+        //            });
+        //    }
+        //}
 
         public void Cancel()
         {

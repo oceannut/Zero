@@ -20,13 +20,17 @@ namespace Zero.BLL
 
         Task UpdateCategoryAsync(Category category);
 
-        void DeleteCategory(ICollection<Category> categories);
+        void DeleteCategory(int scope, ICollection<string> idCol);
 
-        Task DeleteCategoryAsync(ICollection<Category> categories);
+        Task DeleteCategoryAsync(int scope, ICollection<string> idCol);
 
-        Category GetCategoryByCode(int scope, string code, bool? includeParent = null);
+        Category GetCategory(int scope, string id);
 
-        Task<Category> GetCategoryByCodeAsync(int scope, string code, bool? includeParent = null);
+        Task<Category> GetCategoryAsync(int scope, string id);
+
+        Category GetCategoryByCode(int scope, string code);
+
+        Task<Category> GetCategoryByCodeAsync(int scope, string code);
 
         bool IsCategoryCodeExisted(int scope, string code);
 

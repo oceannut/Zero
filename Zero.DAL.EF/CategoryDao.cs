@@ -61,6 +61,14 @@ namespace Zero.DAL.EF
             }
         }
 
+        public Category Get(int scope, string id)
+        {
+            using (CategoryDataContext context = new CategoryDataContext(connectionString))
+            {
+                return context.Categories.Find(id);
+            }
+        }
+
         public Category GetByCode(int scope, string code, bool? includeParent = null)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))

@@ -54,6 +54,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.WpfCommon", "..\Nega\N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Client.Common", "Zero.Client.Common\Zero.Client.Common.csproj", "{5B4E0E6E-9865-4EBF-A9C1-2B807EDFB345}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.Rest", "Zero.Service.Rest\Zero.Service.Rest.csproj", "{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.IISWASHost", "Zero.Service.IISWASHost\Zero.Service.IISWASHost.csproj", "{90F57DDE-EBB0-4503-A3D5-9486B955187A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.DAL.Rest", "Zero.DAL.Rest\Zero.DAL.Rest.csproj", "{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -204,6 +210,24 @@ Global
 		{5B4E0E6E-9865-4EBF-A9C1-2B807EDFB345}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B4E0E6E-9865-4EBF-A9C1-2B807EDFB345}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B4E0E6E-9865-4EBF-A9C1-2B807EDFB345}.Release|x64.ActiveCfg = Release|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4}.Release|x64.ActiveCfg = Release|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|x64.ActiveCfg = Release|Any CPU
+		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -221,6 +245,8 @@ Global
 		{F8D21E26-CDFA-41C7-8669-7510D3AEE353} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
 		{C5A090F2-6C50-4FA5-9A7D-297D38F918EC} = {F5E0CDD5-E702-446A-9708-60A931CB062A}
 		{5B4E0E6E-9865-4EBF-A9C1-2B807EDFB345} = {9CF2D916-3BF7-4D89-BB9B-39840BDFDE74}
+		{43FB66D6-B1ED-4243-AD80-E0F3AFAFB2B4} = {9D5B351F-A51D-408E-99FC-30C0FE175728}
+		{90F57DDE-EBB0-4503-A3D5-9486B955187A} = {9D5B351F-A51D-408E-99FC-30C0FE175728}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.Integration.WCF.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.Integration.WPF.6.0.1304.0\lib\NET45

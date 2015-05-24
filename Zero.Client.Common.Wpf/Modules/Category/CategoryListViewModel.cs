@@ -21,6 +21,7 @@ namespace Zero.Client.Common.Wpf
     {
 
         private readonly ICategoryService categoryService;
+        private readonly ICategoryClientService categoryClientService;
         private readonly int scope;
         private CategoryViewModel selectedItem;
 
@@ -42,6 +43,7 @@ namespace Zero.Client.Common.Wpf
         }
 
         public CategoryListViewModel(ICategoryService categoryService, 
+            ICategoryClientService categoryClientService,
             int scope)
         {
             if (categoryService == null)
@@ -50,6 +52,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             this.categoryService = categoryService;
+            this.categoryClientService = categoryClientService;
             this.scope = scope;
         }
 
@@ -60,8 +63,9 @@ namespace Zero.Client.Common.Wpf
 
         public void AddRootCategory()
         {
-            CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.CategoryList.Count + 1);
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, viewModel));
+            int sequence = this.CategoryList == null ? 1 : this.CategoryList.Count + 1;
+            CategoryViewModel viewModel = new CategoryViewModel(this.scope, sequence);
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, viewModel));
         }
 
         public void AddChildCategory()
@@ -73,7 +77,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.selectedItem.Children.Count + 1, this.selectedItem.Model);
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, viewModel));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, viewModel));
         }
 
         public void EditCategory()
@@ -84,7 +88,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, this.selectedItem));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, this.selectedItem));
         }
 
         public void RemoveCategory()
@@ -108,7 +112,7 @@ namespace Zero.Client.Common.Wpf
                         category.Delete(task.Result,
                             (e) =>
                             {
-                                this.categoryService.DeleteCategoryAsync(e)
+                                this.categoryService.DeleteCategoryAsync(category.Scope, (from item in e select item.Id).ToArray())
                                     .ExcuteOnUIThread(
                                         () =>
                                         {
@@ -159,7 +163,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this, category));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, category));
         }
 
         public void Node_Drop(object sender, DragEventArgs e)

@@ -39,7 +39,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\Impl\CategoryClientServiceImpl.cs" />
+    <Compile Include="Services\Impl\DesktopCategoryClientService.cs" />
+    <Compile Include="Services\ICategoryClientService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">
+      <Project>{671f50a2-0a0b-44b5-85a7-4212eb3ef1f3}</Project>
+      <Name>Nega.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.BLL\Zero.BLL.csproj">
+      <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>
+      <Name>Zero.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.Domain\Zero.Domain.csproj">
+      <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
+      <Name>Zero.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

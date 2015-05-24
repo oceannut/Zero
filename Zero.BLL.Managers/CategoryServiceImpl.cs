@@ -25,6 +25,10 @@ namespace Zero.BLL.Impl
 
         public void SaveCategory(Category category)
         {
+            if (category == null)
+            {
+                throw new ArgumentNullException();
+            }
             categoryDao.Save(category);
         }
 
@@ -39,6 +43,10 @@ namespace Zero.BLL.Impl
 
         public void UpdateCategory(Category category)
         {
+            if (category == null)
+            {
+                throw new ArgumentNullException();
+            }
             categoryDao.Update(category);
         }
 
@@ -51,31 +59,58 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public void DeleteCategory(ICollection<Category> categories)
+        public void DeleteCategory(int scope, ICollection<string> idCol)
         {
-            categoryDao.Delete(categories);
+            if (idCol == null || idCol.Count == 0)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var categories = ListCategory(scope);
+            if (categories != null && categories.Count() > 0)
+            {
+                var deleteList = categories.Where(e => idCol.Contains(e.Id));
+                if (deleteList != null && deleteList.Count() > 0)
+                {
+                    categoryDao.Delete(deleteList.ToArray());
+                }
+            }
         }
 
-        public Task DeleteCategoryAsync(ICollection<Category> categories)
+        public Task DeleteCategoryAsync(int scope, ICollection<string> idCol)
         {
             return Task.Factory.StartNew(
                 () =>
                 {
-                    DeleteCategory(categories);
+                    DeleteCategory(scope, idCol);
                 });
         }
 
-        public Category GetCategoryByCode(int scope, string code, bool? includeParent = null)
+        public Category GetCategory(int scope, string id)
         {
-            return categoryDao.GetByCode(scope, code, includeParent);
+            return categoryDao.Get(scope, id);
         }
 
-        public Task<Category> GetCategoryByCodeAsync(int scope, string code, bool? includeParent = null)
+        public Task<Category> GetCategoryAsync(int scope, string id)
+        {
+            return Task.Factory.StartNew(
+                () =>
+                {
+                    return GetCategory(scope, id);
+                });
+        }
+
+        public Category GetCategoryByCode(int scope, string code)
+        {
+            return categoryDao.GetByCode(scope, code, true);
+        }
+
+        public Task<Category> GetCategoryByCodeAsync(int scope, string code)
         {
             return Task.Factory.StartNew<Category>(
                 () =>
                 {
-                    return GetCategoryByCode(scope, code, includeParent);
+                    return GetCategoryByCode(scope, code);
                 });
         }
 
@@ -134,6 +169,7 @@ namespace Zero.BLL.Impl
                     return TreeCategory(scope);
                 });
         }
+
 
     }
 }

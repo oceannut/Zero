@@ -15,14 +15,17 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 
-using Nega.WcfUnity;
+using Nega.Common;
 using Nega.Entlib;
+using Nega.Modularity;
+using Nega.WcfUnity;
 
 using Zero.Service.Rest;
 using Zero.BLL;
 using Zero.BLL.Impl;
 using Zero.DAL;
 using Zero.DAL.EF;
+using Zero.DAL.Caching;
 
 namespace Zero.Service.IISWASHost
 {
@@ -65,21 +68,39 @@ namespace Zero.Service.IISWASHost
 
             #region DAL
 
-            container.RegisterType<IUserDao, UserDao>(new InjectionConstructor(connectionString));
-            container.RegisterType<IRoleDao, RoleDao>(new InjectionConstructor(connectionString));
+            container.RegisterType<ICacheFactory, PermanentCacheFactory>("PermanentCacheFactory", new ContainerControlledLifetimeManager());
+            container.RegisterType<CacheManager>("PermanentCacheManager", new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(container.Resolve<ICacheFactory>("PermanentCacheFactory")));
+
+            container.RegisterType<IUserDao, UserDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+            container.RegisterType<IRoleDao, RoleDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+
+            container.RegisterType<CategoryDao>("CategoryDao", new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+            container.RegisterType<ICategoryDao, CategoryCache>(new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(container.Resolve<CategoryDao>("CategoryDao"), container.Resolve<CacheManager>("PermanentCacheManager")));
+
+            (container.Resolve<CategoryCache>() as IModule).Initialize();
 
             #endregion
 
             #region BLL
 
-            container.RegisterType<IUserService, UserServiceImpl>(new Interceptor<InterfaceInterceptor>(),
+            container.RegisterType<IUserService, UserServiceImpl>(new ContainerControlledLifetimeManager(), 
+                new Interceptor<InterfaceInterceptor>(),
+                new InterceptionBehavior<PolicyInjectionBehavior>());
+            container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
+                new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
 
             #endregion
 
             #region Wcf
 
-            container.RegisterType<ISignService, SignService>(new Interceptor<TransparentProxyInterceptor>(),
+            container.RegisterType<ISignService, SignService>(
+                new Interceptor<TransparentProxyInterceptor>(),
+                new InterceptionBehavior<PolicyInjectionBehavior>());
+            container.RegisterType<ICategoryRestService, CategoryRestServiceImpl>(
+                new Interceptor<TransparentProxyInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
 
             #endregion

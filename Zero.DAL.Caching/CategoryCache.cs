@@ -130,6 +130,27 @@ namespace Zero.DAL.Caching
             return count;
         }
 
+        public Category Get(int scope, string id)
+        {
+            Category found = null;
+            TreeNodeCollection<Category> tree = Tree(scope);
+            Tree<Category>.PreorderTraverse(tree,
+                (e) =>
+                {
+                    if (id == e.Data.Id)
+                    {
+                        found = e.Data.ShallowClone();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                });
+
+            return found;
+        }
+
         public Category GetByCode(int scope, string code, bool? includeParent = null)
         {
             Category found = null;

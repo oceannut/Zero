@@ -129,11 +129,16 @@
       <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>
       <Name>Zero.BLL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Zero.Client.Common\Zero.Client.Common.csproj">
+      <Project>{5b4e0e6e-9865-4ebf-a9c1-2b807edfb345}</Project>
+      <Name>Zero.Client.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Zero.Domain\Zero.Domain.csproj">
       <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
       <Name>Zero.Domain</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="CategoryRestService.svc" />
     <Content Include="TestService.svc" />
     <Content Include="SignService.svc" />
     <Content Include="Web.config" />
@@ -132,6 +133,10 @@
       <Project>{1cecf82e-9452-4091-889a-abd10742fa49}</Project>
       <Name>Nega.Entlib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Nega\Nega.Modularity\Nega.Modularity.csproj">
+      <Project>{6f85c233-dfda-416e-9a84-31163fd5ab5e}</Project>
+      <Name>Nega.Modularity</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Nega\Nega.WcfUnity\Nega.WcfUnity.csproj">
       <Project>{7d13cde7-115d-42a8-91e3-634adfae36b6}</Project>
       <Name>Nega.WcfUnity</Name>
@@ -144,6 +149,10 @@
       <Project>{eeba284c-09e6-4b8a-8eb5-83e259c79516}</Project>
       <Name>Zero.BLL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Zero.DAL.Caching\Zero.DAL.Caching.csproj">
+      <Project>{1b6d8ebb-ce32-4531-99da-69784a9f3a50}</Project>
+      <Name>Zero.DAL.Caching</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Zero.DAL.EF\Zero.DAL.EF.csproj">
       <Project>{fc93a87c-8a49-4a5d-a493-2b2e0db75427}</Project>
       <Name>Zero.DAL.EF</Name>
@@ -155,6 +164,10 @@
     <ProjectReference Include="..\Zero.Domain\Zero.Domain.csproj">
       <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
       <Name>Zero.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.Service.Rest\Zero.Service.Rest.csproj">
+      <Project>{43fb66d6-b1ed-4243-ad80-e0f3afafb2b4}</Project>
+      <Name>Zero.Service.Rest</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -172,6 +172,10 @@
       <Project>{c1ef5c84-3ae7-4ad6-b35b-4303440c35be}</Project>
       <Name>Zero.Client.Common.Wpf</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Zero.Client.Common\Zero.Client.Common.csproj">
+      <Project>{5b4e0e6e-9865-4ebf-a9c1-2b807edfb345}</Project>
+      <Name>Zero.Client.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Zero.DAL.Caching\Zero.DAL.Caching.csproj">
       <Project>{1b6d8ebb-ce32-4531-99da-69784a9f3a50}</Project>
       <Name>Zero.DAL.Caching</Name>
@@ -179,6 +183,10 @@
     <ProjectReference Include="..\Zero.DAL.EF\Zero.DAL.EF.csproj">
       <Project>{fc93a87c-8a49-4a5d-a493-2b2e0db75427}</Project>
       <Name>Zero.DAL.EF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zero.DAL.Rest\Zero.DAL.Rest.csproj">
+      <Project>{7ec56040-d87c-4bd7-98bd-f7e21bb3cf4a}</Project>
+      <Name>Zero.DAL.Rest</Name>
     </ProjectReference>
     <ProjectReference Include="..\Zero.DAL\Zero.DAL.csproj">
       <Project>{457a80e9-95fd-436f-b035-67f721ac6bc2}</Project>
