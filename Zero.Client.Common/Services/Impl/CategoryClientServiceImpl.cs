@@ -24,6 +24,8 @@ namespace Zero.Client.Common
             Action<Category> success, 
             Action<Exception> failure)
         {
+            category.Creation = DateTime.Now;
+            category.Modification = DateTime.Now;
             this.categoryService.SaveCategoryAsync(category)
                 .ContinueWith((saveTask) =>
                 {

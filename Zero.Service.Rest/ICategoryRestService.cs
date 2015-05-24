@@ -17,7 +17,6 @@ namespace Zero.Service.Rest
 
         [OperationContract]
         [WebInvoke(Method = "POST",
-            BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "/category/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
@@ -25,7 +24,7 @@ namespace Zero.Service.Rest
 
         [OperationContract]
         [WebInvoke(Method = "PUT",
-            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "/category/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
@@ -39,13 +38,13 @@ namespace Zero.Service.Rest
 
         //[OperationContract]
         //[WebGet(UriTemplate = "/category/{id}/",
-        //    RequestFormat = WebMessageFormat.Json, 
+        //    RequestFormat = WebMessageFormat.Json,
         //    ResponseFormat = WebMessageFormat.Json)]
         //Category GetCategory(string id);
 
         [OperationContract]
         [WebGet(UriTemplate = "/category/{scope}/code/{code}/",
-            RequestFormat = WebMessageFormat.Json, 
+            RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         Category GetCategoryByCode(string scope, string code);
 

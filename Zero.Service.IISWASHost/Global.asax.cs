@@ -99,9 +99,7 @@ namespace Zero.Service.IISWASHost
             container.RegisterType<ISignService, SignService>(
                 new Interceptor<TransparentProxyInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
-            container.RegisterType<ICategoryRestService, CategoryRestServiceImpl>(
-                new Interceptor<TransparentProxyInterceptor>(),
-                new InterceptionBehavior<PolicyInjectionBehavior>());
+            container.RegisterType<ICategoryRestService, CategoryRestServiceImpl>();
 
             #endregion
 

@@ -82,13 +82,13 @@ namespace Zero.Client.Wpf
 
             //this.container.RegisterType<ICategoryDao, CategoryCache>(new ContainerControlledLifetimeManager(),
             //    new InjectionConstructor(this.container.Resolve<CategoryDao>("CategoryDao"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
-            //this.container.RegisterType<ICategoryDao, CategoryCache>("CategoryCache", new ContainerControlledLifetimeManager(),
-            //    new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryWebClient"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
+            this.container.RegisterType<ICategoryDao, CategoryCache>("CategoryCache", new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryWebClient"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
 
-            //(this.container.Resolve<CategoryCache>() as IModule).Initialize();
+            (this.container.Resolve<ICategoryDao>("CategoryCache") as IModule).Initialize();
 
             this.container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryWebClient")));
+                new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryCache")));
 
             this.container.RegisterType<ICategoryClientService, DesktopCategoryClientService>("DesktopCategoryClientService", new ContainerControlledLifetimeManager());
             this.container.RegisterType<ICategoryClientService, CategoryClientServiceImpl>("CategoryClientService", new ContainerControlledLifetimeManager());

@@ -65,7 +65,21 @@ namespace Zero.Service.Rest
 
         public Category[] ListCategories(string scope)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (scope == "0")
+                {
+                    return this.categoryService.ListCategory(null).ToArray();
+                }
+                else
+                {
+                    return this.categoryService.ListCategory(Convert.ToInt32(scope)).ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException(HttpStatusCode.InternalServerError);
+            }
         }
 
     }

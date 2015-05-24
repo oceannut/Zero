@@ -49,8 +49,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CategoryQueryService.cs__" />
-    <None Include="ICategoryQueryService.cs__" />
     <Compile Include="Impl\CategoryRestServiceImpl.cs" />
     <Compile Include="ICategoryRestService.cs" />
     <Compile Include="ISignService.cs" />

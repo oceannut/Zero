@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 using Nega.Common;
 using Nega.Data;
+using Nega.WcfCommon;
 
 using Zero.Domain;
 using Zero.DAL;
-using System.Runtime.Serialization.Json;
-using System.IO;
 
 namespace Zero.DAL.Rest
 {
@@ -19,46 +18,41 @@ namespace Zero.DAL.Rest
     public class CategoryWebClient : GenericDao<Category, string>, ICategoryDao
     {
 
-        private string url;
+        private readonly string url;
+        private readonly WebClient client;
 
         public CategoryWebClient(string url)
         {
             this.url = url;
+            this.client = new WebClient();
+            this.client.Encoding = Encoding.UTF8;
         }
 
         public override int Save(Category entity)
         {
-            int count = 0;
-
-            WebClient client = new WebClient();
-            client.Encoding = Encoding.UTF8;
-            client.UploadStringCompleted +=
-                (o, e) =>
-                {
-                    if (e.Error == null)
-                    {
-                        count = 1;
-                    }
-                    else
-                    {
-
-                    }
-                };
-            string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
-            entity.Creation = DateTime.Now;
-            entity.Modification = DateTime.Now;
-
-            string s = null;
-            DataContractJsonSerializer json = new DataContractJsonSerializer(entity.GetType());
-            using (MemoryStream stream = new MemoryStream())
+            try
             {
-                json.WriteObject(stream, entity);
-                s = Encoding.UTF8.GetString(stream.ToArray());
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
+                string s = JsonHelper.Serialize<Category>(entity);
+
+                this.client.UploadString(new Uri(serviceUrl), "POST", s);
+
+                return 1;
             }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
 
-            client.UploadStringAsync(new Uri(serviceUrl), s);
+        public override int Update(Category entity)
+        {
+            string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
+            string s = JsonHelper.Serialize<Category>(entity);
 
-            return count;
+            this.client.UploadString(new Uri(serviceUrl), "PUT", s);
+
+            return 1;
         }
 
 
@@ -84,12 +78,20 @@ namespace Zero.DAL.Rest
 
         public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
         {
-            throw new NotImplementedException();
+            Category[] categories = null;
+
+            string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope.HasValue ? scope.Value : 0);
+
+            string s = this.client.DownloadString(new Uri(serviceUrl));
+            categories = JsonHelper.Deserialize<Category[]>(s);
+
+            return categories;
         }
 
         public TreeNodeCollection<Category> Tree(int scope)
         {
-            throw new NotImplementedException();
+            var categories = List(scope);
+            return Category.BuildTree(categories);
         }
     }
 
