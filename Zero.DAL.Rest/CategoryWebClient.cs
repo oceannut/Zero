@@ -19,25 +19,27 @@ namespace Zero.DAL.Rest
     {
 
         private readonly string url;
-        private readonly WebClient client;
 
         public CategoryWebClient(string url)
         {
             this.url = url;
-            this.client = new WebClient();
-            this.client.Encoding = Encoding.UTF8;
         }
 
         public override int Save(Category entity)
         {
             try
             {
-                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
-                string s = JsonHelper.Serialize<Category>(entity);
+                using (WebClient client = new WebClient())
+                {
+                    client.Encoding = Encoding.UTF8;
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-                this.client.UploadString(new Uri(serviceUrl), "POST", s);
+                    string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
+                    string s = JsonHelper.Serialize<Category>(entity);
+                    client.UploadString(new Uri(serviceUrl), "POST", s);
 
-                return 1;
+                    return 1;
+                }
             }
             catch (Exception ex)
             {
@@ -47,12 +49,16 @@ namespace Zero.DAL.Rest
 
         public override int Update(Category entity)
         {
-            string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
-            string s = JsonHelper.Serialize<Category>(entity);
+            using (WebClient client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/", url);
+                string s = JsonHelper.Serialize<Category>(entity);
 
-            this.client.UploadString(new Uri(serviceUrl), "PUT", s);
+                client.UploadString(new Uri(serviceUrl), "PUT", s);
 
-            return 1;
+                return 1;
+            }
         }
 
 
@@ -78,14 +84,18 @@ namespace Zero.DAL.Rest
 
         public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
         {
-            Category[] categories = null;
+            using (WebClient client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                Category[] categories = null;
 
-            string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope.HasValue ? scope.Value : 0);
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope.HasValue ? scope.Value : 0);
 
-            string s = this.client.DownloadString(new Uri(serviceUrl));
-            categories = JsonHelper.Deserialize<Category[]>(s);
+                string s = client.DownloadString(new Uri(serviceUrl));
+                categories = JsonHelper.Deserialize<Category[]>(s);
 
-            return categories;
+                return categories;
+            }
         }
 
         public TreeNodeCollection<Category> Tree(int scope)

@@ -77,17 +77,22 @@ namespace Zero.Client.Common.Wpf
                 this.categoryClientService.SaveCategory(category,
                     (result) =>
                     {
-                        this.current.Name = result.Name;
-                        this.summary.RefreshWhenSave(this.current);
-                        if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            CategoryViewModel nextViewModel = this.current.Next();
-                            this.current = nextViewModel;
-                        }
-                        else
-                        {
-                            this.summary.ClearDetail();
-                        }
+                        UIThreadHelper.BeginInvoke(
+                            () =>
+                            {
+                                this.current.Name = result.Name;
+                                this.summary.RefreshWhenSave(this.current);
+                                if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                {
+                                    CategoryViewModel nextViewModel = this.current.Next();
+                                    this.current = nextViewModel;
+                                }
+                                else
+                                {
+                                    this.summary.ClearDetail();
+                                }
+                            });
+                        
                     },
                     (ex) =>
                     {
