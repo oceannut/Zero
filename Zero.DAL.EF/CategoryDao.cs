@@ -47,7 +47,20 @@ namespace Zero.DAL.EF
             }
         }
 
-        public override int Delete(ICollection<Category> col)
+        public override int Update(IEnumerable<Category> col)
+        {
+            using (CategoryDataContext context = new CategoryDataContext(connectionString))
+            {
+                foreach (Category entity in col)
+                {
+                    var entry = context.Entry<Category>(entity);
+                    entry.State = System.Data.Entity.EntityState.Modified;
+                }
+                return context.SaveChanges();
+            }
+        }
+
+        public override int Delete(IEnumerable<Category> col)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {

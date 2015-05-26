@@ -54,6 +54,40 @@ namespace Zero.Client.Common
                 });
         }
 
+
+        public void UpdateCategory(Category category, 
+            Action<Category> success, 
+            Action<Exception> failure)
+        {
+            this.categoryService.TreeCategoryAsync(category.Scope)
+                .ContinueWith((treeTask) =>
+                {
+                    if (treeTask.Exception == null)
+                    {
+                        category.Update(treeTask.Result,
+                            (e) =>
+                            {
+                                this.categoryService.UpdateCategoryAsync(e)
+                                    .ContinueWith((saveTask) =>
+                                    {
+                                        if (saveTask.Exception == null)
+                                        {
+                                            success(category);
+                                        }
+                                        else
+                                        {
+                                            failure(saveTask.Exception);
+                                        }
+                                    });
+                            });
+                    }
+                    else
+                    {
+                        failure(treeTask.Exception);
+                    }
+                });
+        }
+
     }
 
 }

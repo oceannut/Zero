@@ -20,9 +20,13 @@ namespace Zero.BLL
 
         Task UpdateCategoryAsync(Category category);
 
-        void DeleteCategory(int scope, ICollection<string> idCol);
+        void UpdateCategory(IEnumerable<Category> col);
 
-        Task DeleteCategoryAsync(int scope, ICollection<string> idCol);
+        Task UpdateCategoryAsync(IEnumerable<Category> col);
+
+        void DeleteCategory(int scope, IEnumerable<string> idCol);
+
+        Task DeleteCategoryAsync(int scope, IEnumerable<string> idCol);
 
         Category GetCategory(int scope, string id);
 

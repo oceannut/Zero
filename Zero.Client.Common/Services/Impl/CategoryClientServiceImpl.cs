@@ -40,6 +40,24 @@ namespace Zero.Client.Common
                 });
         }
 
+        public void UpdateCategory(Category category, 
+            Action<Category> success, 
+            Action<Exception> failure)
+        {
+            this.categoryService.UpdateCategoryAsync(category)
+                .ContinueWith((saveTask) =>
+                {
+                    if (saveTask.Exception == null)
+                    {
+                        success(category);
+                    }
+                    else
+                    {
+                        failure(saveTask.Exception);
+                    }
+                });
+        }
+
     }
 
 }

@@ -65,7 +65,7 @@ namespace Zero.Client.Common.Wpf
         {
             int sequence = this.CategoryList == null ? 1 : this.CategoryList.Count + 1;
             CategoryViewModel viewModel = new CategoryViewModel(this.scope, sequence);
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, viewModel));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, viewModel));
         }
 
         public void AddChildCategory()
@@ -77,7 +77,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.selectedItem.Children.Count + 1, this.selectedItem.Model);
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, viewModel));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, viewModel));
         }
 
         public void EditCategory()
@@ -88,7 +88,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, this.selectedItem));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, this.selectedItem));
         }
 
         public void RemoveCategory()
@@ -163,7 +163,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryService, this.categoryClientService, this, category));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, category));
         }
 
         public void Node_Drop(object sender, DragEventArgs e)

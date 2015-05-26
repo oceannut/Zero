@@ -16,6 +16,10 @@ namespace Zero.Client.Common
             Action<Category> success,
             Action<Exception> failure);
 
+        void UpdateCategory(Category category,
+            Action<Category> success,
+            Action<Exception> failure);
+
     }
 
 }

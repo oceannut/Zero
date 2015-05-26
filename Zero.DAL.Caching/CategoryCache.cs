@@ -98,7 +98,18 @@ namespace Zero.DAL.Caching
             return count;
         }
 
-        public override int Delete(ICollection<Category> col)
+        public override int Update(IEnumerable<Category> col)
+        {
+            int count = 0;
+            foreach (Category item in col)
+            {
+                count += Update(item);
+            }
+
+            return count;
+        }
+
+        public override int Delete(IEnumerable<Category> col)
         {
             int count = dao.Delete(col);
 

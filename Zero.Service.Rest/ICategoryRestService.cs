@@ -24,7 +24,6 @@ namespace Zero.Service.Rest
 
         [OperationContract]
         [WebInvoke(Method = "PUT",
-            BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "/category/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]

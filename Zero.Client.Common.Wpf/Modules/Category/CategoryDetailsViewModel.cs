@@ -18,7 +18,6 @@ namespace Zero.Client.Common.Wpf
     public class CategoryDetailsViewModel : Screen
     {
 
-        private readonly ICategoryService categoryService;
         private readonly ICategoryClientService categoryClientService;
         private readonly CategoryListViewModel summary;
         private CategoryViewModel current;
@@ -51,12 +50,10 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        public CategoryDetailsViewModel(ICategoryService categoryService,
-            ICategoryClientService categoryClientService,
+        public CategoryDetailsViewModel(ICategoryClientService categoryClientService,
             CategoryListViewModel summary,
             CategoryViewModel current)
         {
-            this.categoryService = categoryService;
             this.categoryClientService = categoryClientService;
             this.summary = summary;
             this.current = current;
@@ -68,12 +65,11 @@ namespace Zero.Client.Common.Wpf
         public void Save()
         {
             Category category = this.current.Model;
+            category.Name = Name;
+            category.Desc = Desc;
             if (string.IsNullOrWhiteSpace(category.Id))
             {
                 category.Id = Guid.NewGuid().ToString();
-                category.Name = Name;
-                category.Desc = Desc;
-
                 this.categoryClientService.SaveCategory(category,
                     (result) =>
                     {
@@ -92,7 +88,6 @@ namespace Zero.Client.Common.Wpf
                                     this.summary.ClearDetail();
                                 }
                             });
-                        
                     },
                     (ex) =>
                     {
@@ -101,20 +96,19 @@ namespace Zero.Client.Common.Wpf
             }
             else
             {
-                category.ChangeNameAndDesc(Name, Desc,
-                    (e) =>
+                this.categoryClientService.UpdateCategory(category,
+                    (result) =>
                     {
-                        this.categoryService.UpdateCategoryAsync(e)
-                            .ExcuteOnUIThread(
+                        UIThreadHelper.BeginInvoke(
                             () =>
                             {
                                 this.current.Name = name;
                                 this.summary.ClearDetail();
-                            },
-                            (ex) =>
-                            {
-                                MessageBox.Show("更新失败: " + ex.Message);
                             });
+                    },
+                    (ex) =>
+                    {
+                        MessageBox.Show("更新失败: " + ex.Message);
                     });
             }
         }

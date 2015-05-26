@@ -59,9 +59,27 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public void DeleteCategory(int scope, ICollection<string> idCol)
+        public void UpdateCategory(IEnumerable<Category> col)
         {
-            if (idCol == null || idCol.Count == 0)
+            if (col == null || col.Count() == 0)
+            {
+                throw new ArgumentNullException();
+            }
+            categoryDao.Update(col);
+        }
+
+        public Task UpdateCategoryAsync(IEnumerable<Category> col)
+        {
+            return Task.Factory.StartNew(
+                () =>
+                {
+                    UpdateCategory(col);
+                });
+        }
+
+        public void DeleteCategory(int scope, IEnumerable<string> idCol)
+        {
+            if (idCol == null || idCol.Count() == 0)
             {
                 throw new ArgumentNullException();
             }
@@ -77,7 +95,7 @@ namespace Zero.BLL.Impl
             }
         }
 
-        public Task DeleteCategoryAsync(int scope, ICollection<string> idCol)
+        public Task DeleteCategoryAsync(int scope, IEnumerable<string> idCol)
         {
             return Task.Factory.StartNew(
                 () =>
@@ -169,7 +187,6 @@ namespace Zero.BLL.Impl
                     return TreeCategory(scope);
                 });
         }
-
 
     }
 }

@@ -114,12 +114,11 @@ namespace Zero.Domain
             {
                 throw new InvalidOperationException("Name is not set yet.");
             }
-            if (!string.IsNullOrWhiteSpace(this.Id) && !string.IsNullOrWhiteSpace(this.ParentId) 
-                && tree == null)
+            if (!string.IsNullOrWhiteSpace(this.Id) && !string.IsNullOrWhiteSpace(this.ParentId) && tree == null)
             {
                 throw new InvalidOperationException("Please provide tree when Id and ParentId are not null.");
             }
-            if (IsCyclicReference(tree))
+            if (!string.IsNullOrWhiteSpace(this.Id) && !string.IsNullOrWhiteSpace(this.ParentId) && IsCyclicReference(tree))
             {
                 throw new CyclicInheritanceException();
             }
@@ -142,131 +141,42 @@ namespace Zero.Domain
             }
         }
 
-        /// <summary>
-        /// 更改名称和详细。
-        /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="desc">详细</param>
-        /// <param name="action">更新操作。</param>
-        /// <param name="timestampFactory">获取统一时间的操作。</param>
-        public void ChangeNameAndDesc(string name, 
-            string desc,
-            Action<Category> action,
-            Func<DateTime> timestampFactory = null)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException();
-            }
-
-            Name = name;
-            Desc = desc;
-            Update(action, timestampFactory);
-        }
-
-        /// <summary>
-        /// 更改排序号。
-        /// </summary>
-        /// <param name="sequence">排序号。</param>
-        /// <param name="action">更新操作。</param>
-        /// <param name="timestampFactory">获取统一时间的操作。</param>
-        public void ChangeSequence(long sequence,
-            Action<Category> action,
-            Func<DateTime> timestampFactory = null)
-        {
-            if (Sequence != sequence)
-            {
-                Sequence = sequence;
-                Update(action, timestampFactory);
-            }
-        }
-
-        /// <summary>
-        /// 更改上级类型。
-        /// </summary>
-        /// <param name="parent">上级类型。</param>
-        /// <param name="sequence">排序号。</param>
-        /// <param name="tree">类型树。</param>
-        /// <param name="action">更新操作。</param>
-        /// <param name="timestampFactory">获取统一时间的操作。</param>
-        public void ChangeParent(Category parent,
-            long sequence,
-            TreeNodeCollection<Category> tree, 
-            Action<Category> action,
-            Func<DateTime> timestampFactory = null)
-        {
-            if (parent != null && string.IsNullOrWhiteSpace(parent.Id))
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (Parent != parent)
-            {
-                if (parent != null && !string.IsNullOrWhiteSpace(parent.Id)
-                    && tree == null)
-                {
-                    throw new InvalidOperationException("Please provide tree when Id and ParentId are not null.");
-                }
-                if (IsCyclicReference(tree))
-                {
-                    throw new CyclicInheritanceException();
-                }
-
-                Parent = parent;
-                Sequence = sequence;
-                Update(action, timestampFactory);
-            }
-        }
-
-        /// <summary>
-        /// 更改类型不再使用。
-        /// </summary>
-        /// <param name="action">更新操作。</param>
-        /// <param name="timestampFactory">获取统一时间的操作。</param>
-        public void Disuse(TreeNodeCollection<Category> tree, 
+        public void Update(TreeNodeCollection<Category> tree,
             Action<IEnumerable<Category>> action,
             Func<DateTime> timestampFactory = null)
         {
-            if (!this.Disused)
+            if (tree == null)
             {
-                IEnumerable<Category> categories = GetSelfAndDescendants(tree);
-                foreach (var category in categories)
-                {
-                    category.Disused = true;
-                    DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
-                    category.Modification = timestamp;
-                }
+                throw new ArgumentNullException();
+            }
+            if (!IsRequiredAllSet())
+            {
+                throw new InvalidOperationException();
+            }
+            if (IsCyclicReference(tree))
+            {
+                throw new CyclicInheritanceException();
+            }
 
-                if (action != null)
+            DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
+            Modification = timestamp;
+
+            List<Category> list = new List<Category>();
+            IEnumerable<Category> categories = GetDescendants(tree);
+            foreach (var category in categories)
+            {
+                if (category.Disused != this.Disused)
                 {
-                    action(categories);
+                    category.Disused = this.Disused;
+                    category.Modification = timestamp;
+                    list.Add(category);
                 }
             }
-        }
+            list.Add(this);
 
-        /// <summary>
-        /// 更改类型使用。
-        /// </summary>
-        ///<param name="action">更新操作。</param>
-        /// <param name="timestampFactory">获取统一时间的操作。</param>
-        public void Use(TreeNodeCollection<Category> tree, 
-            Action<IEnumerable<Category>> action,
-            Func<DateTime> timestampFactory = null)
-        {
-            if (this.Disused)
+            if (action != null)
             {
-                IEnumerable<Category> categories = GetSelfAndDescendants(tree);
-                foreach (var category in categories)
-                {
-                    category.Disused = false;
-                    DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
-                    category.Modification = timestamp;
-                }
-
-                if (action != null)
-                {
-                    action(categories);
-                }
+                action(list);
             }
         }
 
@@ -276,13 +186,19 @@ namespace Zero.Domain
         /// <param name="tree">类型树。</param>
         /// <param name="action">删除操作。</param>
         public void Delete(TreeNodeCollection<Category> tree,
-            Action<ICollection<Category>> action)
+            Action<IEnumerable<Category>> action)
         {
-            IEnumerable<Category> categories = GetSelfAndDescendants(tree, false);
+            if (tree == null)
+            {
+                throw new ArgumentNullException();
+            }
+            IEnumerable<Category> categories = GetDescendants(tree, false);
+            List<Category> list = new List<Category>(categories);
+            list.Add(this);
 
             if (action != null)
             {
-                action(categories.ToArray());
+                action(list);
             }
         }
 
@@ -323,14 +239,19 @@ namespace Zero.Domain
         }
 
         /// <summary>
-        /// 获取类型，及以其为根节点的子树上的所有类型。
+        /// 获取以当前类型为根节点的子树上的所有子类型。
         /// </summary>
         /// <param name="tree">类型树。</param>
         /// <param name="isPreorder">是否以先序顺序访问子树。</param>
         /// <returns></returns>
-        public IEnumerable<Category> GetSelfAndDescendants(TreeNodeCollection<Category> tree,
+        public IEnumerable<Category> GetDescendants(TreeNodeCollection<Category> tree,
             bool? isPreorder = null)
         {
+            if (tree == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             List<Category> list = new List<Category>();
             bool contains = false;
             Tree<Category>.PreorderTraverse(tree,
@@ -341,7 +262,7 @@ namespace Zero.Domain
                         contains = true;
                         if (!isPreorder.HasValue || isPreorder.Value)
                         {
-                            Tree<Category>.PreorderTraverse(e,
+                            Tree<Category>.PreorderTraverse(e.Children,
                                 (node) =>
                                 {
                                     list.Add(node.Data);
@@ -349,7 +270,7 @@ namespace Zero.Domain
                         }
                         else
                         {
-                            Tree<Category>.PostorderTraverse(e,
+                            Tree<Category>.PostorderTraverse(e.Children,
                                 (node) =>
                                 {
                                     list.Add(node.Data);
@@ -525,23 +446,6 @@ namespace Zero.Domain
         public static int CompareToBySequence(TreeNode<Category> node1, TreeNode<Category> node2)
         {
             return node2.Data.Sequence.CompareTo(node1.Data.Sequence);
-        }
-
-        private void Update(Action<Category> action,
-            Func<DateTime> timestampFactory = null)
-        {
-            if (!IsRequiredAllSet())
-            {
-                throw new InvalidOperationException();
-            }
-
-            DateTime timestamp = timestampFactory == null ? DateTime.Now : timestampFactory();
-            Modification = timestamp;
-
-            if (action != null)
-            {
-                action(this);
-            }
         }
 
         private bool IsRequiredAllSet()

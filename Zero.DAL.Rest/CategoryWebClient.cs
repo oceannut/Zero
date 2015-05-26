@@ -61,6 +61,10 @@ namespace Zero.DAL.Rest
             }
         }
 
+        public override int Update(IEnumerable<Category> col)
+        {
+            return base.Update(col);
+        }
 
         public Category Get(int scope, string id)
         {
