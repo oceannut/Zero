@@ -109,6 +109,35 @@ namespace Zero.DAL.Caching
             return count;
         }
 
+        public override int Delete(Category entity)
+        {
+            int count = dao.Delete(entity);
+
+            TreeNodeCollection<Category> tree = Tree(entity.Scope);
+            Tree<Category>.PostorderTraverse(tree,
+                (e) =>
+                {
+                    if (entity.Id == e.Data.Id)
+                    {
+                        UnattachToParent(tree, e.Parent, e);
+                        if (!e.IsLeaf)
+                        {
+                            Tree<Category>.PostorderTraverse(e,
+                                (subNode) =>
+                                {
+                                    if (subNode.Parent != null)
+                                    {
+                                        subNode.Parent.Children.Remove(subNode);
+                                    }
+                                });
+                        }
+                    }
+
+                });
+
+            return count;
+        }
+
         public override int Delete(IEnumerable<Category> col)
         {
             int count = dao.Delete(col);
@@ -162,7 +191,7 @@ namespace Zero.DAL.Caching
             return found;
         }
 
-        public Category GetByCode(int scope, string code, bool? includeParent = null)
+        public Category GetByCode(int scope, string code)
         {
             Category found = null;
             TreeNodeCollection<Category> tree = Tree(scope);
@@ -172,14 +201,11 @@ namespace Zero.DAL.Caching
                     if (code == e.Data.Code)
                     {
                         found = e.Data.ShallowClone();
-                        if (includeParent.HasValue && includeParent.Value)
+                        TreeNode<Category> parent = e.Parent;
+                        while (parent != null)
                         {
-                            TreeNode<Category> parent = e.Parent;
-                            while (parent != null)
-                            {
-                                found.Parent = parent.Data.ShallowClone();
-                                parent = parent.Parent;
-                            }
+                            found.Parent = parent.Data.ShallowClone();
+                            parent = parent.Parent;
                         }
                         return true;
                     }
@@ -213,40 +239,40 @@ namespace Zero.DAL.Caching
             return isExisted;
         }
 
-        public int Count(int? scope = null, string parentId = null, bool? isDisused = null)
+        public int Count(int? scope = null, bool? isDisused = null)
         {
             int count = 0;
             if (scope.HasValue)
             {
                 TreeNodeCollection<Category> tree = Tree(scope.Value);
-                Filter(false, e => count++, tree, parentId, isDisused);
+                Filter(false, e => count++, tree, isDisused);
             }
             else
             {
                 foreach (var item in this.cache.Items)
                 {
                     TreeNodeCollection<Category> tree = item.Value as TreeNodeCollection<Category>;
-                    Filter(false, e => count++, tree, parentId, isDisused);
+                    Filter(false, e => count++, tree, isDisused);
                 }
             }
 
             return count;
         }
 
-        public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
+        public IEnumerable<Category> List(int? scope = null, bool? isDisused = null)
         {
             List<Category> result = new List<Category>();
             if (scope.HasValue)
             {
                 TreeNodeCollection<Category> tree = Tree(scope.Value);
-                Filter(true, e => result.Add(e), tree, parentId, isDisused);
+                Filter(true, e => result.Add(e), tree, isDisused);
             }
             else
             {
                 foreach (var item in this.cache.Items)
                 {
                     TreeNodeCollection<Category> tree = item.Value as TreeNodeCollection<Category>;
-                    Filter(true, e => result.Add(e), tree, parentId, isDisused);
+                    Filter(true, e => result.Add(e), tree, isDisused);
                 }
             }
 
@@ -333,13 +359,12 @@ namespace Zero.DAL.Caching
         }
 
         private void Filter(bool needClone, Action<Category> action, TreeNodeCollection<Category> tree, 
-            string parentId = null, bool? isDisused = null)
+            bool? isDisused = null)
         {
             Tree<Category>.PreorderTraverse(tree,
                         (e) =>
                         {
-                            if ((parentId == null || (parentId == string.Empty && e.Data.ParentId == null) || parentId == e.Data.ParentId)
-                                && (isDisused == null || isDisused.Value == e.Data.Disused))
+                            if ((isDisused == null || isDisused.Value == e.Data.Disused))
                             {
                                 if (needClone)
                                 {

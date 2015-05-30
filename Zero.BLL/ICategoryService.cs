@@ -24,9 +24,17 @@ namespace Zero.BLL
 
         Task UpdateCategoryAsync(IEnumerable<Category> col);
 
-        void DeleteCategory(int scope, IEnumerable<string> idCol);
+        //void DeleteCategory(int scope, IEnumerable<string> idCol);
 
-        Task DeleteCategoryAsync(int scope, IEnumerable<string> idCol);
+        //Task DeleteCategoryAsync(int scope, IEnumerable<string> idCol);
+
+        void DeleteCategory(Category category);
+
+        Task DeleteCategoryAsync(Category category);
+
+        void DeleteCategory(IEnumerable<Category> col);
+
+        Task DeleteCategoryAsync(IEnumerable<Category> col);
 
         Category GetCategory(int scope, string id);
 
@@ -40,13 +48,13 @@ namespace Zero.BLL
 
         Task<bool> IsCategoryCodeExistedAsync(int scope, string code);
 
-        int CountCategory(int? scope = null, string parentId = null, bool? isDisused = null);
+        int CountCategory(int? scope = null, bool? isDisused = null);
 
-        Task<int> CountCategoryAsync(int? scope = null, string parentId = null, bool? isDisused = null);
+        Task<int> CountCategoryAsync(int? scope = null, bool? isDisused = null);
 
-        IEnumerable<Category> ListCategory(int? scope, string parentId = null, bool? isDisused = null);
+        IEnumerable<Category> ListCategory(int? scope, bool? isDisused = null);
 
-        Task<IEnumerable<Category>> ListCategoryAsync(int? scope, string parentId = null, bool? isDisused = null);
+        Task<IEnumerable<Category>> ListCategoryAsync(int? scope, bool? isDisused = null);
 
         TreeNodeCollection<Category> TreeCategory(int scope);
 

@@ -77,30 +77,66 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public void DeleteCategory(int scope, IEnumerable<string> idCol)
+        //public void DeleteCategory(int scope, IEnumerable<string> idCol)
+        //{
+        //    if (idCol == null || idCol.Count() == 0)
+        //    {
+        //        throw new ArgumentNullException();
+        //    }
+
+        //    var categories = ListCategory(scope);
+        //    if (categories != null && categories.Count() > 0)
+        //    {
+        //        var deleteList = categories.Where(e => idCol.Contains(e.Id));
+        //        if (deleteList != null && deleteList.Count() > 0)
+        //        {
+        //            categoryDao.Delete(deleteList.ToArray());
+        //        }
+        //    }
+        //}
+
+        //public Task DeleteCategoryAsync(int scope, IEnumerable<string> idCol)
+        //{
+        //    return Task.Factory.StartNew(
+        //        () =>
+        //        {
+        //            DeleteCategory(scope, idCol);
+        //        });
+        //}
+
+        public void DeleteCategory(Category category)
         {
-            if (idCol == null || idCol.Count() == 0)
+            if (category == null)
             {
                 throw new ArgumentNullException();
             }
-
-            var categories = ListCategory(scope);
-            if (categories != null && categories.Count() > 0)
-            {
-                var deleteList = categories.Where(e => idCol.Contains(e.Id));
-                if (deleteList != null && deleteList.Count() > 0)
-                {
-                    categoryDao.Delete(deleteList.ToArray());
-                }
-            }
+            categoryDao.Delete(category);
         }
 
-        public Task DeleteCategoryAsync(int scope, IEnumerable<string> idCol)
+        public Task DeleteCategoryAsync(Category category)
         {
             return Task.Factory.StartNew(
                 () =>
                 {
-                    DeleteCategory(scope, idCol);
+                    DeleteCategory(category);
+                });
+        }
+
+        public void DeleteCategory(IEnumerable<Category> col)
+        {
+            if (col == null || col.Count() == 0)
+            {
+                throw new ArgumentNullException();
+            }
+            categoryDao.Delete(col);
+        }
+
+        public Task DeleteCategoryAsync(IEnumerable<Category> col)
+        {
+            return Task.Factory.StartNew(
+                () =>
+                {
+                    DeleteCategory(col);
                 });
         }
 
@@ -120,7 +156,7 @@ namespace Zero.BLL.Impl
 
         public Category GetCategoryByCode(int scope, string code)
         {
-            return categoryDao.GetByCode(scope, code, true);
+            return categoryDao.GetByCode(scope, code);
         }
 
         public Task<Category> GetCategoryByCodeAsync(int scope, string code)
@@ -146,31 +182,31 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        public int CountCategory(int? scope = null, string parentId = null, bool? isDisused = null)
+        public int CountCategory(int? scope = null, bool? isDisused = null)
         {
-            return categoryDao.Count(scope, parentId, isDisused);
+            return categoryDao.Count(scope, isDisused);
         }
 
-        public Task<int> CountCategoryAsync(int? scope = null, string parentId = null, bool? isDisused = null)
+        public Task<int> CountCategoryAsync(int? scope = null, bool? isDisused = null)
         {
             return Task.Factory.StartNew<int>(
                 () =>
                 {
-                    return CountCategory(scope, parentId, isDisused);
+                    return CountCategory(scope, isDisused);
                 });
         }
 
-        public IEnumerable<Category> ListCategory(int? scope, string parentId = null, bool? isDisused = null)
+        public IEnumerable<Category> ListCategory(int? scope, bool? isDisused = null)
         {
-            return categoryDao.List(scope, parentId, isDisused);
+            return categoryDao.List(scope, isDisused);
         }
 
-        public Task<IEnumerable<Category>> ListCategoryAsync(int? scope, string parentId = null, bool? isDisused = null)
+        public Task<IEnumerable<Category>> ListCategoryAsync(int? scope, bool? isDisused = null)
         {
             return Task.Factory.StartNew<IEnumerable<Category>>(
                 () =>
                 {
-                    return ListCategory(scope, parentId, isDisused);
+                    return ListCategory(scope, isDisused);
                 });
         }
 
@@ -189,4 +225,5 @@ namespace Zero.BLL.Impl
         }
 
     }
+
 }

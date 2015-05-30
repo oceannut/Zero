@@ -20,7 +20,6 @@ namespace Zero.Client.Common.Wpf
     public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive
     {
 
-        private readonly ICategoryService categoryService;
         private readonly ICategoryClientService categoryClientService;
         private readonly int scope;
         private CategoryViewModel selectedItem;
@@ -42,16 +41,14 @@ namespace Zero.Client.Common.Wpf
             }
         }
 
-        public CategoryListViewModel(ICategoryService categoryService, 
-            ICategoryClientService categoryClientService,
+        public CategoryListViewModel(ICategoryClientService categoryClientService,
             int scope)
         {
-            if (categoryService == null)
+            if (categoryClientService == null)
             {
                 throw new ArgumentNullException();
             }
 
-            this.categoryService = categoryService;
             this.categoryClientService = categoryClientService;
             this.scope = scope;
         }
@@ -104,49 +101,37 @@ namespace Zero.Client.Common.Wpf
             }
 
             Category category = this.selectedItem.Model;
-            this.categoryService.TreeCategoryAsync(category.Scope)
-                .ContinueWith((task) =>
+            this.categoryClientService.DeleteCategory(category,
+                (result) =>
                 {
-                    if (task.Exception == null)
-                    {
-                        category.Delete(task.Result,
-                            (e) =>
+                    UIThreadHelper.BeginInvoke(
+                        () =>
+                        {
+                            Tree.PostorderTraverse(this.selectedItem,
+                                (node) =>
+                                {
+                                    CategoryViewModel viewModel = node as CategoryViewModel;
+                                    if (viewModel.Children != null && viewModel.Children.Count > 0)
+                                    {
+                                        for (int i = viewModel.Children.Count - 1; i >= 0; i--)
+                                        {
+                                            viewModel.RemoveChildAt(i);
+                                        }
+                                    }
+                                });
+                            if (this.selectedItem.Parent == null)
                             {
-                                this.categoryService.DeleteCategoryAsync(category.Scope, (from item in e select item.Id).ToArray())
-                                    .ExcuteOnUIThread(
-                                        () =>
-                                        {
-                                            Tree.PostorderTraverse(this.selectedItem,
-                                                (node) =>
-                                                {
-                                                    CategoryViewModel viewModel = node as CategoryViewModel;
-                                                    if (viewModel.Children != null && viewModel.Children.Count > 0)
-                                                    {
-                                                        for (int i = viewModel.Children.Count - 1; i >= 0; i--)
-                                                        {
-                                                            viewModel.RemoveChildAt(i);
-                                                        }
-                                                    }
-                                                });
-                                            if (this.selectedItem.Parent == null)
-                                            {
-                                                this.CategoryList.Remove(this.selectedItem);
-                                            }
-                                            else
-                                            {
-                                                this.selectedItem.Parent.RemoveChild(this.selectedItem);
-                                            }
-                                        },
-                                        (ex) =>
-                                        {
-                                            MessageBox.Show("删除失败: " + ex.Message);
-                                        });
-                            });
-                    }
-                    else
-                    {
-                        MessageBox.Show("加载类型树失败: " + task.Exception);
-                    }
+                                this.CategoryList.Remove(this.selectedItem);
+                            }
+                            else
+                            {
+                                this.selectedItem.Parent.RemoveChild(this.selectedItem);
+                            }
+                        });
+                },
+                (ex) =>
+                {
+                    MessageBox.Show("删除失败: " + ex.Message);
                 });
         }
 
@@ -207,19 +192,22 @@ namespace Zero.Client.Common.Wpf
         private void LoadCategoryList()
         {
             CategoryViewModel.CleanupTree(this.CategoryList);
-            this.categoryService.ListCategoryAsync(this.scope)
-                .ExcuteOnUIThread<IEnumerable<Category>>(
-                    (e) =>
-                    {
-                        if (e != null && e.Count() > 0)
+            this.categoryClientService.ListCategory(this.scope,
+                (result) =>
+                {
+                    UIThreadHelper.BeginInvoke(
+                        () =>
                         {
-                            this.CategoryList = CategoryViewModel.BuildTree(e);
-                        }
-                    },
-                    (ex) =>
-                    {
-                        MessageBox.Show(ex.ToString());
-                    });
+                            if (result != null && result.Count() > 0)
+                            {
+                                this.CategoryList = CategoryViewModel.BuildTree(result);
+                            }
+                        });
+                },
+                (ex) =>
+                {
+                    MessageBox.Show("查询失败: " + ex.Message);
+                });
         }
 
     }

@@ -20,6 +20,14 @@ namespace Zero.Client.Common
             Action<Category> success,
             Action<Exception> failure);
 
+        void DeleteCategory(Category category,
+            Action<Category> success,
+            Action<Exception> failure);
+
+        void ListCategory(int scope,
+            Action<IEnumerable<Category>> success,
+            Action<Exception> failure);
+
     }
 
 }

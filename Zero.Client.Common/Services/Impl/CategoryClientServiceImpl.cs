@@ -58,6 +58,42 @@ namespace Zero.Client.Common
                 });
         }
 
+        public void DeleteCategory(Category category, 
+            Action<Category> success, 
+            Action<Exception> failure)
+        {
+            this.categoryService.DeleteCategoryAsync(category)
+                .ContinueWith((saveTask) =>
+                {
+                    if (saveTask.Exception == null)
+                    {
+                        success(category);
+                    }
+                    else
+                    {
+                        failure(saveTask.Exception);
+                    }
+                });
+        }
+
+        public void ListCategory(int scope, 
+            Action<IEnumerable<Category>> success, 
+            Action<Exception> failure)
+        {
+            this.categoryService.ListCategoryAsync(scope)
+                .ContinueWith((task) =>
+                {
+                    if (task.Exception == null)
+                    {
+                        success(task.Result);
+                    }
+                    else
+                    {
+                        failure(task.Exception);
+                    }
+                });
+        }
+
     }
 
 }

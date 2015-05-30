@@ -97,9 +97,9 @@ namespace Zero.Client.Wpf
             this.container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
 
             this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel1",
-                new InjectionConstructor(this.container.Resolve<ICategoryService>(), this.container.Resolve<ICategoryClientService>("CategoryClientService"), 1));
+                new InjectionConstructor(this.container.Resolve<ICategoryClientService>("CategoryClientService"), 1));
             this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel2",
-                new InjectionConstructor(this.container.Resolve<ICategoryService>(), this.container.Resolve<ICategoryClientService>("CategoryClientService"), 2));
+                new InjectionConstructor(this.container.Resolve<ICategoryClientService>("CategoryClientService"), 2));
             
             this.container.RegisterType<IModuleContainer, SimpleModuleContainer>(new ContainerControlledLifetimeManager());
 

@@ -66,12 +66,22 @@ namespace Zero.DAL.Rest
             return base.Update(col);
         }
 
+        public override int Delete(Category entity)
+        {
+            return base.Delete(entity);
+        }
+
+        public override int Delete(IEnumerable<Category> col)
+        {
+            return base.Delete(col);
+        }
+
         public Category Get(int scope, string id)
         {
             throw new NotImplementedException();
         }
 
-        public Category GetByCode(int scope, string code, bool? includeParent = null)
+        public Category GetByCode(int scope, string code)
         {
             throw new NotImplementedException();
         }
@@ -81,12 +91,12 @@ namespace Zero.DAL.Rest
             throw new NotImplementedException();
         }
 
-        public int Count(int? scope = null, string parentId = null, bool? isDisused = null)
+        public int Count(int? scope = null, bool? isDisused = null)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
+        public IEnumerable<Category> List(int? scope = null, bool? isDisused = null)
         {
             using (WebClient client = new WebClient())
             {

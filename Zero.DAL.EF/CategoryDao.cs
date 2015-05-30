@@ -60,6 +60,17 @@ namespace Zero.DAL.EF
             }
         }
 
+        public override int Delete(Category entity)
+        {
+            using (CategoryDataContext context = new CategoryDataContext(connectionString))
+            {
+                var entry = context.Entry<Category>(entity);
+                entry.State = System.Data.Entity.EntityState.Deleted;
+                context.Categories.Remove(entity);
+                return context.SaveChanges();
+            }
+        }
+
         public override int Delete(IEnumerable<Category> col)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
@@ -82,24 +93,14 @@ namespace Zero.DAL.EF
             }
         }
 
-        public Category GetByCode(int scope, string code, bool? includeParent = null)
+        public Category GetByCode(int scope, string code)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
-                if (includeParent.HasValue && includeParent.Value)
-                {
-                    return (from categroy in context.Categories.Include("Parent")
-                            where categroy.Scope == scope && categroy.Code == code
-                            select categroy)
+                return (from categroy in context.Categories.Include("Parent")
+                        where categroy.Scope == scope && categroy.Code == code
+                        select categroy)
                             .FirstOrDefault();
-                }
-                else
-                {
-                    return (from categroy in context.Categories
-                            where categroy.Scope == scope && categroy.Code == code
-                            select categroy)
-                            .FirstOrDefault();
-                }
             }
         }
 
@@ -111,25 +112,23 @@ namespace Zero.DAL.EF
             }
         }
 
-        public int Count(int? scope = null, string parentId = null, bool? isDisused = null)
+        public int Count(int? scope = null, bool? isDisused = null)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
                 return context.Categories.Count(
                     category =>
                         ((scope == null || category.Scope == scope)
-                        && (parentId == null || ((parentId == string.Empty && category.ParentId == null) || category.ParentId == parentId))
                         && (isDisused == null || category.Disused == isDisused.Value)));
             }
         }
 
-        public IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null)
+        public IEnumerable<Category> List(int? scope = null, bool? isDisused = null)
         {
             using (CategoryDataContext context = new CategoryDataContext(connectionString))
             {
                 return (from category in context.Categories
                         where (scope == null || category.Scope == scope)
-                            && (parentId == null || ((parentId == string.Empty && category.ParentId == null) || category.ParentId == parentId))
                             && (isDisused == null || category.Disused == isDisused.Value)
                         select category)
                         .ToArray();

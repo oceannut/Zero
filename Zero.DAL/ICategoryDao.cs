@@ -17,13 +17,13 @@ namespace Zero.DAL
 
         Category Get(int scope, string id);
 
-        Category GetByCode(int scope, string code, bool? includeParent = null);
+        Category GetByCode(int scope, string code);
 
         bool IsCodeExisted(int scope, string code);
 
-        int Count(int? scope = null, string parentId = null, bool? isDisused = null);
+        int Count(int? scope = null, bool? isDisused = null);
 
-        IEnumerable<Category> List(int? scope = null, string parentId = null, bool? isDisused = null);
+        IEnumerable<Category> List(int? scope = null, bool? isDisused = null);
 
         TreeNodeCollection<Category> Tree(int scope);
 
