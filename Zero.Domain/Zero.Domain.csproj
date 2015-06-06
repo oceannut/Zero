@@ -58,11 +58,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseAccess.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="KeyVal.cs" />
+    <Compile Include="ResourceAccess.cs" />
+    <Compile Include="ResourceAttribute.cs" />
+    <Compile Include="ResourcePermission.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">

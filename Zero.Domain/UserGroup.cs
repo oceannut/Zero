@@ -11,7 +11,7 @@ namespace Zero.Domain
 {
 
     [DataContract]
-    public class Role : ITimestampData
+    public class UserGroup : ITimestampData
     {
 
         [DataMember]
@@ -23,8 +23,8 @@ namespace Zero.Domain
         [DataMember]
         public virtual IList<User> Users { get; set; }
 
-        //[DataMember]
-        //public bool IsAdmin { get; set; }
+        [DataMember]
+        public virtual IList<Role> Roles { get; set; }
 
         [DataMember]
         public DateTime Creation { get; set; }

@@ -100,7 +100,10 @@ namespace Zero.DAL.Rest
         {
             using (WebClient client = new WebClient())
             {
+                
                 client.Encoding = Encoding.UTF8;
+                client.Headers.Add(HttpRequestHeader.Authorization, "123");
+               
                 Category[] categories = null;
 
                 string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope.HasValue ? scope.Value : 0);

@@ -56,7 +56,6 @@ namespace Zero.DAL.EF
                     userGet.Pwd = entity.Pwd;
                     userGet.Name = entity.Name;
                     userGet.Email = entity.Email;
-                    userGet.Group = entity.Group;
                     if ((entity.Roles == null || entity.Roles.Count == 0) && userGet.Roles != null && userGet.Roles.Count > 0)
                     {
                         userGet.Roles.Clear();

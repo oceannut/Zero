@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
@@ -95,6 +96,8 @@ namespace Zero.Service.IISWASHost
             #endregion
 
             #region Wcf
+
+            container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>();
 
             container.RegisterType<ISignService, SignService>(
                 new Interceptor<TransparentProxyInterceptor>(),

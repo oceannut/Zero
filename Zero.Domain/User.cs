@@ -29,9 +29,6 @@ namespace Zero.Domain
         public string Email { get; set; }
 
         [DataMember]
-        public string Group { get; set; }
-
-        [DataMember]
         public virtual IList<Role> Roles { get; set; }
 
         [DataMember]
