@@ -196,6 +196,7 @@ namespace Zero.BLL.Impl
                 });
         }
 
+        
         public IEnumerable<Category> ListCategory(int? scope, bool? isDisused = null)
         {
             return categoryDao.List(scope, isDisused);

@@ -60,6 +60,9 @@ namespace Zero.Service.IISWASHost
                   "Delete successfully", true, false, true, 10))
                  .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
                  .AddCallHandler<TransactionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor());
+            container.Configure<Interception>().AddPolicy("List")
+                 .AddMatchingRule<MemberNameMatchingRule>(new InjectionConstructor(new InjectionParameter("List*")))
+                 .AddCallHandler<ResourceAuthorizationCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(container));
 
             container.Configure<Interception>().AddPolicy("Wcf")
                  .AddMatchingRule<NamespaceMatchingRule>(new InjectionConstructor(new InjectionParameter("Zero.Service.Rest")))
@@ -86,9 +89,12 @@ namespace Zero.Service.IISWASHost
 
             #region BLL
 
-            container.RegisterType<IUserService, UserServiceImpl>(new ContainerControlledLifetimeManager(), 
+            container.RegisterType<IResourceAccessService, ResourceAccessServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
-                new InterceptionBehavior<PolicyInjectionBehavior>());
+                new InterceptionBehavior<PolicyInjectionBehavior>()); 
+            container.RegisterType<IUserService, UserServiceImpl>(new ContainerControlledLifetimeManager(),
+                new Interceptor<InterfaceInterceptor>(),
+                new InterceptionBehavior<PolicyInjectionBehavior>()); 
             container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
@@ -97,7 +103,13 @@ namespace Zero.Service.IISWASHost
 
             #region Wcf
 
-            container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>();
+            container.RegisterType<IResourceAuthorizationProvider, ResourceAuthorizationProvider>(new ContainerControlledLifetimeManager(),
+                new Interceptor<InterfaceInterceptor>());
+            container.RegisterType<IAuthenticationProvider, UserServiceImpl>(new ContainerControlledLifetimeManager(),
+                new Interceptor<InterfaceInterceptor>());
+            container.RegisterType<IPrincipalProvider, GenericPrincipalProvider>(new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
+            container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 
             container.RegisterType<ISignService, SignService>(
                 new Interceptor<TransparentProxyInterceptor>(),

@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="ICategoryService.cs" />
     <Compile Include="IKeyValService.cs" />
+    <Compile Include="IResourceAccessService.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

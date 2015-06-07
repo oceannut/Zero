@@ -59,6 +59,8 @@
   <ItemGroup>
     <Compile Include="CategoryServiceImpl.cs" />
     <Compile Include="KeyValServiceImpl.cs" />
+    <Compile Include="ResourceAccessServiceImpl.cs" />
+    <Compile Include="ResourceAuthorizationProvider.cs" />
     <Compile Include="UserServiceImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

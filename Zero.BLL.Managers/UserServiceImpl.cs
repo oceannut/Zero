@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Nega.Common;
 using Nega.Data;
 
 using Zero.Domain;
@@ -13,19 +14,20 @@ using Zero.DAL;
 namespace Zero.BLL.Impl
 {
 
-    public class UserServiceImpl : IUserService
+    public class UserServiceImpl : IUserService, IAuthenticationProvider
     {
 
-        private IUserDao userDao; 
+        private IUserDao userDao;
         private IRoleDao roleDao;
 
-        public UserServiceImpl(IUserDao userDao, 
+        public UserServiceImpl(IUserDao userDao,
             IRoleDao roleDao)
         {
             this.userDao = userDao;
             this.roleDao = roleDao;
         }
 
+        [Resource(Name = User.RESOURCE_USER, Method = Resource.METHOD_SAVE)]
         public void SaveUser(User user)
         {
             if (user == null)
@@ -182,6 +184,18 @@ namespace Zero.BLL.Impl
         public Task<IList<Role>> GetRoleListAsync()
         {
             throw new NotImplementedException();
+        }
+
+
+        public AuthenticationResult Authenticate(string username, string pwd)
+        {
+            return AuthenticationResult.Pass;
+        }
+
+        public AuthenticationResult Authenticate(string username, string pwd, out string[] roles)
+        {
+            roles = new string[] { "admin" };
+            return AuthenticationResult.Pass;
         }
 
     }

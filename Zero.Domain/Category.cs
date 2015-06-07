@@ -20,6 +20,8 @@ namespace Zero.Domain
         ICloneable
     {
 
+        public const string RESOURCE_CATEGORY = "category";
+
         /// <summary>
         /// 标识。
         /// </summary>
@@ -97,6 +99,11 @@ namespace Zero.Domain
         /// </summary>
         [DataMember]
         public DateTime Modification { get; set; }
+
+        static Category()
+        {
+            ResourceRegistry.Registrate(RESOURCE_CATEGORY, Resource.METHOD_LIST, "");
+        }
 
         /// <summary>
         /// 保存。

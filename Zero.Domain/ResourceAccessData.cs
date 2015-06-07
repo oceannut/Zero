@@ -11,35 +11,17 @@ namespace Zero.Domain
 {
 
     [DataContract]
-    public enum BaseAccessMode
-    {
-        [EnumMember]
-        Allowed,
-        [EnumMember]
-        Denied
-    }
-
-    [DataContract]
-    public class BaseAccess : ITimestampData
+    public class ResourceAccessData : ITimestampData
     {
 
         [DataMember]
         public string Id { get; set; }
 
         [DataMember]
-        public string RoleId { get; set; }
+        public Resource Resource { get; set; }
 
         [DataMember]
-        public virtual Role Role { get; set; }
-
-        [DataMember]
-        public BaseAccessMode Mode { get; set; }
-
-        [DataMember]
-        public DateTime? Offset { get; set; }
-
-        [DataMember]
-        public int Duration { get; set; }
+        public ResourceAccess Access { get; set; }
 
         [DataMember]
         public DateTime Creation { get; set; }

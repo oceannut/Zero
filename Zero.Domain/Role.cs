@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 using Nega.Common;
 
+using R = Zero.Domain.Properties.Resources;
+
 namespace Zero.Domain
 {
 
@@ -31,6 +33,15 @@ namespace Zero.Domain
 
         [DataMember]
         public DateTime Modification { get; set; }
+
+        static Role()
+        {
+            ResourceRegistry.Registrate("role", Resource.METHOD_SAVE, R.RoleSave);
+            ResourceRegistry.Registrate("role", Resource.METHOD_UPDATE, R.RoleUpdate);
+            ResourceRegistry.Registrate("role", Resource.METHOD_GET, R.RoleGet);
+            ResourceRegistry.Registrate("role", Resource.METHOD_DELETE, R.UserDelete);
+            ResourceRegistry.Registrate("role", Resource.METHOD_LIST, R.RoleList);
+        }
 
     }
 

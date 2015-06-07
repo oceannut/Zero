@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Zero.Domain.User" Collapsed="true">
-    <Position X="4.5" Y="0.75" Width="1.5" />
+    <Position X="1.5" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAACACAAAAAAAQAAAAQIAgAAAAAAAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAiAAACACAAAAAAAQAAAAQIAgAAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>User.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -12,7 +12,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Zero.Domain.Role" Collapsed="true">
-    <Position X="4.5" Y="2.75" Width="1.5" />
+    <Position X="1.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACACACAAAAAAAAAAAAAAQIAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Role.cs</FileName>
@@ -23,7 +23,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Zero.Domain.Category" Collapsed="true">
-    <Position X="7.25" Y="4.75" Width="1.5" />
+    <Position X="4.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIQCAIQCAAAAACBAgAAgQAQIJAEAAIAAAgAAQQFAABA=</HashCode>
       <FileName>Category.cs</FileName>
@@ -34,48 +34,38 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Zero.Domain.KeyVal" Collapsed="true">
-    <Position X="9.75" Y="0.75" Width="1.5" />
+    <Position X="6.75" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>KeyVal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zero.Domain.BaseAccess" Collapsed="true">
-    <Position X="4.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAICAIACAAAAEAAAAAAIAAAAAAAAAAAAAAAAgAA=</HashCode>
-      <FileName>BaseAccess.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Role" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Zero.Domain.ResourceAccess" Collapsed="true">
-    <Position X="4.5" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAEAAAIAABACAAAAAgAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ResourceAccess.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Zero.Domain.UserGroup" Collapsed="true">
-    <Position X="1.5" Y="1.75" Width="1.5" />
+    <Position X="1.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACACACAAAAAAAAAAAAAAQIAgAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>UserGroup.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Roles" />
       <Property Name="Users" />
+      <Property Name="Roles" />
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Enum Name="Zero.Domain.BaseAccessMode" Collapsed="true">
-    <Position X="9.75" Y="2" Width="1.5" />
+  <Class Name="Zero.Domain.Resource" Collapsed="true">
+    <Position X="4.5" Y="8" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAIAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BaseAccess.cs</FileName>
+      <HashCode>AAAAEAAAIAAhAAAAAAAgAAQAAAAgAAAAAAAACAAEAAA=</HashCode>
+      <FileName>Resource.cs</FileName>
     </TypeIdentifier>
-  </Enum>
+  </Class>
+  <Class Name="Zero.Domain.ResourceAccessData" Collapsed="true">
+    <Position X="8.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAACIAAAAEAAAAAAAAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ResourceAccessData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Font Name="Microsoft YaHei UI" Size="9" />
 </ClassDiagram>
