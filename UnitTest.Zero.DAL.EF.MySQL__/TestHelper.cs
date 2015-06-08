@@ -22,7 +22,6 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
                 Pwd = "test",
                 Name = "test",
                 Email = "test",
-                Group = "test",
                 Creation = DateTime.Now,
                 Modification = DateTime.Now
             };

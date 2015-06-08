@@ -12,3 +12,27 @@ CREATE TABLE `categories` (
   `Modification` datetime NOT NULL,
   PRIMARY KEY (`Id`)
 );
+
+CREATE TABLE `users` (
+  `Id` varchar(60) NOT NULL,
+  `Username` varchar(60) NOT NULL,
+  `Pwd` varchar(60) NOT NULL,
+  `Name` varchar(60) NOT NULL,
+  `Email` varchar(128) DEFAULT NULL,
+  `Creation` datetime NOT NULL,
+  `Modification` datetime NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `roles` (
+  `Id` varchar(60) NOT NULL,
+  `Name` varchar(60) NOT NULL,
+  `Creation` datetime NOT NULL,
+  `Modification` datetime NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `userroles` (
+  `UserId` varchar(60) NOT NULL,
+  `RoleId` varchar(60) NOT NULL
+);
