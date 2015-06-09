@@ -51,14 +51,11 @@
   <ItemGroup>
     <Compile Include="Impl\CategoryRestServiceImpl.cs" />
     <Compile Include="ICategoryRestService.cs" />
-    <Compile Include="ISignService.cs" />
-    <Compile Include="ITestService.cs" />
+    <Compile Include="ISignRestService.cs" />
+    <Compile Include="ITestRestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignService.cs" />
-    <Compile Include="TestService.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <Compile Include="Impl\SignRestServiceImpl.cs" />
+    <Compile Include="Impl\TestRestServiceImpl.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">

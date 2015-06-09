@@ -13,17 +13,17 @@ using Zero.BLL;
 namespace Zero.Service.Rest
 {
     
-    public class SignService : MarshalByRefObject, ISignService
+    public class SignRestServiceImpl : MarshalByRefObject, ISignRestService
     {
 
         private readonly IUserService userService;
 
-        public SignService()
+        public SignRestServiceImpl()
         {
             
         }
 
-        public SignService(IUserService userService)
+        public SignRestServiceImpl(IUserService userService)
         {
             this.userService = userService;
         }
@@ -69,7 +69,7 @@ namespace Zero.Service.Rest
             throw new NotImplementedException();
         }
 
-        public bool Signout(string username)
+        public bool Signout(string username, string pwd)
         {
             throw new NotImplementedException();
         }

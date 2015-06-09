@@ -24,6 +24,32 @@ namespace Zero.Service.Rest
             this.categoryService = categoryService;
         }
 
+        public Category SaveCategory(string scope, string name, string description)
+        {
+            try
+            {
+                int scopeInt = Convert.ToInt32(scope);
+                TreeNodeCollection<Category> tree = this.categoryService.TreeCategory(scopeInt);
+                Category category = new Category
+                {
+                    Name = name,
+                    Desc = description,
+                    Scope = scopeInt
+                };
+                category.Save(tree,
+                    (e) =>
+                    {
+                        this.categoryService.SaveCategory(category);
+                    });
+
+                return category;
+            }
+            catch (Exception)
+            {
+                throw new WebFaultException(HttpStatusCode.InternalServerError);
+            }
+        }
+
         public Category SaveCategory(Category category)
         {
             try
@@ -81,6 +107,8 @@ namespace Zero.Service.Rest
                 throw new WebFaultException(HttpStatusCode.InternalServerError);
             }
         }
+
+
 
 
 

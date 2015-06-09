@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Zero.Service.Rest.SignRestServiceImpl" Factory="Nega.WcfUnity.UnityServiceHostFactory" %>

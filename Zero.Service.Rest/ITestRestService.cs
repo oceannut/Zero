@@ -10,12 +10,13 @@ namespace Zero.Service.Rest
 {
 
     [ServiceContract]
-    public interface ITestService
+    public interface ITestRestService
     {
 
         [OperationContract]
-        [WebGet(UriTemplate = "/test/service/path/",
-            RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(UriTemplate = "/test/path/",
+            RequestFormat = WebMessageFormat.Json, 
+            ResponseFormat = WebMessageFormat.Json)]
         string GetServicePath();
 
     }

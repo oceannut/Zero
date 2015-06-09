@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Zero.Service.Rest
 {
-    public class TestService : ITestService
+    public class TestRestServiceImpl : ITestRestService
     {
+
         public string GetServicePath()
         {
             return Environment.CurrentDirectory;
         }
+
     }
 }

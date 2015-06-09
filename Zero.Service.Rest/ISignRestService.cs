@@ -12,7 +12,7 @@ namespace Zero.Service.Rest
 {
 
     [ServiceContract]
-    public interface ISignService
+    public interface ISignRestService
     {
 
         [OperationContract]
@@ -36,7 +36,7 @@ namespace Zero.Service.Rest
             UriTemplate = "/sign/{username}/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        bool Signout(string username);
+        bool Signout(string username, string pwd);
 
         [OperationContract]
         [WebGet(UriTemplate = "/sign/{username}/",

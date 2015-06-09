@@ -111,7 +111,7 @@ namespace Zero.Service.IISWASHost
                 new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
             container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 
-            container.RegisterType<ISignService, SignService>(
+            container.RegisterType<ISignRestService, SignRestServiceImpl>(
                 new Interceptor<TransparentProxyInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
             container.RegisterType<ICategoryRestService, CategoryRestServiceImpl>();

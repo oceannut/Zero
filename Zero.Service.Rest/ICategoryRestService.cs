@@ -17,10 +17,19 @@ namespace Zero.Service.Rest
 
         [OperationContract]
         [WebInvoke(Method = "POST",
-            UriTemplate = "/category/",
+            UriTemplate = "/category/{scope}/",
+            BodyStyle= WebMessageBodyStyle.WrappedRequest,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Category SaveCategory(Category category);
+        Category SaveCategory(string scope, string name, string description);
+
+
+        //[OperationContract]
+        //[WebInvoke(Method = "POST",
+        //    UriTemplate = "/category/",
+        //    RequestFormat = WebMessageFormat.Json,
+        //    ResponseFormat = WebMessageFormat.Json)]
+        //Category SaveCategory(Category category);
 
         [OperationContract]
         [WebInvoke(Method = "PUT",
