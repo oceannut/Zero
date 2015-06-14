@@ -21,7 +21,7 @@ namespace Zero.Service.Rest
             BodyStyle= WebMessageBodyStyle.WrappedRequest,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Category SaveCategory(string scope, string name, string description);
+        Category SaveCategory(string scope, string name, string description, string parentId);
 
 
         //[OperationContract]

@@ -83,11 +83,26 @@
     </Page>
     <Compile Include="Modules\Base\ClosableViewModel.cs" />
     <Compile Include="Modules\Base\NavViewModel.cs" />
+    <Page Include="Modules\User\ResourceAccessListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\User\RoleListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Modules\User\UserListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\Category\CategoryDetailsViewModel.cs" />
     <Compile Include="Modules\Category\CategoryListViewModel.cs" />
     <Compile Include="Modules\Category\CategoryViewModel.cs" />
+    <Compile Include="Modules\User\ResourceAccessListViewModel.cs" />
+    <Compile Include="Modules\User\RoleListViewModel.cs" />
+    <Compile Include="Modules\User\UserListViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -184,10 +184,6 @@
       <Project>{fc93a87c-8a49-4a5d-a493-2b2e0db75427}</Project>
       <Name>Zero.DAL.EF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Zero.DAL.Rest\Zero.DAL.Rest.csproj">
-      <Project>{7ec56040-d87c-4bd7-98bd-f7e21bb3cf4a}</Project>
-      <Name>Zero.DAL.Rest</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Zero.DAL\Zero.DAL.csproj">
       <Project>{457a80e9-95fd-436f-b035-67f721ac6bc2}</Project>
       <Name>Zero.DAL</Name>

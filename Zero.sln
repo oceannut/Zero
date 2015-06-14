@@ -58,8 +58,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.Rest", "Zero.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.Service.IISWASHost", "Zero.Service.IISWASHost\Zero.Service.IISWASHost.csproj", "{90F57DDE-EBB0-4503-A3D5-9486B955187A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zero.DAL.Rest", "Zero.DAL.Rest\Zero.DAL.Rest.csproj", "{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nega.WcfCommon", "..\Nega\Nega.WcfCommon\Nega.WcfCommon.csproj", "{82F25757-AFEB-4D3D-BF00-151D6560A028}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.Zero.Domain__", "UnitTest.Zero.Domain__\UnitTest.Zero.Domain__.csproj", "{A4CDD9F3-5AE9-4970-8110-E3C4F78FA26E}"
@@ -226,12 +224,6 @@ Global
 		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{90F57DDE-EBB0-4503-A3D5-9486B955187A}.Release|x64.ActiveCfg = Release|Any CPU
-		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EC56040-D87C-4BD7-98BD-F7E21BB3CF4A}.Release|x64.ActiveCfg = Release|Any CPU
 		{82F25757-AFEB-4D3D-BF00-151D6560A028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82F25757-AFEB-4D3D-BF00-151D6560A028}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82F25757-AFEB-4D3D-BF00-151D6560A028}.Debug|x64.ActiveCfg = Debug|Any CPU

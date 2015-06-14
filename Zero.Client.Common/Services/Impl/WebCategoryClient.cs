@@ -23,39 +23,36 @@ namespace Zero.Client.Common
             this.url = url;
         }
 
-        public Category SaveCategory(int scope, string name, string desc)
+        public Category SaveCategory(int scope, string name, string desc, string parentId)
         {
-            try
+            using (WebClient client = new WebClient())
             {
-                using (WebClient client = new WebClient())
+                client.Encoding = Encoding.UTF8;
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope);
+                JsonStringBuilder data = new JsonStringBuilder();
+                data.AppendLeftBrace();
+                data.Append("name", name).AppendComma();
+                data.Append("desc", desc).AppendComma();
+                data.Append("parentId", parentId);
+                data.AppendRightBrace();
+                string result = client.UploadString(new Uri(serviceUrl), "POST", data.ToString());
+
+                return JsonHelper.Deserialize<Category>(result);
+            }
+        }
+
+        public Task<Category> SaveCategoryAsync(int scope, string name, string desc, string parentId)
+        {
+            return Task.Factory.StartNew(
+                () =>
                 {
-                    client.Encoding = Encoding.UTF8;
-                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
-
-                    string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope);
-                    string data = JsonHelper.Serialize<Category>(
-                        new Category
-                        {
-                            Name = name,
-                            Desc = desc
-                        });
-                    string result = client.UploadString(new Uri(serviceUrl), "POST", data);
-
-                    return JsonHelper.Deserialize<Category>(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+                    return SaveCategory(scope, name, desc, parentId);
+                });
         }
 
-        public Task<Category> SaveCategoryAsync(int scope, string name, string desc)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Category> ListCategory(int? scope)
+        public IEnumerable<Category> ListCategory(int scope)
         {
             using (WebClient client = new WebClient())
             {
@@ -65,7 +62,7 @@ namespace Zero.Client.Common
 
                 Category[] categories = null;
 
-                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope.HasValue ? scope.Value : 0);
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope);
 
                 string s = client.DownloadString(new Uri(serviceUrl));
                 categories = JsonHelper.Deserialize<Category[]>(s);
@@ -74,7 +71,7 @@ namespace Zero.Client.Common
             }
         }
 
-        public Task<IEnumerable<Category>> ListCategoryAsync(int? scope)
+        public Task<IEnumerable<Category>> ListCategoryAsync(int scope)
         {
             return Task.Factory.StartNew(
                 () =>

@@ -9,25 +9,25 @@ using Zero.Domain;
 namespace Zero.Client.Common
 {
 
-    public interface ICategoryClientService
-    {
+    //public interface ICategoryClientService
+    //{
 
-        void SaveCategory(Category category,
-            Action<Category> success,
-            Action<Exception> failure);
+    //    void SaveCategory(Category category,
+    //        Action<Category> success,
+    //        Action<Exception> failure);
 
-        void UpdateCategory(Category category,
-            Action<Category> success,
-            Action<Exception> failure);
+    //    void UpdateCategory(Category category,
+    //        Action<Category> success,
+    //        Action<Exception> failure);
 
-        void DeleteCategory(Category category,
-            Action<Category> success,
-            Action<Exception> failure);
+    //    void DeleteCategory(Category category,
+    //        Action<Category> success,
+    //        Action<Exception> failure);
 
-        void ListCategory(int scope,
-            Action<IEnumerable<Category>> success,
-            Action<Exception> failure);
+    //    void ListCategory(int scope,
+    //        Action<IEnumerable<Category>> success,
+    //        Action<Exception> failure);
 
-    }
+    //}
 
 }

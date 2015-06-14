@@ -16,7 +16,6 @@ using Zero.Domain;
 using Zero.DAL;
 using Zero.DAL.EF;
 using Zero.DAL.Caching;
-using Zero.DAL.Rest;
 using Zero.BLL;
 using Zero.BLL.Impl;
 using Zero.Client.Common;
@@ -102,13 +101,23 @@ namespace Zero.Client.Wpf
                 new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 1));
             this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel2",
                 new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 2));
+            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel100",
+                new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 100));
+
+            this.container.RegisterType<UserListViewModel>();
+            this.container.RegisterType<RoleListViewModel>();
+            this.container.RegisterType<ResourceAccessListViewModel>();
             
             this.container.RegisterType<IModuleContainer, SimpleModuleContainer>(new ContainerControlledLifetimeManager());
 
             this.container.RegisterType<ShellViewModel>(new InjectionProperty("Navs",
                     new ResolvedArrayParameter<NavViewModel>(
                         new NavViewModel("车辆分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel1")),
-                        new NavViewModel("案件分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel2"))
+                        new NavViewModel("案件分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel2")),
+                        new NavViewModel("部门管理", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel100")),
+                        new NavViewModel("用户管理", this.container.Resolve<UserListViewModel>()),
+                        new NavViewModel("角色管理", this.container.Resolve<RoleListViewModel>()),
+                        new NavViewModel("权限管理", this.container.Resolve<ResourceAccessListViewModel>())
                         )));
 
         }

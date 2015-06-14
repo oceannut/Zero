@@ -16,10 +16,23 @@ namespace Zero.Client.Common.Wpf
     public class CategoryViewModel : TreeNodeModel
     {
 
-        private readonly Category model;
+        private Category model;
         public Category Model
         {
             get { return model; }
+            internal set
+            {
+                if (model == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                if (this.model != value)
+                {
+                    this.model = value;
+                    this.Name = this.model.Name;
+                }
+            }
         }
 
         public CategoryViewModel() :
@@ -36,7 +49,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             this.model = model;
-            this.Name = model.Name;
+            this.Name = this.model.Name;
         }
 
         public CategoryViewModel(int scope, int sequence)
