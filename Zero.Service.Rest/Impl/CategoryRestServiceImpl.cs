@@ -57,15 +57,19 @@ namespace Zero.Service.Rest
             }
         }
 
-        public Category SaveCategory(Category category)
+        public Category UpdateCategory(string scope, string id, string name, string description)
         {
             try
             {
-                TreeNodeCollection<Category> tree = this.categoryService.TreeCategory(category.Scope);
-                category.Save(tree,
+                int scopeInt = Convert.ToInt32(scope);
+                TreeNodeCollection<Category> tree = this.categoryService.TreeCategory(scopeInt);
+                Category category = this.categoryService.GetCategory(scopeInt, id);
+                category.Name = name;
+                category.Desc = description;
+                category.Update(tree,
                     (e) =>
                     {
-                        this.categoryService.SaveCategory(category);
+                        this.categoryService.UpdateCategory(category);
                     });
 
                 return category;
@@ -76,17 +80,21 @@ namespace Zero.Service.Rest
             }
         }
 
-        public Category UpdateCategory(Category category)
+        public void DeleteCategory(string scope, string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                int scopeInt = Convert.ToInt32(scope);
+                Category category = this.categoryService.GetCategory(scopeInt, id);
+                this.categoryService.DeleteCategory(category);
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException(HttpStatusCode.InternalServerError);
+            }
         }
 
-        public void DeleteCategory(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Category GetCategory(string id)
+        public Category GetCategory(string scope, string id)
         {
             throw new NotImplementedException();
         }
@@ -100,25 +108,13 @@ namespace Zero.Service.Rest
         {
             try
             {
-                if (scope == "0")
-                {
-                    return this.categoryService.ListCategory(null).ToArray();
-                }
-                else
-                {
-                    return this.categoryService.ListCategory(Convert.ToInt32(scope)).ToArray();
-                }
+                return this.categoryService.ListCategory(Convert.ToInt32(scope)).ToArray();
             }
             catch (Exception ex)
             {
                 throw new WebFaultException(HttpStatusCode.InternalServerError);
             }
         }
-
-
-
-
-
 
     }
 

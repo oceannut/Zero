@@ -23,32 +23,25 @@ namespace Zero.Service.Rest
             ResponseFormat = WebMessageFormat.Json)]
         Category SaveCategory(string scope, string name, string description, string parentId);
 
-
-        //[OperationContract]
-        //[WebInvoke(Method = "POST",
-        //    UriTemplate = "/category/",
-        //    RequestFormat = WebMessageFormat.Json,
-        //    ResponseFormat = WebMessageFormat.Json)]
-        //Category SaveCategory(Category category);
-
         [OperationContract]
         [WebInvoke(Method = "PUT",
-            UriTemplate = "/category/",
+            UriTemplate = "/category/{scope}/{id}/",
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Category UpdateCategory(Category category);
+        Category UpdateCategory(string scope, string id, string name, string description);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE",
-            UriTemplate = "/category/{id}/",
+            UriTemplate = "/category/{scope}/{id}/",
             RequestFormat = WebMessageFormat.Json)]
-        void DeleteCategory(string id);
+        void DeleteCategory(string scope, string id);
 
-        //[OperationContract]
-        //[WebGet(UriTemplate = "/category/{id}/",
-        //    RequestFormat = WebMessageFormat.Json,
-        //    ResponseFormat = WebMessageFormat.Json)]
-        //Category GetCategory(string id);
+        [OperationContract]
+        [WebGet(UriTemplate = "/category/{scope}/{id}/",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        Category GetCategory(string scope, string id);
 
         [OperationContract]
         [WebGet(UriTemplate = "/category/{scope}/code/{code}/",

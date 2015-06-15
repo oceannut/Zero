@@ -97,20 +97,24 @@ namespace Zero.Client.Common.Wpf
             }
             else
             {
-                //this.categoryClientService.UpdateCategory(category,
-                //    (result) =>
-                //    {
-                //        UIThreadHelper.BeginInvoke(
-                //            () =>
-                //            {
-                //                this.current.Name = name;
-                //                this.summary.ClearDetail();
-                //            });
-                //    },
-                //    (ex) =>
-                //    {
-                //        MessageBox.Show("更新失败: " + ex.Message);
-                //    });
+                this.categoryClient.UpdateCategoryAsync(category.Scope, category.Id, Name, Desc)
+                    .ContinueWith(
+                        (task) =>
+                        {
+                            if (task.Exception == null)
+                            {
+                                UIThreadHelper.BeginInvoke(
+                                    () =>
+                                    {
+                                        this.current.Model = task.Result;
+                                        this.summary.ClearDetail();
+                                    });
+                            }
+                            else
+                            {
+                                MessageBox.Show("更新失败: " + task.Exception);
+                            }
+                        });
             }
         }
 

@@ -9,6 +9,7 @@ using Nega.Common;
 using Nega.WcfCommon;
 
 using Zero.Domain;
+using System.Collections.Specialized;
 
 namespace Zero.Client.Common
 {
@@ -49,6 +50,56 @@ namespace Zero.Client.Common
                 () =>
                 {
                     return SaveCategory(scope, name, desc, parentId);
+                });
+        }
+
+        public Category UpdateCategory(int scope, string id, string name, string desc)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/{2}/", url, scope, id);
+                JsonStringBuilder data = new JsonStringBuilder();
+                data.AppendLeftBrace();
+                data.Append("name", name).AppendComma();
+                data.Append("desc", desc).AppendComma();
+                data.AppendRightBrace();
+                string result = client.UploadString(new Uri(serviceUrl), "PUT", data.ToString());
+
+                return JsonHelper.Deserialize<Category>(result);
+            }
+        }
+
+        public Task<Category> UpdateCategoryAsync(int scope, string id, string name, string desc)
+        {
+            return Task.Factory.StartNew(
+                () =>
+                {
+                    return UpdateCategory(scope, id, name, desc);
+                });
+        }
+
+        public void DeleteCategory(string scope, string id)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                //client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                
+
+                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/{2}/", url, scope, id);
+                client.UploadString(new Uri(serviceUrl), "DELETE", "");
+            }
+        }
+
+        public Task DeleteCategoryAsync(string scope, string id)
+        {
+            return Task.Factory.StartNew(
+                () =>
+                {
+                    DeleteCategory(scope, id);
                 });
         }
 

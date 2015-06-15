@@ -20,7 +20,6 @@ namespace Zero.Client.Common.Wpf
     public class CategoryListViewModel : Conductor<IScreen>.Collection.OneActive
     {
 
-        //private readonly ICategoryClientService categoryClientService;
         private readonly ICategoryClient categoryClient;
         private readonly int scope;
         private CategoryViewModel selectedItem;
@@ -41,18 +40,6 @@ namespace Zero.Client.Common.Wpf
                 }
             }
         }
-
-        //public CategoryListViewModel(ICategoryClientService categoryClientService,
-        //    int scope)
-        //{
-        //    if (categoryClientService == null)
-        //    {
-        //        throw new ArgumentNullException();
-        //    }
-
-        //    this.categoryClientService = categoryClientService;
-        //    this.scope = scope;
-        //}
 
         public CategoryListViewModel(ICategoryClient categoryClient,
             int scope)
@@ -75,7 +62,6 @@ namespace Zero.Client.Common.Wpf
         {
             int sequence = this.CategoryList == null ? 1 : this.CategoryList.Count + 1;
             CategoryViewModel viewModel = new CategoryViewModel(this.scope, sequence);
-            //ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, viewModel));
             ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, viewModel));
         }
 
@@ -88,7 +74,7 @@ namespace Zero.Client.Common.Wpf
             }
 
             CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.selectedItem.Children.Count + 1, this.selectedItem.Model);
-            //ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, viewModel));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, viewModel));
         }
 
         public void EditCategory()
@@ -99,7 +85,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            //ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, this.selectedItem));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, this.selectedItem));
         }
 
         public void RemoveCategory()
@@ -115,38 +101,41 @@ namespace Zero.Client.Common.Wpf
             }
 
             Category category = this.selectedItem.Model;
-            //this.categoryClientService.DeleteCategory(category,
-            //    (result) =>
-            //    {
-            //        UIThreadHelper.BeginInvoke(
-            //            () =>
-            //            {
-            //                Tree.PostorderTraverse(this.selectedItem,
-            //                    (node) =>
-            //                    {
-            //                        CategoryViewModel viewModel = node as CategoryViewModel;
-            //                        if (viewModel.Children != null && viewModel.Children.Count > 0)
-            //                        {
-            //                            for (int i = viewModel.Children.Count - 1; i >= 0; i--)
-            //                            {
-            //                                viewModel.RemoveChildAt(i);
-            //                            }
-            //                        }
-            //                    });
-            //                if (this.selectedItem.Parent == null)
-            //                {
-            //                    this.CategoryList.Remove(this.selectedItem);
-            //                }
-            //                else
-            //                {
-            //                    this.selectedItem.Parent.RemoveChild(this.selectedItem);
-            //                }
-            //            });
-            //    },
-            //    (ex) =>
-            //    {
-            //        MessageBox.Show("删除失败: " + ex.Message);
-            //    });
+            this.categoryClient.DeleteCategoryAsync(this.scope.ToString(), category.Id)
+                .ContinueWith((task) =>
+                {
+                    if (task.Exception == null)
+                    {
+                        UIThreadHelper.BeginInvoke(
+                        () =>
+                        {
+                            Tree.PostorderTraverse(this.selectedItem,
+                                (node) =>
+                                {
+                                    CategoryViewModel viewModel = node as CategoryViewModel;
+                                    if (viewModel.Children != null && viewModel.Children.Count > 0)
+                                    {
+                                        for (int i = viewModel.Children.Count - 1; i >= 0; i--)
+                                        {
+                                            viewModel.RemoveChildAt(i);
+                                        }
+                                    }
+                                });
+                            if (this.selectedItem.Parent == null)
+                            {
+                                this.CategoryList.Remove(this.selectedItem);
+                            }
+                            else
+                            {
+                                this.selectedItem.Parent.RemoveChild(this.selectedItem);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        MessageBox.Show("删除失败: " + task.Exception);
+                    }
+                });
         }
 
         public void RefreshCategory()
@@ -162,7 +151,7 @@ namespace Zero.Client.Common.Wpf
                 return;
             }
 
-            //ActivateItem(new CategoryDetailsViewModel(this.categoryClientService, this, category));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, category));
         }
 
         public void Node_Drop(object sender, DragEventArgs e)
@@ -206,22 +195,6 @@ namespace Zero.Client.Common.Wpf
         private void LoadCategoryList()
         {
             CategoryViewModel.CleanupTree(this.CategoryList);
-            //this.categoryClientService.ListCategory(this.scope,
-            //    (result) =>
-            //    {
-            //        UIThreadHelper.BeginInvoke(
-            //            () =>
-            //            {
-            //                if (result != null && result.Count() > 0)
-            //                {
-            //                    this.CategoryList = CategoryViewModel.BuildTree(result);
-            //                }
-            //            });
-            //    },
-            //    (ex) =>
-            //    {
-            //        MessageBox.Show("查询失败: " + ex.Message);
-            //    });
             this.categoryClient.ListCategoryAsync(this.scope)
                 .ContinueWith(
                     (task) =>
