@@ -22,7 +22,7 @@ namespace Zero.Client.Common.Wpf
 
         private readonly ICategoryClient categoryClient;
         private readonly int scope;
-        private CategoryViewModel selectedItem;
+        private CategoryViewModel selectedCategory;
 
         private ObservableCollection<TreeNodeModel> categoryList;
         /// <summary>
@@ -53,9 +53,9 @@ namespace Zero.Client.Common.Wpf
             this.scope = scope;
         }
 
-        public void SelectCategory(TreeNodeModel selectedItem)
+        public void SelectCategory(TreeNodeModel selectedCategory)
         {
-            this.selectedItem = selectedItem as CategoryViewModel;
+            this.selectedCategory = selectedCategory as CategoryViewModel;
         }
 
         public void AddRootCategory()
@@ -67,74 +67,68 @@ namespace Zero.Client.Common.Wpf
 
         public void AddChildCategory()
         {
-            if (this.selectedItem == null)
+            if (this.selectedCategory == null)
             {
                 MessageBox.Show("请选择要添加子节点的父节点");
                 return;
             }
 
-            CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.selectedItem.Children.Count + 1, this.selectedItem.Model);
+            CategoryViewModel viewModel = new CategoryViewModel(this.scope, this.selectedCategory.Children.Count + 1, this.selectedCategory.Model);
             ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, viewModel));
         }
 
         public void EditCategory()
         {
-            if (this.selectedItem == null)
+            if (this.selectedCategory == null)
             {
                 MessageBox.Show("请选择编辑的节点");
                 return;
             }
 
-            ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, this.selectedItem));
+            ActivateItem(new CategoryDetailsViewModel(this.categoryClient, this, this.selectedCategory));
         }
 
         public void RemoveCategory()
         {
-            if (this.selectedItem == null)
+            if (this.selectedCategory == null)
             {
                 MessageBox.Show("请选择要删除的节点");
                 return;
             }
-            if (MessageBox.Show(string.Format("您确定要删除\"{0}\"?", this.selectedItem.Name), "删除对话框", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            if (MessageBox.Show(string.Format("您确定要删除\"{0}\"?", this.selectedCategory.Name), "删除对话框", MessageBoxButton.YesNo) == MessageBoxResult.No)
             {
                 return;
             }
 
-            Category category = this.selectedItem.Model;
+            Category category = this.selectedCategory.Model;
             this.categoryClient.DeleteCategoryAsync(this.scope.ToString(), category.Id)
-                .ContinueWith((task) =>
+                .ExcuteOnUIThread(
+                () =>
                 {
-                    if (task.Exception == null)
-                    {
-                        UIThreadHelper.BeginInvoke(
-                        () =>
+                    Tree.PostorderTraverse(this.selectedCategory,
+                        (node) =>
                         {
-                            Tree.PostorderTraverse(this.selectedItem,
-                                (node) =>
+                            CategoryViewModel viewModel = node as CategoryViewModel;
+                            if (viewModel.Children != null && viewModel.Children.Count > 0)
+                            {
+                                for (int i = viewModel.Children.Count - 1; i >= 0; i--)
                                 {
-                                    CategoryViewModel viewModel = node as CategoryViewModel;
-                                    if (viewModel.Children != null && viewModel.Children.Count > 0)
-                                    {
-                                        for (int i = viewModel.Children.Count - 1; i >= 0; i--)
-                                        {
-                                            viewModel.RemoveChildAt(i);
-                                        }
-                                    }
-                                });
-                            if (this.selectedItem.Parent == null)
-                            {
-                                this.CategoryList.Remove(this.selectedItem);
-                            }
-                            else
-                            {
-                                this.selectedItem.Parent.RemoveChild(this.selectedItem);
+                                    viewModel.RemoveChildAt(i);
+                                }
                             }
                         });
+                    if (this.selectedCategory.Parent == null)
+                    {
+                        this.CategoryList.Remove(this.selectedCategory);
                     }
                     else
                     {
-                        MessageBox.Show("删除失败: " + task.Exception);
+                        this.selectedCategory.Parent.RemoveChild(this.selectedCategory);
                     }
+                },
+                (ex) =>
+                {
+                    MessageBox.Show("删除失败: " + ex);
                 });
         }
 
@@ -179,10 +173,10 @@ namespace Zero.Client.Common.Wpf
 
         internal void ClearDetail()
         {
-             for (int i = this.Items.Count - 1; i >= 0; i--)
-             {
-                 DeactivateItem(this.Items[i], true);
-             }
+            for (int i = this.Items.Count - 1; i >= 0; i--)
+            {
+                DeactivateItem(this.Items[i], true);
+            }
         }
 
         protected override void OnViewLoaded(object view)
@@ -196,24 +190,17 @@ namespace Zero.Client.Common.Wpf
         {
             CategoryViewModel.CleanupTree(this.CategoryList);
             this.categoryClient.ListCategoryAsync(this.scope)
-                .ContinueWith(
-                    (task) =>
+                .ExcuteOnUIThread<IEnumerable<Category>>(
+                    (result) =>
                     {
-                        if (task.Exception == null)
+                        if (result != null && result.Count() > 0)
                         {
-                            UIThreadHelper.BeginInvoke(
-                            () =>
-                            {
-                                if (task.Result != null && task.Result.Count() > 0)
-                                {
-                                    this.CategoryList = CategoryViewModel.BuildTree(task.Result);
-                                }
-                            });
+                            this.CategoryList = CategoryViewModel.BuildTree(result);
                         }
-                        else
-                        {
-                            MessageBox.Show("查询失败: " + task.Exception.Message);
-                        }
+                    },
+                    (ex) =>
+                    {
+                        MessageBox.Show("获取失败: " + ex);
                     });
         }
 

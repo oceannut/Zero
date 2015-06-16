@@ -62,11 +62,12 @@ namespace Zero.Service.IISWASHost
                  .AddCallHandler<TransactionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor());
             container.Configure<Interception>().AddPolicy("List")
                  .AddMatchingRule<MemberNameMatchingRule>(new InjectionConstructor(new InjectionParameter("List*")))
+                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
                  .AddCallHandler<ResourceAuthorizationCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(container));
 
             container.Configure<Interception>().AddPolicy("Wcf")
                  .AddMatchingRule<NamespaceMatchingRule>(new InjectionConstructor(new InjectionParameter("Zero.Service.Rest")))
-                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogPolicy));
+                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy));
 
             #endregion
 
@@ -111,8 +112,7 @@ namespace Zero.Service.IISWASHost
                 new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
             container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 
-            container.RegisterType<ISignRestService, SignRestServiceImpl>(
-                new Interceptor<TransparentProxyInterceptor>(),
+            container.RegisterType<ISignRestService, SignRestServiceImpl>(new Interceptor<TransparentProxyInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
             container.RegisterType<ICategoryRestService, CategoryRestServiceImpl>();
 

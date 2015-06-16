@@ -15,6 +15,7 @@ using Zero.Client.Common;
 
 namespace Zero.Client.Common.Wpf
 {
+
     public class CategoryDetailsViewModel : Screen
     {
 
@@ -67,53 +68,39 @@ namespace Zero.Client.Common.Wpf
             Category category = this.current.Model;
             if (string.IsNullOrWhiteSpace(category.Id))
             {
-                this.categoryClient.SaveCategoryAsync(category.Scope, Name, Desc, null)
-                    .ContinueWith(
-                        (task)=>
+                this.categoryClient.SaveCategoryAsync(category.Scope, Name, Desc, category.ParentId)
+                    .ExcuteOnUIThread<Category>(
+                        (result) =>
                         {
-                            if (task.Exception == null)
+                            this.current.Model = result;
+                            this.summary.RefreshWhenSave(this.current);
+                            if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                             {
-                                UIThreadHelper.BeginInvoke(
-                                    () =>
-                                    {
-                                        this.current.Model = task.Result;
-                                        this.summary.RefreshWhenSave(this.current);
-                                        if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                                        {
-                                            CategoryViewModel nextViewModel = this.current.Next();
-                                            this.current = nextViewModel;
-                                        }
-                                        else
-                                        {
-                                            this.summary.ClearDetail();
-                                        }
-                                    });
+                                CategoryViewModel nextViewModel = this.current.Next();
+                                this.current = nextViewModel;
                             }
                             else
                             {
-                                MessageBox.Show("保存失败: " + task.Exception);
+                                this.summary.ClearDetail();
                             }
+                        },
+                        (ex) =>
+                        {
+                            MessageBox.Show("保存失败: " + ex);
                         });
             }
             else
             {
                 this.categoryClient.UpdateCategoryAsync(category.Scope, category.Id, Name, Desc)
-                    .ContinueWith(
-                        (task) =>
+                    .ExcuteOnUIThread<Category>(
+                        (result) =>
                         {
-                            if (task.Exception == null)
-                            {
-                                UIThreadHelper.BeginInvoke(
-                                    () =>
-                                    {
-                                        this.current.Model = task.Result;
-                                        this.summary.ClearDetail();
-                                    });
-                            }
-                            else
-                            {
-                                MessageBox.Show("更新失败: " + task.Exception);
-                            }
+                            this.current.Model = result;
+                            this.summary.ClearDetail();
+                        },
+                        (ex) =>
+                        {
+                            MessageBox.Show("更新失败: " + ex);
                         });
             }
         }

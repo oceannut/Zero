@@ -21,7 +21,7 @@ namespace Zero.Service.Rest
             BodyStyle= WebMessageBodyStyle.WrappedRequest,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Category SaveCategory(string scope, string name, string description, string parentId);
+        Category SaveCategory(string scope, string name, string desc, string parentId);
 
         [OperationContract]
         [WebInvoke(Method = "PUT",
@@ -29,7 +29,7 @@ namespace Zero.Service.Rest
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Category UpdateCategory(string scope, string id, string name, string description);
+        Category UpdateCategory(string scope, string id, string name, string desc);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE",
