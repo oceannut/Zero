@@ -7,6 +7,7 @@ using System.Windows;
 
 using Caliburn.Micro;
 
+using Nega.Common;
 using Nega.WpfCommon;
 
 using Zero.BLL;
@@ -21,6 +22,7 @@ namespace Zero.Client.Common.Wpf
 
         private readonly ICategoryClient categoryClient;
         private readonly CategoryListViewModel summary;
+        private readonly ILogger logger;
         private CategoryViewModel current;
 
         private string name;
@@ -57,6 +59,7 @@ namespace Zero.Client.Common.Wpf
         {
             this.categoryClient = categoryClient;
             this.summary = summary;
+            this.logger = Nega.Common.LogManager.GetLogger();
             this.current = current;
 
             this.Name = this.current.Model.Name;
@@ -86,7 +89,8 @@ namespace Zero.Client.Common.Wpf
                         },
                         (ex) =>
                         {
-                            MessageBox.Show("保存失败: " + ex);
+                            this.logger.Log(ex);
+                            MessageBox.Show("保存失败");
                         });
             }
             else
@@ -100,7 +104,8 @@ namespace Zero.Client.Common.Wpf
                         },
                         (ex) =>
                         {
-                            MessageBox.Show("更新失败: " + ex);
+                            this.logger.Log(ex);
+                            MessageBox.Show("更新失败");
                         });
             }
         }

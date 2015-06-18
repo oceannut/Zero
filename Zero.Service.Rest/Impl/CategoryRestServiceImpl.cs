@@ -10,18 +10,21 @@ using Nega.Common;
 
 using Zero.Domain;
 using Zero.BLL;
+using R = Zero.Service.Rest.Properties.Resources;
 
 namespace Zero.Service.Rest
 {
 
-    public class CategoryRestServiceImpl : MarshalByRefObject, ICategoryRestService
+    public class CategoryRestServiceImpl : ICategoryRestService
     {
 
-        private ICategoryService categoryService;
+        private readonly ICategoryService categoryService;
+        private readonly ILogger logger;
 
         public CategoryRestServiceImpl(ICategoryService categoryService)
         {
             this.categoryService = categoryService;
+            this.logger = LogManager.GetLogger();
         }
 
         public Category SaveCategory(string scope, string name, string desc, string parentId)
@@ -46,20 +49,23 @@ namespace Zero.Service.Rest
                     {
                         this.categoryService.SaveCategory(category);
                     });
-                //throw new Exception("测试");
                 return category;
             }
             catch (Exception ex)
             {
+                this.logger.Log(ex);
                 throw new WebFaultException(HttpStatusCode.InternalServerError);
             }
         }
 
         public Category UpdateCategory(string scope, string id, string name, string desc)
         {
+            int scopeInt = Convert.ToInt32(scope);
+            ValidateId(id);
+            ValidateNameAndDesc(name, desc);
+
             try
             {
-                int scopeInt = Convert.ToInt32(scope);
                 TreeNodeCollection<Category> tree = this.categoryService.TreeCategory(scopeInt);
                 Category category = this.categoryService.GetCategory(scopeInt, id);
                 category.Name = name;
@@ -74,20 +80,24 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
+                this.logger.Log(ex);
                 throw new WebFaultException(HttpStatusCode.InternalServerError);
             }
         }
 
         public void DeleteCategory(string scope, string id)
         {
+            int scopeInt = Convert.ToInt32(scope);
+            ValidateId(id);
+
             try
             {
-                int scopeInt = Convert.ToInt32(scope);
                 Category category = this.categoryService.GetCategory(scopeInt, id);
                 this.categoryService.DeleteCategory(category);
             }
             catch (Exception ex)
             {
+                this.logger.Log(ex);
                 throw new WebFaultException(HttpStatusCode.InternalServerError);
             }
         }
@@ -104,12 +114,15 @@ namespace Zero.Service.Rest
 
         public Category[] ListCategories(string scope)
         {
+            int scopeInt = Convert.ToInt32(scope);
+
             try
             {
-                return this.categoryService.ListCategory(Convert.ToInt32(scope)).ToArray();
+                return this.categoryService.ListCategory(scopeInt).ToArray();
             }
             catch (Exception ex)
             {
+                this.logger.Log(ex);
                 throw new WebFaultException(HttpStatusCode.InternalServerError);
             }
         }
@@ -123,17 +136,29 @@ namespace Zero.Service.Rest
             }
             catch (Exception)
             {
-                throw new WebFaultException(HttpStatusCode.BadRequest);
+                throw new WebFaultException<string>(R.ExCategoryScope, HttpStatusCode.BadRequest);
+            }
+            if (scopeInt < 1)
+            {
+                throw new WebFaultException<string>(R.ExCategoryScope, HttpStatusCode.BadRequest);
             }
 
             return scopeInt;
+        }
+
+        private void ValidateId(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new WebFaultException<string>(R.ExCategoryIdRequired, HttpStatusCode.BadRequest);
+            }
         }
 
         private void ValidateNameAndDesc(string name, string desc)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new WebFaultException(HttpStatusCode.BadRequest);
+                throw new WebFaultException<string>(R.ExCategoryNameRequired, HttpStatusCode.BadRequest);
             }
         }
 

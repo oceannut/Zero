@@ -11,6 +11,7 @@ using Caliburn.Micro;
 
 using Nega.Common;
 using Nega.Modularity;
+using Nega.Entlib;
 
 using Zero.Domain;
 using Zero.DAL;
@@ -92,6 +93,9 @@ namespace Zero.Client.Wpf
             //this.container.RegisterType<ICategoryClientService, DesktopCategoryClientService>("DesktopCategoryClientService", new ContainerControlledLifetimeManager());
             //this.container.RegisterType<ICategoryClientService, CategoryClientServiceImpl>("CategoryClientService", new ContainerControlledLifetimeManager());
 
+            container.RegisterType<ILoggerFactory, LoggerFactoryImpl>(new ContainerControlledLifetimeManager(), new InjectionConstructor("ErrorCategory"));
+            Nega.Common.LogManager.Factory = container.Resolve<ILoggerFactory>();
+            
             this.container.RegisterType<ICategoryClient, WebCategoryClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
 
             this.container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());

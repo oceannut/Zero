@@ -8,11 +8,11 @@ using System.Windows;
 
 using Caliburn.Micro;
 
+using Nega.Common;
 using Nega.WpfCommon;
 
 using Zero.Domain;
 using Zero.BLL;
-using Nega.Common;
 
 namespace Zero.Client.Common.Wpf
 {
@@ -22,6 +22,7 @@ namespace Zero.Client.Common.Wpf
 
         private readonly ICategoryClient categoryClient;
         private readonly int scope;
+        private readonly ILogger logger;
         private CategoryViewModel selectedCategory;
 
         private ObservableCollection<TreeNodeModel> categoryList;
@@ -51,6 +52,7 @@ namespace Zero.Client.Common.Wpf
 
             this.categoryClient = categoryClient;
             this.scope = scope;
+            this.logger = Nega.Common.LogManager.GetLogger();
         }
 
         public void SelectCategory(TreeNodeModel selectedCategory)
@@ -128,7 +130,8 @@ namespace Zero.Client.Common.Wpf
                 },
                 (ex) =>
                 {
-                    MessageBox.Show("删除失败: " + ex);
+                    this.logger.Log(ex);
+                    MessageBox.Show("删除失败");
                 });
         }
 
@@ -200,7 +203,8 @@ namespace Zero.Client.Common.Wpf
                     },
                     (ex) =>
                     {
-                        MessageBox.Show("获取失败: " + ex);
+                        this.logger.Log(ex);
+                        MessageBox.Show("获取失败");
                     });
         }
 

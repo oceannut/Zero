@@ -49,13 +49,18 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategoryRestServiceImpl.cs" />
+    <Compile Include="Impl\CategoryRestServiceImpl.cs" />
     <Compile Include="ICategoryRestService.cs" />
     <Compile Include="ISignRestService.cs" />
     <Compile Include="ITestRestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Impl\SignRestServiceImpl.cs" />
     <Compile Include="Impl\TestRestServiceImpl.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">
@@ -70,6 +75,12 @@
       <Project>{a7bcc192-2491-45cc-a700-b6d85fa6477f}</Project>
       <Name>Zero.Domain</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

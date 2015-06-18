@@ -37,7 +37,7 @@ namespace Zero.Service.IISWASHost
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            string exceptionHandlingLogPolicy = "Log";
+            //string exceptionHandlingLogPolicy = "Log";
             string exceptionHandlingLogAndWrapPolicy = "LogAndWrap";
 
             IUnityContainer container = ObjectsRegistry.SoloInstance.Container;
@@ -65,9 +65,12 @@ namespace Zero.Service.IISWASHost
                  .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
                  .AddCallHandler<ResourceAuthorizationCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(container));
 
-            container.Configure<Interception>().AddPolicy("Wcf")
-                 .AddMatchingRule<NamespaceMatchingRule>(new InjectionConstructor(new InjectionParameter("Zero.Service.Rest")))
-                 .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy));
+            //container.Configure<Interception>().AddPolicy("Wcf")
+            //     .AddMatchingRule(new NamespaceMatchingRule("Zero.Service.Rest", true))
+            //     .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogPolicy));
+
+            container.RegisterType<ILoggerFactory, LoggerFactoryImpl>(new ContainerControlledLifetimeManager(), new InjectionConstructor("ErrorCategory"));
+            LogManager.Factory = container.Resolve<ILoggerFactory>();
 
             #endregion
 
@@ -112,8 +115,7 @@ namespace Zero.Service.IISWASHost
                 new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
             container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 
-            container.RegisterType<ISignRestService, SignRestServiceImpl>(new Interceptor<TransparentProxyInterceptor>(),
-                new InterceptionBehavior<PolicyInjectionBehavior>());
+            container.RegisterType<ISignRestService, SignRestServiceImpl>();
             container.RegisterType<ICategoryRestService, CategoryRestServiceImpl>();
 
             #endregion
