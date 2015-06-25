@@ -36,11 +36,11 @@ namespace Zero.Domain
 
         static Role()
         {
-            ResourceRegistry.Registrate("role", Resource.METHOD_SAVE, R.RoleSave);
-            ResourceRegistry.Registrate("role", Resource.METHOD_UPDATE, R.RoleUpdate);
-            ResourceRegistry.Registrate("role", Resource.METHOD_GET, R.RoleGet);
-            ResourceRegistry.Registrate("role", Resource.METHOD_DELETE, R.UserDelete);
-            ResourceRegistry.Registrate("role", Resource.METHOD_LIST, R.RoleList);
+            //ResourceRegistry.Registrate("role", Resource.METHOD_SAVE, R.RoleSave);
+            //ResourceRegistry.Registrate("role", Resource.METHOD_UPDATE, R.RoleUpdate);
+            //ResourceRegistry.Registrate("role", Resource.METHOD_GET, R.RoleGet);
+            //ResourceRegistry.Registrate("role", Resource.METHOD_DELETE, R.UserDelete);
+            //ResourceRegistry.Registrate("role", Resource.METHOD_LIST, R.RoleList);
         }
 
     }

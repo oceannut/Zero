@@ -100,11 +100,6 @@ namespace Zero.Domain
         [DataMember]
         public DateTime Modification { get; set; }
 
-        static Category()
-        {
-            ResourceRegistry.Registrate(RESOURCE_CATEGORY, Resource.METHOD_LIST, "");
-        }
-
         /// <summary>
         /// 保存。
         /// </summary>

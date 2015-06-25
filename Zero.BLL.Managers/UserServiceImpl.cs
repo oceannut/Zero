@@ -27,7 +27,7 @@ namespace Zero.BLL.Impl
             this.roleDao = roleDao;
         }
 
-        [Resource(Name = User.RESOURCE_USER, Method = Resource.METHOD_SAVE)]
+        //[Resource(Name = User.RESOURCE_USER, Method = Resource.METHOD_SAVE)]
         public void SaveUser(User user)
         {
             if (user == null)

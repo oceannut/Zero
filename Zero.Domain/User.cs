@@ -43,11 +43,11 @@ namespace Zero.Domain
 
         static User()
         {
-            ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_SAVE, R.UserSave);
-            ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_UPDATE, R.UserUpdate);
-            ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_GET, R.UserDelete);
-            ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_DELETE, R.UserDelete);
-            ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_LIST, R.UserList);
+            //ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_SAVE, R.UserSave);
+            //ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_UPDATE, R.UserUpdate);
+            //ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_GET, R.UserDelete);
+            //ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_DELETE, R.UserDelete);
+            //ResourceRegistry.Registrate(RESOURCE_USER, Resource.METHOD_LIST, R.UserList);
         }
 
     }

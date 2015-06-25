@@ -23,6 +23,11 @@ namespace Zero.BLL.Impl
             this.categoryDao = categoryDao;
         }
 
+        static CategoryServiceImpl()
+        {
+            //ResourceRegistry.Registrate(Category.RESOURCE_CATEGORY, Resource.METHOD_LIST, "");
+        }
+
         public void SaveCategory(Category category)
         {
             if (category == null)
@@ -30,6 +35,14 @@ namespace Zero.BLL.Impl
                 throw new ArgumentNullException();
             }
             categoryDao.Save(category);
+
+            //AuditManager.GetAuditor().Audit(
+            //    new Resource
+            //    {
+            //        Name = Category.RESOURCE_CATEGORY,
+            //        Method = ResourceMethod.CREATE
+            //    }, 
+            //    "");
         }
 
         public Task SaveCategoryAsync(Category category)
