@@ -14,14 +14,19 @@ using Zero.Client.Common.Wpf;
 namespace Zero.Client.Wpf
 {
 
-    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive
+    public class ShellViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<SigninEvent>
     {
 
         #region fields
 
+        private const double windowHeight = 620;
+        private const double windowWidth = 1000;
+
         private readonly IModuleContainer container;
         private readonly IWindowManager windowManager;
         private readonly IEventAggregator eventAggregator;
+
+        private readonly SigninViewModel signinViewModel;
 
         #endregion
 
@@ -76,11 +81,14 @@ namespace Zero.Client.Wpf
 
         public ShellViewModel(IModuleContainer container,
             IWindowManager windowManager,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            SigninViewModel signinViewModel)
         {
             this.container = container;
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
+
+            this.signinViewModel = signinViewModel;
         }
 
         #endregion
@@ -113,12 +121,8 @@ namespace Zero.Client.Wpf
 
         #endregion
 
-        #region overrides
-
-        protected override void OnViewAttached(object view, object context)
+        public void Handle(SigninEvent message)
         {
-            base.OnViewAttached(view, context);
-
             this.NavList = new ObservableCollection<NavViewModel>();
             if (this.Navs != null && this.Navs.Length > 0)
             {
@@ -127,6 +131,50 @@ namespace Zero.Client.Wpf
                     this.NavList.Add(nav);
                 }
             }
+        }
+
+        #region overrides
+
+        protected override void OnViewAttached(object view, object context)
+        {
+            base.OnViewAttached(view, context);
+
+            App.Current.MainWindow.Height = 0;
+            App.Current.MainWindow.Width = 0;
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+
+            this.eventAggregator.Subscribe(this);
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            properties.Add("WindowStyle", System.Windows.WindowStyle.None);
+            bool? dialogResult = this.windowManager.ShowDialog(this.signinViewModel, null, properties);
+            if (dialogResult.HasValue && dialogResult.Value)
+            {
+                App.Current.MainWindow.Top = App.Current.MainWindow.Top - windowHeight / 2;
+                App.Current.MainWindow.Left = App.Current.MainWindow.Left - windowWidth / 2;
+                App.Current.MainWindow.Height = windowHeight;
+                App.Current.MainWindow.Width = windowWidth;
+            }
+            else
+            {
+                CloseWindow();
+            }
+        }
+
+        protected override void OnDeactivate(bool close)
+        {
+            this.eventAggregator.Unsubscribe(this);
+
+            base.OnDeactivate(close);
         }
 
         #endregion

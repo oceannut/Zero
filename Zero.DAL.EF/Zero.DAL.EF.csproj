@@ -64,6 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuditEntryDao.cs" />
+    <Compile Include="AuditEntryDataContext.cs" />
     <Compile Include="CategoryDao.cs" />
     <Compile Include="CategoryDataContext.cs" />
     <Compile Include="KeyValDataContext.cs" />

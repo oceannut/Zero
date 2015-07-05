@@ -40,9 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ClientContext.cs" />
+    <Compile Include="Services\ISignClient.cs" />
     <Compile Include="Services\ICategoryClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Impl\WebCategoryClient.cs" />
+    <Compile Include="Services\Impl\WebSignClient.cs" />
+    <Compile Include="Utilities\WebClientBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Nega\Nega.Common\Nega.Common.csproj">

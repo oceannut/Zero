@@ -9,7 +9,7 @@ using Zero.Domain;
 namespace Zero.BLL
 {
 
-    [Resource(false)]
+    [Resource(Category.RESOURCE_CATEGORY)]
     public interface ICategoryService
     {
 

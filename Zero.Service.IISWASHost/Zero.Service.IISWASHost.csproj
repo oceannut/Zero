@@ -137,6 +137,10 @@
       <Project>{6f85c233-dfda-416e-9a84-31163fd5ab5e}</Project>
       <Name>Nega.Modularity</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Nega\Nega.WcfCommon\Nega.WcfCommon.csproj">
+      <Project>{82f25757-afeb-4d3d-bf00-151d6560a028}</Project>
+      <Name>Nega.WcfCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Nega\Nega.WcfUnity\Nega.WcfUnity.csproj">
       <Project>{7d13cde7-115d-42a8-91e3-634adfae36b6}</Project>
       <Name>Nega.WcfUnity</Name>

@@ -28,7 +28,6 @@ namespace Zero.Client.Wpf
     public class UnityBoostrapper : BootstrapperBase
     {
 
-        private const string connectionString = "connectionString";
         private const string url = "http://localhost:49938";
 
         private IUnityContainer container;
@@ -77,29 +76,18 @@ namespace Zero.Client.Wpf
             this.container.RegisterType<CacheManager>("PermanentCacheManager", new ContainerControlledLifetimeManager(),
                 new InjectionConstructor(this.container.Resolve<ICacheFactory>("PermanentCacheFactory")));
 
-            //this.container.RegisterType<CategoryDao>("CategoryDao", new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
-            //this.container.RegisterType<ICategoryDao, CategoryWebClient>("CategoryWebClient", new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
-
-            //this.container.RegisterType<ICategoryDao, CategoryCache>(new ContainerControlledLifetimeManager(),
-            //    new InjectionConstructor(this.container.Resolve<CategoryDao>("CategoryDao"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
-            //this.container.RegisterType<ICategoryDao, CategoryCache>("CategoryCache", new ContainerControlledLifetimeManager(),
-            //    new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryWebClient"), this.container.Resolve<CacheManager>("PermanentCacheManager")));
-
-            //(this.container.Resolve<ICategoryDao>("CategoryCache") as IModule).Initialize();
-
-            //this.container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
-            //    new InjectionConstructor(this.container.Resolve<ICategoryDao>("CategoryCache")));
-
-            //this.container.RegisterType<ICategoryClientService, DesktopCategoryClientService>("DesktopCategoryClientService", new ContainerControlledLifetimeManager());
-            //this.container.RegisterType<ICategoryClientService, CategoryClientServiceImpl>("CategoryClientService", new ContainerControlledLifetimeManager());
+            
 
             container.RegisterType<ILoggerFactory, LoggerFactoryImpl>(new ContainerControlledLifetimeManager(), new InjectionConstructor("ErrorCategory"));
             Nega.Common.LogManager.Factory = container.Resolve<ILoggerFactory>();
-            
+
+            this.container.RegisterType<ISignClient, WebSignClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
             this.container.RegisterType<ICategoryClient, WebCategoryClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
 
             this.container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
             this.container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
+
+            this.container.RegisterType<SigninViewModel>();
 
             this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel1",
                 new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 1));

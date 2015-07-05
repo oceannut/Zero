@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Nega.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Zero.Domain;
 
 namespace UnitTest.Zero.DAL.EF.MySQL__
@@ -50,6 +50,26 @@ namespace UnitTest.Zero.DAL.EF.MySQL__
             };
             category.Code = code;
             return category;
+        }
+
+        public static AuditEntry CreateAuditEntry()
+        {
+            AuditEntry entry = new AuditEntry
+            {
+                Id = Guid.NewGuid().ToString(),
+                Resource = new Resource
+                {
+                    Name = "test",
+                    Method = 1
+                },
+                User = "test",
+                UserCategory = ThreadUserCategory.User,
+                Client = "test",
+                Priority = 1,
+                Content = "test",
+                Creation = DateTime.Now
+            };
+            return entry;
         }
 
     }

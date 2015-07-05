@@ -27,6 +27,7 @@ using Zero.BLL.Impl;
 using Zero.DAL;
 using Zero.DAL.EF;
 using Zero.DAL.Caching;
+using Nega.WcfCommon;
 
 namespace Zero.Service.IISWASHost
 {
@@ -65,10 +66,6 @@ namespace Zero.Service.IISWASHost
                  .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogAndWrapPolicy))
                  .AddCallHandler<ResourceAuthorizationCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(container));
 
-            //container.Configure<Interception>().AddPolicy("Wcf")
-            //     .AddMatchingRule(new NamespaceMatchingRule("Zero.Service.Rest", true))
-            //     .AddCallHandler<ExceptionCallHandler>(new ContainerControlledLifetimeManager(), new InjectionConstructor(exceptionHandlingLogPolicy));
-
             container.RegisterType<ILoggerFactory, LoggerFactoryImpl>(new ContainerControlledLifetimeManager(), new InjectionConstructor("ErrorCategory"));
             LogManager.Factory = container.Resolve<ILoggerFactory>();
 
@@ -79,6 +76,9 @@ namespace Zero.Service.IISWASHost
             container.RegisterType<ICacheFactory, PermanentCacheFactory>("PermanentCacheFactory", new ContainerControlledLifetimeManager());
             container.RegisterType<CacheManager>("PermanentCacheManager", new ContainerControlledLifetimeManager(),
                 new InjectionConstructor(container.Resolve<ICacheFactory>("PermanentCacheFactory")));
+
+            container.RegisterType<IAuditEntryDao, AuditEntryDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
+            container.RegisterType<IAuditWriter, AuditEntryDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
 
             container.RegisterType<IUserDao, UserDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
             container.RegisterType<IRoleDao, RoleDao>(new ContainerControlledLifetimeManager(), new InjectionConstructor(connectionString));
@@ -96,23 +96,36 @@ namespace Zero.Service.IISWASHost
             container.RegisterType<IResourceAccessService, ResourceAccessServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>()); 
+
             container.RegisterType<IUserService, UserServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
-                new InterceptionBehavior<PolicyInjectionBehavior>()); 
+                new InterceptionBehavior<PolicyInjectionBehavior>());
+            container.RegisterType<IAuthenticationProvider, UserServiceImpl>(new ContainerControlledLifetimeManager(),
+                new Interceptor<InterfaceInterceptor>());
+
             container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
 
             #endregion
 
-            #region Wcf
+            container.RegisterType<ICredentialsProvider, GenericCredentialsProvider>(new ContainerControlledLifetimeManager());
 
             container.RegisterType<IResourceAuthorizationProvider, ResourceAuthorizationProvider>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>());
-            container.RegisterType<IAuthenticationProvider, UserServiceImpl>(new ContainerControlledLifetimeManager(),
-                new Interceptor<InterfaceInterceptor>());
+            
             container.RegisterType<IPrincipalProvider, GenericPrincipalProvider>(new ContainerControlledLifetimeManager(),
                 new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
+
+            container.RegisterType<IAuditor, GenericAuditor>(new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(container.Resolve<IPrincipalProvider>(), container.Resolve<IAuditWriter>()));
+            AuditManager.Auditor = container.Resolve<IAuditor>();
+
+
+            #region Wcf
+
+            container.RegisterType<IClientManager, WebClientManager>(new ContainerControlledLifetimeManager());
+
             container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 
             container.RegisterType<ISignRestService, SignRestServiceImpl>();

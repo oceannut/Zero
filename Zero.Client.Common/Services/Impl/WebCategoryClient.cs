@@ -26,10 +26,10 @@ namespace Zero.Client.Common
 
         public Category SaveCategory(int scope, string name, string desc, string parentId)
         {
-            using (WebClient client = new WebClient())
+            using (WebClient client = WebClientBuilder.Build())
             {
-                client.Encoding = Encoding.UTF8;
-                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                client.SupportJson();
+                client.SupportAuthorization(ClientContext.Current.UserToken);
 
                 string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope);
                 JsonStringBuilder data = new JsonStringBuilder();
@@ -64,7 +64,7 @@ namespace Zero.Client.Common
                 JsonStringBuilder data = new JsonStringBuilder();
                 data.AppendLeftBrace();
                 data.Append("name", name).AppendComma();
-                data.Append("desc", desc).AppendComma();
+                data.Append("desc", desc);
                 data.AppendRightBrace();
                 string result = client.UploadString(new Uri(serviceUrl), "PUT", data.ToString());
 
@@ -109,7 +109,7 @@ namespace Zero.Client.Common
             {
 
                 client.Encoding = Encoding.UTF8;
-                client.Headers.Add(HttpRequestHeader.Authorization, "123");
+                client.Headers.Add(HttpRequestHeader.Authorization, "zsp");
 
                 Category[] categories = null;
 

@@ -72,6 +72,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\SignEvents.cs" />
     <Compile Include="ModuleName.cs" />
     <Page Include="Modules\Category\CategoryDetailsView.xaml">
       <SubType>Designer</SubType>
@@ -83,6 +84,10 @@
     </Page>
     <Compile Include="Modules\Base\ClosableViewModel.cs" />
     <Compile Include="Modules\Base\NavViewModel.cs" />
+    <Page Include="Modules\Auth\SigninView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Modules\User\ResourceAccessListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -100,6 +105,7 @@
     <Compile Include="Modules\Category\CategoryDetailsViewModel.cs" />
     <Compile Include="Modules\Category\CategoryListViewModel.cs" />
     <Compile Include="Modules\Category\CategoryViewModel.cs" />
+    <Compile Include="Modules\Auth\SigninViewModel.cs" />
     <Compile Include="Modules\User\ResourceAccessListViewModel.cs" />
     <Compile Include="Modules\User\RoleListViewModel.cs" />
     <Compile Include="Modules\User\UserListViewModel.cs" />

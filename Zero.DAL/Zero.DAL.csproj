@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAuditEntryDao.cs" />
     <Compile Include="ICategoryDao.cs" />
     <Compile Include="IKeyValDao.cs" />
     <Compile Include="IRoleDao.cs" />

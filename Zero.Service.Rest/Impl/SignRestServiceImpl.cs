@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
-using System.Net;
+
+using Nega.Common;
+using Nega.WcfCommon;
 
 using Zero.Domain;
 using Zero.BLL;
@@ -13,22 +16,27 @@ using Zero.BLL;
 namespace Zero.Service.Rest
 {
     
-    public class SignRestServiceImpl : MarshalByRefObject, ISignRestService
+    public class SignRestServiceImpl : ISignRestService
     {
 
+        private readonly IAuthenticationProvider authenticationProvider;
+        private readonly ICredentialsProvider credentialsProvider;
+        private readonly IClientManager clientManager;
         private readonly IUserService userService;
 
-        public SignRestServiceImpl()
+        public SignRestServiceImpl(IAuthenticationProvider authenticationProvider, 
+            ICredentialsProvider credentialsProvider, 
+            IClientManager clientManager,
+            IUserService userService)
         {
-            
-        }
-
-        public SignRestServiceImpl(IUserService userService)
-        {
+            this.authenticationProvider = authenticationProvider;
+            this.credentialsProvider = credentialsProvider;
+            this.clientManager = clientManager;
             this.userService = userService;
         }
 
-        public User Signup(string username, string pwd, string name, string email)
+        public string Signup(string username, string pwd, string name, string email,
+            bool autoSignin)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -55,23 +63,76 @@ namespace Zero.Service.Rest
             try
             {
                 this.userService.SaveUser(user);
+
+                string userToken = credentialsProvider.GenerateUserToken(username);
+                if (autoSignin)
+                {
+                    clientManager.AddClient(username, userToken);
+                }
+
+                return userToken;
             }
             catch (Exception ex)
             {
                 throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
             }
-
-            return user;
         }
 
-        public bool Signin(string username, string pwd)
+        public string Signin(string username, string pwd)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new WebFaultException<string>("用户名不能为空", HttpStatusCode.BadRequest);
+            }
+            if (string.IsNullOrWhiteSpace(pwd))
+            {
+                throw new WebFaultException<string>("密码不能为空", HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                var result = this.authenticationProvider.Authenticate(username, pwd);
+                if (AuthenticationResult.Pass == result)
+                {
+                    string userToken = credentialsProvider.GenerateUserToken(username);
+                    clientManager.AddClient(username, userToken);
+
+                    return userToken;
+                }
+                else if (AuthenticationResult.NotExisted == result)
+                {
+                    throw new WebFaultException<string>("用户名不存在", HttpStatusCode.BadRequest);
+                }
+                else if (AuthenticationResult.Mismatch == result)
+                {
+                    throw new WebFaultException<string>("密码错误", HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    throw new WebFaultException<string>("用户名或密码不合法", HttpStatusCode.BadRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
-        public bool Signout(string username, string pwd)
+        public bool Signout(string username)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new WebFaultException<string>("用户名不能为空", HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                clientManager.RemoveClient(username);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
+            }
         }
 
         public bool IsUsernameExist(string username)

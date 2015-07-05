@@ -36,13 +36,10 @@ namespace Zero.BLL.Impl
             }
             categoryDao.Save(category);
 
-            //AuditManager.GetAuditor().Audit(
-            //    new Resource
-            //    {
-            //        Name = Category.RESOURCE_CATEGORY,
-            //        Method = ResourceMethod.CREATE
-            //    }, 
-            //    "");
+            AuditManager.Auditor.Audit(
+                Category.RESOURCE_CATEGORY,
+                ResourceMethod.CREATE,
+                "add category");
         }
 
         public Task SaveCategoryAsync(Category category)

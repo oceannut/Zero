@@ -83,6 +83,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AuditEntryDaoUnitTest.cs" />
     <Compile Include="RoleDaoUnitTest.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="CategoryDaoUnitTest.cs" />

@@ -21,7 +21,8 @@ namespace Zero.Service.Rest
             UriTemplate = "/sign/{username}/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        User Signup(string username, string pwd, string name, string email);
+        string Signup(string username, string pwd, string name, string email,
+            bool autoSignin);
 
         [OperationContract]
         [WebInvoke(Method = "PUT",
@@ -29,14 +30,14 @@ namespace Zero.Service.Rest
             UriTemplate = "/sign/{username}/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        bool Signin(string username, string pwd);
+        string Signin(string username, string pwd);
 
         [OperationContract]
         [WebInvoke(Method = "DELETE",
             UriTemplate = "/sign/{username}/",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        bool Signout(string username, string pwd);
+        bool Signout(string username);
 
         [OperationContract]
         [WebGet(UriTemplate = "/sign/{username}/",

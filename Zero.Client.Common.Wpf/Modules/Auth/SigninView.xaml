@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Zero.Client.Common.Wpf.SigninView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:wpf="clr-namespace:Nega.WpfCommon;assembly=Nega.WpfCommon"
+             Width="360" Height="240">
+
+    <StackPanel Margin="12">
+
+        <TextBlock Text="XXX系统" FontSize="22" HorizontalAlignment="Center" Margin="0 12 0 12"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="80*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="32"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="用户名" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 6 0" FontSize="16"/>
+            <TextBox Grid.Column="1" Grid.Row="0" Margin="0 2 0 2" FontSize="16" Text="{Binding Username}"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="密码" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 6 0" FontSize="16"/>
+            <PasswordBox Grid.Column="1" Grid.Row="1" Margin="0 2 0 2" FontSize="16"
+                         wpf:PasswordBoxHelper.Attach="True" 
+                         wpf:PasswordBoxHelper.Password="{Binding Path=Password,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 12 0 0">
+            <Button Content="取消" x:Name="Cancel" FontSize="16" Padding="12 6 12 6"/>
+            <Button Content="登录" x:Name="Signin" FontSize="16" Padding="12 6 12 6" Margin="12 0 0 0"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 12 0 0">
+            <TextBlock Text="thinkinbio @2015" Foreground="#8FAAAAAA"/>
+        </StackPanel>
+
+    </StackPanel>
+
+</UserControl>
