@@ -38,14 +38,14 @@ namespace Zero.Client.Common
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
         }
 
-        public static void SupportAuthorization(this WebClient client, string credentials)
+        public static void SupportAuthorization(this WebClient client, string userToken)
         {
-            if (client == null || string.IsNullOrWhiteSpace(credentials))
+            if (client == null || string.IsNullOrWhiteSpace(userToken))
             {
                 throw new ArgumentNullException();
             }
 
-            client.Headers[HttpRequestHeader.Authorization] = credentials;
+            client.Headers[HttpRequestHeader.Authorization] = userToken;
         }
 
     }

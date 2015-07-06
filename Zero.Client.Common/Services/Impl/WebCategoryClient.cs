@@ -55,10 +55,10 @@ namespace Zero.Client.Common
 
         public Category UpdateCategory(int scope, string id, string name, string desc)
         {
-            using (WebClient client = new WebClient())
+            using (WebClient client = WebClientBuilder.Build())
             {
-                client.Encoding = Encoding.UTF8;
-                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                client.SupportJson();
+                client.SupportAuthorization(ClientContext.Current.UserToken);
 
                 string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/{2}/", url, scope, id);
                 JsonStringBuilder data = new JsonStringBuilder();
@@ -83,11 +83,9 @@ namespace Zero.Client.Common
 
         public void DeleteCategory(string scope, string id)
         {
-            using (WebClient client = new WebClient())
+            using (WebClient client = WebClientBuilder.Build())
             {
-                client.Encoding = Encoding.UTF8;
-                //client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                
+                client.SupportAuthorization(ClientContext.Current.UserToken);
 
                 string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/{2}/", url, scope, id);
                 client.UploadString(new Uri(serviceUrl), "DELETE", "");
@@ -105,11 +103,9 @@ namespace Zero.Client.Common
 
         public IEnumerable<Category> ListCategory(int scope)
         {
-            using (WebClient client = new WebClient())
+            using (WebClient client = WebClientBuilder.Build())
             {
-
-                client.Encoding = Encoding.UTF8;
-                client.Headers.Add(HttpRequestHeader.Authorization, "zsp");
+                client.SupportAuthorization(ClientContext.Current.UserToken);
 
                 Category[] categories = null;
 
@@ -130,7 +126,6 @@ namespace Zero.Client.Common
                     return ListCategory(scope);
                 });
         }
-
 
         public TreeNodeCollection<Category> Tree(int scope)
         {

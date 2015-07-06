@@ -124,7 +124,9 @@ namespace Zero.Service.IISWASHost
 
             #region Wcf
 
-            container.RegisterType<IClientManager, WebClientManager>(new ContainerControlledLifetimeManager());
+            WebClientManager webClientManager = new WebClientManager();
+            container.RegisterInstance<IClientManager>(webClientManager);
+            container.RegisterInstance<IClientFinder>(webClientManager);
 
             container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 

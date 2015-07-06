@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Nega.Common;
+using Nega.WcfCommon;
 
 namespace Zero.Client.Common
 {
@@ -33,7 +34,7 @@ namespace Zero.Client.Common
                 data.AppendRightBrace();
                 string result = client.UploadString(new Uri(serviceUrl), "PUT", data.ToString());
 
-                return result;
+                return JsonHelper.Deserialize<string>(result);
             }
         }
 
