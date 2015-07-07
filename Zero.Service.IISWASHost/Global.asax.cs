@@ -100,8 +100,8 @@ namespace Zero.Service.IISWASHost
             container.RegisterType<IUserService, UserServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
                 new InterceptionBehavior<PolicyInjectionBehavior>());
-            container.RegisterType<IAuthenticationProvider, UserServiceImpl>(new ContainerControlledLifetimeManager(),
-                new Interceptor<InterfaceInterceptor>());
+
+            container.RegisterType<IAuthenticationProvider, UserServiceImpl>(new ContainerControlledLifetimeManager());
 
             container.RegisterType<ICategoryService, CategoryServiceImpl>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>(),
@@ -114,12 +114,10 @@ namespace Zero.Service.IISWASHost
             container.RegisterType<IResourceAuthorizationProvider, ResourceAuthorizationProvider>(new ContainerControlledLifetimeManager(),
                 new Interceptor<InterfaceInterceptor>());
             
-            container.RegisterType<IPrincipalProvider, GenericPrincipalProvider>(new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
+            //container.RegisterType<IPrincipalProvider, GenericPrincipalProvider>(new ContainerControlledLifetimeManager(),
+            //    new InjectionConstructor(container.Resolve<IAuthenticationProvider>()));
 
-            container.RegisterType<IAuditor, GenericAuditor>(new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(container.Resolve<IPrincipalProvider>(), container.Resolve<IAuditWriter>()));
-            AuditManager.Auditor = container.Resolve<IAuditor>();
+           
 
 
             #region Wcf
@@ -127,6 +125,10 @@ namespace Zero.Service.IISWASHost
             WebClientManager webClientManager = new WebClientManager();
             container.RegisterInstance<IClientManager>(webClientManager);
             container.RegisterInstance<IClientFinder>(webClientManager);
+
+            container.RegisterType<IAuditor, GenericAuditor>(new ContainerControlledLifetimeManager(),
+               new InjectionConstructor(container.Resolve<IClientFinder>(), container.Resolve<IAuditWriter>()));
+            AuditManager.Auditor = container.Resolve<IAuditor>();
 
             container.RegisterType<ServiceAuthorizationManager, WebServiceAuthorizationManager>(new ContainerControlledLifetimeManager());
 

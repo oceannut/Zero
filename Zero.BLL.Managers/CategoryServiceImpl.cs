@@ -58,6 +58,11 @@ namespace Zero.BLL.Impl
                 throw new ArgumentNullException();
             }
             categoryDao.Update(category);
+
+            AuditManager.Auditor.Audit(
+                Category.RESOURCE_CATEGORY,
+                ResourceMethod.UPDATE,
+                "update category");
         }
 
         public Task UpdateCategoryAsync(Category category)
@@ -121,6 +126,11 @@ namespace Zero.BLL.Impl
                 throw new ArgumentNullException();
             }
             categoryDao.Delete(category);
+
+            AuditManager.Auditor.Audit(
+                Category.RESOURCE_CATEGORY,
+                ResourceMethod.DELETE,
+                "delete category");
         }
 
         public Task DeleteCategoryAsync(Category category)

@@ -192,10 +192,9 @@ namespace Zero.BLL.Impl
             return AuthenticationResult.Pass;
         }
 
-        public AuthenticationResult Authenticate(string username, string pwd, out string[] roles)
+        public string[] ListRoles(string username)
         {
-            roles = new string[] { "admin" };
-            return AuthenticationResult.Pass;
+            return new string[] { "admin" };
         }
 
     }

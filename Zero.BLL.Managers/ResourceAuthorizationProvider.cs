@@ -9,7 +9,7 @@ namespace Zero.BLL
 {
     public class ResourceAuthorizationProvider : IResourceAuthorizationProvider
     {
-        public IEnumerable<ResourceAccess> ListResourceAccess(string name, string method)
+        public IEnumerable<ResourceAccess> ListResourceAccesses(string name, int method)
         {
             return null;
         }
