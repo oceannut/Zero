@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ using Caliburn.Micro;
 
 using Nega.Common;
 using Nega.WpfCommon;
+using Nega.WcfCommon;
 
 namespace Zero.Client.Common.Wpf
 {
@@ -59,6 +61,16 @@ namespace Zero.Client.Common.Wpf
 
         public void Signin()
         {
+            if (string.IsNullOrWhiteSpace(this.Username))
+            {
+                MessageBoxHelper.ShowWarning("用户名不能为空");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(this.Password))
+            {
+                MessageBoxHelper.ShowWarning("密码不能为空");
+                return;
+            }
             this.signClient.SigninAsync(this.Username, this.Password)
                 .ExcuteOnUIThread<string>(
                     (result) =>
@@ -70,8 +82,20 @@ namespace Zero.Client.Common.Wpf
                     },
                     (ex) =>
                     {
-                        this.logger.Log(ex);
-                        MessageBoxHelper.ShowError();
+                        WebException webException = ex.InnerExceptions[0] as WebException;
+                        if (webException != null)
+                        {
+                            KeyValuePair<HttpStatusCode, string> status = WebHelper.GetStatusCodeAndMessage(webException);
+                            if (status.Key == HttpStatusCode.BadRequest)
+                            {
+                                MessageBoxHelper.ShowWarning(status.Value);
+                            }
+                            else
+                            {
+                                this.logger.Log(ex);
+                                MessageBoxHelper.ShowError();
+                            }
+                        }
                     });
         }
 

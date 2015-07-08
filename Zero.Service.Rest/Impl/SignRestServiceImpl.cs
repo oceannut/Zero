@@ -88,32 +88,36 @@ namespace Zero.Service.Rest
             {
                 throw new WebFaultException<string>("密码不能为空", HttpStatusCode.BadRequest);
             }
+
+            AuthenticationResult result;
+            string[] roles;
             try
             {
-                var result = this.authenticationProvider.Authenticate(username, pwd);
-                if (AuthenticationResult.Pass == result)
-                {
-                    string userToken = credentialsProvider.GenerateUserToken(username);
-                    clientManager.AddClient(username, userToken);
-
-                    return userToken;
-                }
-                else if (AuthenticationResult.NotExisted == result)
-                {
-                    throw new WebFaultException<string>("用户名不存在", HttpStatusCode.BadRequest);
-                }
-                else if (AuthenticationResult.Mismatch == result)
-                {
-                    throw new WebFaultException<string>("密码错误", HttpStatusCode.BadRequest);
-                }
-                else
-                {
-                    throw new WebFaultException<string>("用户名或密码不合法", HttpStatusCode.BadRequest);
-                }
+                result = this.authenticationProvider.Authenticate(username, pwd, out roles);
             }
             catch (Exception ex)
             {
                 throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
+            }
+
+            if (AuthenticationResult.Pass == result)
+            {
+                string userToken = credentialsProvider.GenerateUserToken(username);
+                clientManager.AddClient(username, userToken, roles);
+
+                return userToken;
+            }
+            else if (AuthenticationResult.NotExisted == result)
+            {
+                throw new WebFaultException<string>("用户名不存在", HttpStatusCode.BadRequest);
+            }
+            else if (AuthenticationResult.Mismatch == result)
+            {
+                throw new WebFaultException<string>("密码错误", HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                throw new WebFaultException<string>("用户名或密码不合法", HttpStatusCode.BadRequest);
             }
         }
 

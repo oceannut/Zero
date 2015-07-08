@@ -187,14 +187,31 @@ namespace Zero.BLL.Impl
         }
 
 
-        public AuthenticationResult Authenticate(string username, string pwd)
+        public AuthenticationResult Authenticate(string username, string pwd, out string[] roles)
         {
+            roles = null;
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return AuthenticationResult.UsernameRequired;
+            }
+            if (string.IsNullOrWhiteSpace(pwd))
+            {
+                return AuthenticationResult.PwdRequired;
+            }
+            User user = this.userDao.GetByUsername(username);
+            if (user == null)
+            {
+                return AuthenticationResult.NotExisted;
+            }
+            if (pwd != user.Pwd)
+            {
+                return AuthenticationResult.Mismatch;
+            }
+            if (user.Roles != null && user.Roles.Count > 0)
+            {
+                roles = (from role in user.Roles select role.Id).ToArray();
+            }
             return AuthenticationResult.Pass;
-        }
-
-        public string[] ListRoles(string username)
-        {
-            return new string[] { "admin" };
         }
 
     }

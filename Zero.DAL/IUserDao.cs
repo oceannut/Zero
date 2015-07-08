@@ -14,6 +14,8 @@ namespace Zero.DAL
     public interface IUserDao : IPageableDao<User, string>
     {
 
+        User GetByUsername(string username);
+
         IList<User> List(string roleId);
 
     }

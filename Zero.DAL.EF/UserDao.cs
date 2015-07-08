@@ -140,7 +140,15 @@ namespace Zero.DAL.EF
         {
             using (UserDataContext context = new UserDataContext(connectionString))
             {
-                return context.Users.Include("Roles").FirstOrDefault(e => e.Id == (string)id);
+                return context.Users.Include("Roles").FirstOrDefault(e => e.Id == id);
+            }
+        }
+
+        public User GetByUsername(string username)
+        {
+            using (UserDataContext context = new UserDataContext(connectionString))
+            {
+                return context.Users.Include("Roles").FirstOrDefault(e => e.Username == username);
             }
         }
 
