@@ -10,6 +10,7 @@ using Nega.Data;
 using Zero.Domain;
 using Zero.BLL;
 using Zero.DAL;
+using R = Zero.BLL.Impl.Properties.Resources;
 
 namespace Zero.BLL.Impl
 {
@@ -186,7 +187,6 @@ namespace Zero.BLL.Impl
             throw new NotImplementedException();
         }
 
-
         public AuthenticationResult Authenticate(string username, string pwd, out string[] roles)
         {
             roles = null;
@@ -198,20 +198,43 @@ namespace Zero.BLL.Impl
             {
                 return AuthenticationResult.PwdRequired;
             }
+
+            AuditEntry auditEntry = new AuditEntry
+                {
+                    User = username,
+                    Resource = new Resource
+                    {
+                        Name = User.RESOURCE_USER,
+                        Method = ResourceMethod.SIGNIN
+                    },
+                    Client = "1",
+                    Content = username,
+                    Priority = AuditManager.DefaultPriority,
+                    Result = OperationResult.Success
+                };
+
+            AuthenticationResult result = AuthenticationResult.Pass;
             User user = this.userDao.GetByUsername(username);
             if (user == null)
             {
-                return AuthenticationResult.NotExisted;
+                result = AuthenticationResult.NotExisted;
+                auditEntry.Result = OperationResult.Failure;
+                auditEntry.Content = string.Format(R.UserNotExisted, username);
             }
-            if (pwd != user.Pwd)
+            else if (pwd != user.Pwd)
             {
-                return AuthenticationResult.Mismatch;
+                result = AuthenticationResult.Mismatch;
+                auditEntry.Result = OperationResult.Failure;
+                auditEntry.Content = string.Format(R.PasswordMismatch, username);
             }
-            if (user.Roles != null && user.Roles.Count > 0)
+            else if (user.Roles != null && user.Roles.Count > 0)
             {
                 roles = (from role in user.Roles select role.Id).ToArray();
             }
-            return AuthenticationResult.Pass;
+
+            AuditManager.Auditor.Audit(auditEntry);
+
+            return result;
         }
 
     }

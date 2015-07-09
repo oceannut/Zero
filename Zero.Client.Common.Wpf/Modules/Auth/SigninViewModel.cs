@@ -55,7 +55,7 @@ namespace Zero.Client.Common.Wpf
             this.eventAggregator = eventAggregator;
             this.logger = Nega.Common.LogManager.GetLogger();
 
-            this.Username = "zsp";
+            this.Username = "zsp1";
             this.Password = "psz";
         }
 
