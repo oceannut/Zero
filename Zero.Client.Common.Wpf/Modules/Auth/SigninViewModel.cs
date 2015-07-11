@@ -9,7 +9,6 @@ using Caliburn.Micro;
 
 using Nega.Common;
 using Nega.WpfCommon;
-using Nega.WcfCommon;
 
 namespace Zero.Client.Common.Wpf
 {
@@ -18,7 +17,6 @@ namespace Zero.Client.Common.Wpf
     {
 
         private readonly ISignClient signClient;
-        private readonly ILogger logger;
         private readonly IEventAggregator eventAggregator;
 
         private string username;
@@ -53,9 +51,8 @@ namespace Zero.Client.Common.Wpf
         {
             this.signClient = signClient;
             this.eventAggregator = eventAggregator;
-            this.logger = Nega.Common.LogManager.GetLogger();
 
-            this.Username = "zsp1";
+            this.Username = "zsp";
             this.Password = "psz";
         }
 
@@ -82,20 +79,7 @@ namespace Zero.Client.Common.Wpf
                     },
                     (ex) =>
                     {
-                        WebException webException = ex.InnerExceptions[0] as WebException;
-                        if (webException != null)
-                        {
-                            KeyValuePair<HttpStatusCode, string> status = WebHelper.GetStatusCodeAndMessage(webException);
-                            if (status.Key == HttpStatusCode.BadRequest)
-                            {
-                                MessageBoxHelper.ShowWarning(status.Value);
-                            }
-                            else
-                            {
-                                this.logger.Log(ex);
-                                MessageBoxHelper.ShowError();
-                            }
-                        }
+                        TaskHelper.HandleWebException(ex);
                     });
         }
 

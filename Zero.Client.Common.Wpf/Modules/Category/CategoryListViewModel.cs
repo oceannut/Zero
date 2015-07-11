@@ -22,7 +22,6 @@ namespace Zero.Client.Common.Wpf
 
         private readonly ICategoryClient categoryClient;
         private readonly int scope;
-        private readonly ILogger logger;
         private CategoryViewModel selectedCategory;
 
         private ObservableCollection<TreeNodeModel> categoryList;
@@ -52,7 +51,6 @@ namespace Zero.Client.Common.Wpf
 
             this.categoryClient = categoryClient;
             this.scope = scope;
-            this.logger = Nega.Common.LogManager.GetLogger();
         }
 
         public void SelectCategory(TreeNodeModel selectedCategory)
@@ -71,7 +69,7 @@ namespace Zero.Client.Common.Wpf
         {
             if (this.selectedCategory == null)
             {
-                MessageBox.Show("请选择要添加子节点的父节点");
+                MessageBoxHelper.ShowWarning("请选择要添加子节点的父节点");
                 return;
             }
 
@@ -83,7 +81,7 @@ namespace Zero.Client.Common.Wpf
         {
             if (this.selectedCategory == null)
             {
-                MessageBox.Show("请选择编辑的节点");
+                MessageBoxHelper.ShowWarning("请选择编辑的节点");
                 return;
             }
 
@@ -94,10 +92,10 @@ namespace Zero.Client.Common.Wpf
         {
             if (this.selectedCategory == null)
             {
-                MessageBox.Show("请选择要删除的节点");
+                MessageBoxHelper.ShowWarning("请选择要删除的节点");
                 return;
             }
-            if (MessageBox.Show(string.Format("您确定要删除\"{0}\"?", this.selectedCategory.Name), "删除对话框", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            if (MessageBoxHelper.ShowConfirm(string.Format("您确定要删除\"{0}\"?", this.selectedCategory.Name)) == MessageBoxResult.No)
             {
                 return;
             }
@@ -130,8 +128,7 @@ namespace Zero.Client.Common.Wpf
                 },
                 (ex) =>
                 {
-                    this.logger.Log(ex);
-                    MessageBox.Show("删除失败");
+                    TaskHelper.HandleWebException(ex);
                 });
         }
 
@@ -203,8 +200,7 @@ namespace Zero.Client.Common.Wpf
                     },
                     (ex) =>
                     {
-                        this.logger.Log(ex);
-                        MessageBox.Show("获取失败");
+                        TaskHelper.HandleWebException(ex);
                     });
         }
 

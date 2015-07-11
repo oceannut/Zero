@@ -187,7 +187,9 @@ namespace Zero.BLL.Impl
             throw new NotImplementedException();
         }
 
-        public AuthenticationResult Authenticate(string username, string pwd, out string[] roles)
+        public AuthenticationResult Authenticate(string username, string pwd,
+            string client,
+            out string[] roles)
         {
             roles = null;
             if (string.IsNullOrWhiteSpace(username))
@@ -207,7 +209,7 @@ namespace Zero.BLL.Impl
                         Name = User.RESOURCE_USER,
                         Method = ResourceMethod.SIGNIN
                     },
-                    Client = "1",
+                    Client = client,
                     Content = username,
                     Priority = AuditManager.DefaultPriority,
                     Result = OperationResult.Success

@@ -22,7 +22,6 @@ namespace Zero.Client.Common.Wpf
 
         private readonly ICategoryClient categoryClient;
         private readonly CategoryListViewModel summary;
-        private readonly ILogger logger;
         private CategoryViewModel current;
 
         private string name;
@@ -59,7 +58,6 @@ namespace Zero.Client.Common.Wpf
         {
             this.categoryClient = categoryClient;
             this.summary = summary;
-            this.logger = Nega.Common.LogManager.GetLogger();
             this.current = current;
 
             this.Name = this.current.Model.Name;
@@ -77,7 +75,7 @@ namespace Zero.Client.Common.Wpf
                         {
                             this.current.Model = result;
                             this.summary.RefreshWhenSave(this.current);
-                            if (MessageBox.Show("是否继续添加类型?", "添加类型", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            if (MessageBoxHelper.ShowConfirm("是否继续添加类型?") == MessageBoxResult.Yes)
                             {
                                 CategoryViewModel nextViewModel = this.current.Next();
                                 this.current = nextViewModel;
@@ -89,8 +87,7 @@ namespace Zero.Client.Common.Wpf
                         },
                         (ex) =>
                         {
-                            this.logger.Log(ex);
-                            MessageBox.Show("保存失败");
+                            TaskHelper.HandleWebException(ex);
                         });
             }
             else
@@ -104,8 +101,7 @@ namespace Zero.Client.Common.Wpf
                         },
                         (ex) =>
                         {
-                            this.logger.Log(ex);
-                            MessageBox.Show("更新失败");
+                            TaskHelper.HandleWebException(ex);
                         });
             }
         }

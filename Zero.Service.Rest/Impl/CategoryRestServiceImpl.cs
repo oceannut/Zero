@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Nega.Common;
+using Nega.WcfCommon;
 
 using Zero.Domain;
 using Zero.BLL;
@@ -19,22 +20,20 @@ namespace Zero.Service.Rest
     {
 
         private readonly ICategoryService categoryService;
-        private readonly ILogger logger;
 
         public CategoryRestServiceImpl(ICategoryService categoryService)
         {
             this.categoryService = categoryService;
-            this.logger = LogManager.GetLogger();
         }
 
         public Category SaveCategory(string scope, string name, string desc, string parentId)
         {
             int scopeInt = Scope2Int(scope);
             ValidateNameAndDesc(name, desc);
-            Category parent = GetParent(scopeInt, parentId);
-
+            
             try
             {
+                Category parent = GetParent(scopeInt, parentId);
                 Category category = new Category
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -53,8 +52,7 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
-                this.logger.Log(ex);
-                throw new WebFaultException(HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
         }
 
@@ -80,8 +78,7 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
-                this.logger.Log(ex);
-                throw new WebFaultException(HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
         }
 
@@ -97,8 +94,7 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
-                this.logger.Log(ex);
-                throw new WebFaultException(HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
         }
 
@@ -122,8 +118,7 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
-                this.logger.Log(ex);
-                throw new WebFaultException(HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
         }
 
@@ -162,12 +157,12 @@ namespace Zero.Service.Rest
             }
         }
 
-        private Category GetParent(int scopeInt, string parentId)
+        private Category GetParent(int scope, string parentId)
         {
             Category parent = null;
             if (!string.IsNullOrWhiteSpace(parentId))
             {
-                parent = this.categoryService.GetCategory(scopeInt, parentId);
+                parent = this.categoryService.GetCategory(scope, parentId);
             }
 
             return parent;

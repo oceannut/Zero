@@ -39,7 +39,7 @@ namespace Zero.BLL.Impl
             AuditManager.Auditor.Audit(
                 Category.RESOURCE_CATEGORY,
                 ResourceMethod.CREATE,
-                "add category");
+                string.Format("{0}({1})", category.Name, category.Scope));
         }
 
         public Task SaveCategoryAsync(Category category)
@@ -62,7 +62,7 @@ namespace Zero.BLL.Impl
             AuditManager.Auditor.Audit(
                 Category.RESOURCE_CATEGORY,
                 ResourceMethod.UPDATE,
-                "update category");
+                string.Format("{0}({1})", category.Name, category.Scope));
         }
 
         public Task UpdateCategoryAsync(Category category)
@@ -130,7 +130,7 @@ namespace Zero.BLL.Impl
             AuditManager.Auditor.Audit(
                 Category.RESOURCE_CATEGORY,
                 ResourceMethod.DELETE,
-                "delete category");
+                string.Format("{0}({1})", category.Name, category.Scope));
         }
 
         public Task DeleteCategoryAsync(Category category)
@@ -216,7 +216,6 @@ namespace Zero.BLL.Impl
                 });
         }
 
-        
         public IEnumerable<Category> ListCategory(int? scope, bool? isDisused = null)
         {
             return categoryDao.List(scope, isDisused);

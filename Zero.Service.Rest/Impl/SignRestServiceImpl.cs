@@ -74,7 +74,7 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
-                throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
         }
 
@@ -93,11 +93,13 @@ namespace Zero.Service.Rest
             string[] roles;
             try
             {
-                result = this.authenticationProvider.Authenticate(username, pwd, out roles);
+                result = this.authenticationProvider.Authenticate(username, pwd, 
+                    OperationContextHelper.GetIP(),
+                    out roles);
             }
             catch (Exception ex)
             {
-                throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
 
             if (AuthenticationResult.Pass == result)
@@ -135,7 +137,7 @@ namespace Zero.Service.Rest
             }
             catch (Exception ex)
             {
-                throw new WebFaultException<string>(ex.Message, HttpStatusCode.InternalServerError);
+                throw ExceptionHelper.Replace(ex);
             }
         }
 
