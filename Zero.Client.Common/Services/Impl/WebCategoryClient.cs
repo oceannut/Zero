@@ -17,6 +17,7 @@ namespace Zero.Client.Common
     public class WebCategoryClient : ICategoryClient
     {
 
+        private const string service = "CategoryRestService.svc/category";
         private readonly string url;
 
         public WebCategoryClient(string url)
@@ -31,7 +32,7 @@ namespace Zero.Client.Common
                 client.SupportJson();
                 client.SupportAuthorization(ClientContext.Current.UserToken);
 
-                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope);
+                string serviceUrl = string.Format("{0}/{1}/{2}/", url, service, scope);
                 JsonStringBuilder data = new JsonStringBuilder();
                 data.AppendLeftBrace();
                 data.Append("name", name).AppendComma();
@@ -60,7 +61,7 @@ namespace Zero.Client.Common
                 client.SupportJson();
                 client.SupportAuthorization(ClientContext.Current.UserToken);
 
-                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/{2}/", url, scope, id);
+                string serviceUrl = string.Format("{0}/{1}/{2}/{3}/", url, service, scope, id);
                 JsonStringBuilder data = new JsonStringBuilder();
                 data.AppendLeftBrace();
                 data.Append("name", name).AppendComma();
@@ -87,7 +88,7 @@ namespace Zero.Client.Common
             {
                 client.SupportAuthorization(ClientContext.Current.UserToken);
 
-                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/{2}/", url, scope, id);
+                string serviceUrl = string.Format("{0}/{1}/{2}/{3}/", url, service, scope, id);
                 client.UploadString(new Uri(serviceUrl), "DELETE", "");
             }
         }
@@ -109,7 +110,7 @@ namespace Zero.Client.Common
 
                 Category[] categories = null;
 
-                string serviceUrl = string.Format("{0}/CategoryRestService.svc/category/{1}/", url, scope);
+                string serviceUrl = string.Format("{0}/{1}/{2}/", url, service, scope);
 
                 string s = client.DownloadString(new Uri(serviceUrl));
                 categories = JsonHelper.Deserialize<Category[]>(s);

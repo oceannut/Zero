@@ -110,8 +110,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="UnityObjects\CaliburnObjects.cs" />
     <Compile Include="ShellViewModel.cs" />
     <Compile Include="UnityBoostrapper.cs" />
+    <Compile Include="UnityObjects\CommonObjects.cs" />
+    <Compile Include="UnityObjects\ZeroObjects.cs" />
     <Page Include="ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

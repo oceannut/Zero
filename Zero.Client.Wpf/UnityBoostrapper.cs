@@ -9,18 +9,7 @@ using Microsoft.Practices.Unity;
 
 using Caliburn.Micro;
 
-using Nega.Common;
-using Nega.Modularity;
 using Nega.Entlib;
-
-using Zero.Domain;
-using Zero.DAL;
-using Zero.DAL.EF;
-using Zero.DAL.Caching;
-using Zero.BLL;
-using Zero.BLL.Impl;
-using Zero.Client.Common;
-using Zero.Client.Common.Wpf;
 
 namespace Zero.Client.Wpf
 {
@@ -28,10 +17,8 @@ namespace Zero.Client.Wpf
     public class UnityBoostrapper : BootstrapperBase
     {
 
-        private const string url = "http://localhost:49938";
-
         private IUnityContainer container;
-        private readonly List<IModule> modules = new List<IModule>();
+        //private readonly List<IModule> modules = new List<IModule>();
 
         public UnityBoostrapper()
         {
@@ -41,8 +28,13 @@ namespace Zero.Client.Wpf
         protected override void Configure()
         {
             this.container = new UnityContainer();
-            
-            RegisterTypes();
+
+            ObjectsFactory factory = ObjectsFactory.SoloInstance;
+            factory.AddConfig(new CaliburnObjects());
+            factory.AddConfig(new CommonObjects());
+            factory.AddConfig(new ZeroObjects());
+
+            factory.Registrate(container);
         }
 
         protected override IEnumerable<Assembly> SelectAssemblies()
@@ -67,51 +59,6 @@ namespace Zero.Client.Wpf
         protected override IEnumerable<object> GetAllInstances(Type service)
         {
             return this.container.ResolveAll(service);
-        }
-
-        private void RegisterTypes()
-        {
-
-            this.container.RegisterType<ICacheFactory, PermanentCacheFactory>("PermanentCacheFactory", new ContainerControlledLifetimeManager());
-            this.container.RegisterType<CacheManager>("PermanentCacheManager", new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(this.container.Resolve<ICacheFactory>("PermanentCacheFactory")));
-
-            
-
-            container.RegisterType<ILoggerFactory, LoggerFactoryImpl>(new ContainerControlledLifetimeManager(), new InjectionConstructor("ErrorCategory"));
-            Nega.Common.LogManager.Factory = container.Resolve<ILoggerFactory>();
-
-            this.container.RegisterType<ISignClient, WebSignClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
-            this.container.RegisterType<ICategoryClient, WebCategoryClient>(new ContainerControlledLifetimeManager(), new InjectionConstructor(url));
-
-            this.container.RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
-            this.container.RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
-
-            this.container.RegisterType<SigninViewModel>();
-
-            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel1",
-                new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 1));
-            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel2",
-                new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 2));
-            this.container.RegisterType<CategoryListViewModel>("CategoryListViewModel100",
-                new InjectionConstructor(this.container.Resolve<ICategoryClient>(), 100));
-
-            this.container.RegisterType<UserListViewModel>();
-            this.container.RegisterType<RoleListViewModel>();
-            this.container.RegisterType<ResourceAccessListViewModel>();
-            
-            this.container.RegisterType<IModuleContainer, SimpleModuleContainer>(new ContainerControlledLifetimeManager());
-
-            this.container.RegisterType<ShellViewModel>(new InjectionProperty("Navs",
-                    new ResolvedArrayParameter<NavViewModel>(
-                        new NavViewModel("车辆分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel1")),
-                        new NavViewModel("案件分类", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel2")),
-                        new NavViewModel("部门管理", this.container.Resolve<CategoryListViewModel>("CategoryListViewModel100")),
-                        new NavViewModel("用户管理", this.container.Resolve<UserListViewModel>()),
-                        new NavViewModel("角色管理", this.container.Resolve<RoleListViewModel>()),
-                        new NavViewModel("权限管理", this.container.Resolve<ResourceAccessListViewModel>())
-                        )));
-
         }
 
     }

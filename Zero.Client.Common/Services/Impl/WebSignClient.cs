@@ -14,6 +14,7 @@ namespace Zero.Client.Common
     public class WebSignClient : ISignClient
     {
 
+        private const string service = "SignRestService.svc/sign";
         private readonly string url;
 
         public WebSignClient(string url)
@@ -27,7 +28,7 @@ namespace Zero.Client.Common
             {
                 client.SupportJson();
             
-                string serviceUrl = string.Format("{0}/SignRestService.svc/sign/{1}/", url, username);
+                string serviceUrl = string.Format("{0}/{1}/{2}/", url, service, username);
                 JsonStringBuilder data = new JsonStringBuilder();
                 data.AppendLeftBrace();
                 data.Append("pwd", pwd);
